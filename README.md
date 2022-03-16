@@ -28,4 +28,14 @@ First of all this is a really early Alpha, consider things with care.
   // Add the API Generator Services, point to the assembly where the classes are you want to use
   services.AddApiGeneratorServices(Configuration, Assembly.GetExecutingAssembly());
 ```
+
+* Add a connection string in appsettings.json named 'ApiGeneratorDatabase'
+
+```
+  "ConnectionStrings": {
+    "ApiGeneratorDatabase": "Server=localhost;database=maximago_dev_222222;user=sa;password=Password123;"
+  },
+```
+
+   
 ...et voila start your app and you're done. 
