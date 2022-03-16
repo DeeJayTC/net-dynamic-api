@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPublishable>False</IsPublishable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Car.cs" />
+    <Compile Remove="CarDealer.cs" />
+    <Compile Remove="Person.cs" />
+    <Compile Remove="Test.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Car.cs" />
+    <None Include="CarDealer.cs" />
+    <None Include="Person.cs" />
+    <None Include="Test.cs" />
+  </ItemGroup>
+
+</Project>

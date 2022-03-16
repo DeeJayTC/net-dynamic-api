@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# CS1591: Fehledes XML-Kommentar für öffentlich sichtbaren Typ oder Element
+dotnet_diagnostic.CS1591.severity = silent
+
+# CS1723: XML-Kommentar weist ein cref-Attribut auf, das sich auf einen Typparameter bezieht.
+dotnet_diagnostic.CS1723.severity = silent
