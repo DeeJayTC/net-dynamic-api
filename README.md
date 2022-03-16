@@ -1,6 +1,8 @@
 # Generate CRUD API with ODATA enabled by just writing class files
 First of all this is a really early Alpha, consider things with care. 
 
+Currently it only supports SQL Server
+
 # How to use:
 * Download sources and link to your project (Nuget soon!)
 * Create a class as you wish
