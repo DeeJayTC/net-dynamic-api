@@ -1,4 +1,4 @@
-# Generate CRUD API with ODATA enabled by just writing class files
+# Generate CRUD APIS with ODATA by just writing class files
 
 <a href="https://discord.gg/vBPpJkS"><img src="https://img.shields.io/badge/chat-discord-brightgreen.svg?logo=discord&style=flat"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
