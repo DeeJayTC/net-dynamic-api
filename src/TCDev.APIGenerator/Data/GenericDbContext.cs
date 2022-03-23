@@ -65,7 +65,7 @@ namespace TCDev.ApiGenerator.Data
 
          // Add all other types (auto mode)
          var customTypes = Assembly.GetEntryAssembly().GetExportedTypes()
-            .Where(x => x.GetCustomAttributes<GeneratedControllerAttribute>().Any());
+            .Where(x => x.GetCustomAttributes<ApiAttribute>().Any());
          foreach (var customType in customTypes.Where(x => x.GetInterface("IEntityTypeConfiguration`1") == null))
             builder.Entity(customType);
 
@@ -80,7 +80,7 @@ namespace TCDev.ApiGenerator.Data
       public static IEdmModel GetEdmModel()
       {
          var customTypes = Assembly.GetEntryAssembly().GetExportedTypes()
-            .Where(x => x.GetCustomAttributes<GeneratedControllerAttribute>().Any());
+            .Where(x => x.GetCustomAttributes<ApiAttribute>().Any());
          var builder = new ODataConventionModelBuilder();
          foreach (var customType in customTypes)
          {

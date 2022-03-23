@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>TCDev.ApiGenerator</name>
+        <name>TCDev.APIGenerator</name>
     </assembly>
     <members>
-        <member name="M:TCDev.ApiGenerator.Attributes.GeneratedControllerAttribute.#ctor(System.String,System.String[],System.String[],System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
+        <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
             <summary>
-            Attribute defining auto generated controller for the class
+               Attribute defining auto generated controller for the class
             </summary>
             <param name="route">The full base route for the class ie /myclass/ </param>
             <param name="requiredReadClaims"></param>
@@ -17,64 +17,70 @@
             <param name="authorize"></param>
             <param name="cache"></param>
             <param name="cacheDuration"></param>
+            <param name="methods">The methods to generate for this endpoint</param>
         </member>
-        <member name="T:TCDev.ApiGenerator.Attributes.GeneratedControllerAttributeOptions">
+        <member name="T:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions">
             <summary>
-            Configuration settings for generated controller behaviour
+               Configuration settings for generated controller behaviour
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.GeneratedControllerAttributeOptions.RequiredReadClaims">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredReadClaims">
             <summary>
-            Claims required for read access
+               Claims required for read access
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.GeneratedControllerAttributeOptions.RequiredWriteClaims">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredWriteClaims">
             <summary>
-            Claims required for write access
+               Claims required for write access
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.GeneratedControllerAttributeOptions.Authorize">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.Authorize">
             <summary>
-            Wether authorized access is required or not
+               Wether authorized access is required or not
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.GeneratedControllerAttributeOptions.Cache">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.Cache">
             <summary>
-            Cache responses
+               Cache responses
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.GeneratedControllerAttributeOptions.FireEvents">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.FireEvents">
             <summary>
-            Read/Write calls will fire RMQ Events
+               Read/Write calls will fire RMQ Events
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.GeneratedControllerAttributeOptions.CacheDuration">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.CacheDuration">
             <summary>
-            Default cache duration
+               Default cache duration
             </summary>
         </member>
         <member name="M:TCDev.ApiGenerator.GenericController`2.Query(System.Boolean)">
             <summary>
-            Returns a list of <see cref="!:T" /> entries
+               Returns a list of <see cref="!:T" /> entries
             </summary>
             <param name="includeUnpublished"></param>
             <returns cref="T:System.Collections.Generic.List`1"></returns>
         </member>
         <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel">
             <summary>
-            Generate EDM Model for OData functionalities
+               Generate EDM Model for OData functionalities
             </summary>
             <returns></returns>
         </member>
+        <member name="P:TCDev.ApiGenerator.Extension.SwaggerOptions.EnableProduction">
+            <summary>
+            Enable Swagger in Production
+            </summary>
+        </member>
         <member name="T:TCDev.Controllers.GenericControllerRouteConvention">
             <summary>
-            Applies route conventions to allow routes for auto generated controllers
-            One of the main pieces to make the magic work.
+               Applies route conventions to allow routes for auto generated controllers
+               One of the main pieces to make the magic work.
             </summary>
         </member>
         <member name="M:TCDev.Controllers.GenericTypeControllerFeatureProvider.#ctor(System.String[])">
             <summary>
-            Initiate the Controller generator
+               Initiate the Controller generator
             </summary>
             <param name="assemblies">Names of assemblies to search for classes</param>
         </member>

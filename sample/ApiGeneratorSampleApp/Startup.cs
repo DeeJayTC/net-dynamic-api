@@ -3,6 +3,7 @@
 // https://www.github.com/deejaytc/dotnet-utils
 
 using System.Reflection;
+using EFCore.AutomaticMigrations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using TCDev.ApiGenerator.Data;
+using TCDev.ApiGenerator.Extension;
+using TCDev.APIGenerator.Extension;
 
 namespace TCDev.ApiGenerator
 {
@@ -30,15 +34,7 @@ namespace TCDev.ApiGenerator
             .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
 
          services.AddControllers();
-         services.AddSwaggerGen(c =>
-         {
-            c.SwaggerDoc("v1",
-               new OpenApiInfo
-               {
-                  Title = "TCDev.ApiGenerator", Version = "v1", Description = "Sample for TCDev API Generator"
-               });
-            c.IncludeXmlComments("ApiGeneratorSampleApp.xml", true);
-         });
+
 
          // Add the API Generator Services, point to the assembly where the classes are you want to use
          services.AddApiGeneratorServices(Configuration, Assembly.GetExecutingAssembly());
@@ -56,10 +52,9 @@ namespace TCDev.ApiGenerator
          if (env.IsDevelopment())
          {
             app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TCDev.ApiGenerator v1"));
          }
 
+         app.UseApiGenerator();
 
          app.UseHttpsRedirection();
 
@@ -68,7 +63,10 @@ namespace TCDev.ApiGenerator
          app.UseAuthentication();
          app.UseAuthorization();
 
-         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+         app.UseEndpoints(endpoints => {
+            endpoints.UseApiGenerator();
+            endpoints.MapControllers(); 
+         });
       }
    }
 }

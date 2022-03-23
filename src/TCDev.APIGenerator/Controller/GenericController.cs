@@ -35,18 +35,26 @@ namespace TCDev.ApiGenerator
       private bool useCache { get; set; }
       private bool fireEvent { get; set; }
 
+      public ApiMethodsToGenerate methodsToGenerate;
+
       private void ConfigureController()
       {
          // Get attribute config from underlying type T
          var attrs = Attribute.GetCustomAttributes(typeof(T));
-         if (attrs.FirstOrDefault(p => p.GetType() == typeof(GeneratedControllerAttribute)) is GeneratedControllerAttribute optionAttrib)
+         if (attrs.FirstOrDefault(p => p.GetType() == typeof(ApiAttribute)) is ApiAttribute optionAttrib)
          {
             useCache = optionAttrib.Options.Cache;
             fireEvent = optionAttrib.Options.FireEvents;
+            //methodsToGenerate = optionAttrib.Options.Methods;
+
+            // Check if we need to remove methods..
+
+
+
          }
          else
          {
-            throw new Exception($"Could not find GeneratedControllerAttribute on Class: {typeof(T)}");
+            throw new Exception($"Could not find ApiAttribute on Class: {typeof(T)}");
          }
       }
 
@@ -66,7 +74,12 @@ namespace TCDev.ApiGenerator
          PageSize = 20)]
       public IActionResult Query(bool includeUnpublished = false)
       {
-         if (!ModelState.IsValid) return BadRequest();
+         // Check if post is enabled
+         if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+            return BadRequest($"GET is disabled for {typeof(T).Name}");
+
+         if (!ModelState.IsValid) 
+            return BadRequest();
 
          return Ok(_repository.Get());
       }
@@ -74,6 +87,10 @@ namespace TCDev.ApiGenerator
       [HttpGet("{id}")]
       public async Task<IActionResult> Find(TEntityId id)
       {
+         // Check if post is enabled
+         if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+            return BadRequest($"GET is disabled for {typeof(T).Name}");
+
          if (!ModelState.IsValid)
             return BadRequest();
 
@@ -86,14 +103,27 @@ namespace TCDev.ApiGenerator
       [HttpPost]
       public async Task<IActionResult> Create([FromBody] T record)
       {
-         if (!ModelState.IsValid)
-            return BadRequest();
+         try
+         {
+            // Check if post is enabled
+            if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Insert))
+               return BadRequest($"POST is disabled for {record.GetType().Name}");
 
-         _repository.Create(record);
-         if (await _repository.SaveAsync() == 0)
-            return BadRequest();
+            // Check if payload is valid
+            if (!ModelState.IsValid)
+               return BadRequest();
 
-         return CreatedAtAction("Find", new {id = record.Id}, record);
+            // Create the new entry
+            _repository.Create(record);
+            await _repository.SaveAsync();              
+
+            // respond with the newly created record
+            return CreatedAtAction("Find", new { id = record.Id }, record);
+         }
+         catch (Exception ex)
+         {
+            return BadRequest(ex);
+         }
       }
 
       [HttpPut("{id}")]
@@ -101,8 +131,14 @@ namespace TCDev.ApiGenerator
       {
          try
          {
+            if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Update))
+               return BadRequest($"PUT is disabled for {record.GetType().Name}");
+
             if (!ModelState.IsValid)
                return BadRequest();
+
+            var existingRecord = await _repository.GetAsync(id);
+            if (existingRecord == null) return NotFound();
 
             _repository.Update(record);
             await _repository.SaveAsync();
@@ -118,6 +154,9 @@ namespace TCDev.ApiGenerator
       [HttpDelete("{id}")]
       public async Task<IActionResult> Delete(TEntityId id)
       {
+         if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
+            return BadRequest($"DELETE is disabled");
+
          if (!ModelState.IsValid)
             return BadRequest();
 

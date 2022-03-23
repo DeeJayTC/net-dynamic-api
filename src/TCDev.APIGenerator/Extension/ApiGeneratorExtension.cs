@@ -4,22 +4,33 @@
 
 using System.Reflection;
 using EntityFramework.Triggers;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TCDev.ApiGenerator.Data;
 using TCDev.Controllers;
+using Fritz.InstantAPIs;
+using Microsoft.AspNetCore.Routing;
+using TCDev.APIGenerator.Extension;
+using Microsoft.OpenApi.Models;
 
 namespace TCDev.ApiGenerator.Extension
 {
    public static class ApiGeneratorExtension
    {
+
+      public static ApiGeneratorConfig ApiGeneratorConfig { get; set; } = new ApiGeneratorConfig();
+
       public static IServiceCollection AddApiGeneratorServices(
          this IServiceCollection services,
          IConfiguration config,
          Assembly assembly)
       {
+
+         var apiConfig = new ApiGeneratorConfig();
+
          // Add Database Context
          services.AddDbContext<GenericDbContext>(options =>
             options.UseSqlServer(config.GetConnectionString("ApiGeneratorDatabase"),
@@ -34,12 +45,33 @@ namespace TCDev.ApiGenerator.Extension
          services.AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
 
-         // Add Framework Services & Options, we use the current assembly to get classes. 
+         //Add Framework Services & Options, we use the current assembly to get classes. 
          // Todo: Add option to add any custom assembly
-         services.AddMvc(o => o.Conventions.Add(new GenericControllerRouteConvention()))
-            .ConfigureApplicationPartManager(m =>
-               m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider(new[] {assembly.FullName}))
+         services.AddMvc(o =>
+               o.Conventions.Add(new GenericControllerRouteConvention()))
+                  .ConfigureApplicationPartManager(m =>
+                     m.FeatureProviders.Add(new GenericTypeControllerFeatureProvider(new[] { assembly.FullName }))
             );
+
+
+         services.AddSwaggerGen(c =>
+         {
+            c.SwaggerDoc(ApiGeneratorConfig.SwaggerOptions.Version,
+               new OpenApiInfo
+               {
+                  Title = ApiGeneratorConfig.SwaggerOptions.Title,
+                  Version = ApiGeneratorConfig.SwaggerOptions.Version,
+                  Description = ApiGeneratorConfig.SwaggerOptions.Description,
+                  Contact = new OpenApiContact() { 
+                     Email = ApiGeneratorConfig.SwaggerOptions.ContactMail, 
+                     Url = new System.Uri(ApiGeneratorConfig.SwaggerOptions.ContactUri)
+                  }
+               });
+
+            c.DocumentFilter<ShowInSwaggerFilter>();
+            c.IncludeXmlComments("ApiGeneratorSampleApp.xml", true);
+         });
+
 
          services.AddControllers().AddOData(opt =>
             {
@@ -53,5 +85,23 @@ namespace TCDev.ApiGenerator.Extension
 
          return services;
       }
+
+
+      public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app)
+      {
+
+         app.UseSwagger();
+         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TCDev.ApiGenerator v1"));
+         return app;
+      }
+
+      public static IEndpointRouteBuilder UseApiGenerator(this IEndpointRouteBuilder builder)
+      {
+
+         builder.MapInstantAPIs<GenericDbContext>();
+         return builder;
+      }
+
+
    }
 }

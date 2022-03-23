@@ -7,7 +7,7 @@ namespace TCDev.ApiGenerator.Attributes
    /// <summary>
    ///    Configuration settings for generated controller behaviour
    /// </summary>
-   public class GeneratedControllerAttributeOptions
+   public class ApiAttributeAttributeOptions
    {
       /// <summary>
       ///    Claims required for read access
@@ -38,5 +38,7 @@ namespace TCDev.ApiGenerator.Attributes
       ///    Default cache duration
       /// </summary>
       public int CacheDuration { get; set; } = 50000;
+
+      public ApiMethodsToGenerate Methods { get; set; } = ApiMethodsToGenerate.All;
    }
 }

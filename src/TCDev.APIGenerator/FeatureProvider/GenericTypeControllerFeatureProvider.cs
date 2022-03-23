@@ -30,7 +30,7 @@ namespace TCDev.Controllers
          foreach (var assembly in Assemblies)
          {
             var loadedAssembly = Assembly.Load(assembly);
-            var customClasses = loadedAssembly.GetExportedTypes().Where(x => x.GetCustomAttributes<GeneratedControllerAttribute>().Any());
+            var customClasses = loadedAssembly.GetExportedTypes().Where(x => x.GetCustomAttributes<ApiAttribute>().Any());
 
             foreach (var candidate in customClasses)
             {

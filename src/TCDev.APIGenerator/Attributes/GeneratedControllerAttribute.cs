@@ -6,8 +6,21 @@ using System;
 
 namespace TCDev.ApiGenerator.Attributes
 {
+
+   [Flags]
+   public enum ApiMethodsToGenerate
+   {
+      Get = 1,
+      GetById = 2,
+      Insert = 4,
+      Update = 8,
+      Delete = 16,
+      All = Get | GetById | Delete | Update | Insert
+   }
+
+
    [AttributeUsage(AttributeTargets.Class)]
-   public class GeneratedControllerAttribute : Attribute
+   public class ApiAttribute : Attribute
    {
       /// <summary>
       ///    Attribute defining auto generated controller for the class
@@ -21,8 +34,10 @@ namespace TCDev.ApiGenerator.Attributes
       /// <param name="authorize"></param>
       /// <param name="cache"></param>
       /// <param name="cacheDuration"></param>
-      public GeneratedControllerAttribute(
+      /// <param name="methods">The methods to generate for this endpoint</param>
+      public ApiAttribute(
          string route,
+         ApiMethodsToGenerate methods = ApiMethodsToGenerate.All,
          string[] requiredReadClaims = null,
          string[] requiredWriteClaims = null,
          string[] requiredRolesRead = null,
@@ -33,13 +48,19 @@ namespace TCDev.ApiGenerator.Attributes
          int cacheDuration = 50000)
       {
          Route = route;
-         Options = new GeneratedControllerAttributeOptions
+         Options = new ApiAttributeAttributeOptions
          {
-            RequiredReadClaims = requiredReadClaims, RequiredWriteClaims = requiredWriteClaims, Authorize = authorize, Cache = cache, CacheDuration = cacheDuration, FireEvents = fireEvents
+            RequiredReadClaims = requiredReadClaims, 
+            RequiredWriteClaims = requiredWriteClaims, 
+            Authorize = authorize, 
+            Cache = cache, 
+            CacheDuration = cacheDuration, 
+            FireEvents = fireEvents,
+            Methods = methods
          };
       }
 
       public string Route { get; set; }
-      public GeneratedControllerAttributeOptions Options { get; set; }
+      public ApiAttributeAttributeOptions Options { get; set; }
    }
 }

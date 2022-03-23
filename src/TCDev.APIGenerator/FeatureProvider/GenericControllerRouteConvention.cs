@@ -20,7 +20,7 @@ namespace TCDev.Controllers
          if (controller.ControllerType.IsGenericType)
          {
             var genericType = controller.ControllerType.GenericTypeArguments[0];
-            var customNameAttribute = genericType.GetCustomAttribute<GeneratedControllerAttribute>();
+            var customNameAttribute = genericType.GetCustomAttribute<ApiAttribute>();
             controller.ControllerName = genericType.Name;
 
             if (customNameAttribute?.Route != null)

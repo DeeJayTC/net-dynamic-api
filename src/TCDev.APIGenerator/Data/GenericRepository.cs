@@ -6,6 +6,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using TCDev.ApiGenerator.Interfaces;
+using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace TCDev.ApiGenerator.Data
 {
@@ -47,6 +49,14 @@ namespace TCDev.ApiGenerator.Data
 
       public void Update(TEntity record)
       {
+
+         // We have a before update handler
+         if (typeof(TEntity).IsAssignableFrom(typeof(IEventDelegates<TEntity>)))
+         {
+
+         }
+
+
          var entity = _context.Set<TEntity>().Attach(record);
          entity.DetectChanges();
          entity.State = EntityState.Modified;

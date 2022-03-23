@@ -23,12 +23,12 @@ namespace TCDev.ApiGenerator.Attributes
          bool cache = false,
          int cacheDuration = 50000)
       {
-         Options = new GeneratedControllerAttributeOptions
+         Options = new ApiAttributeAttributeOptions
          {
             Authorize = authorize, Cache = cache, CacheDuration = cacheDuration, FireEvents = fireEvents
          };
       }
 
-      public GeneratedControllerAttributeOptions Options { get; set; }
+      public ApiAttributeAttributeOptions Options { get; set; }
    }
 }

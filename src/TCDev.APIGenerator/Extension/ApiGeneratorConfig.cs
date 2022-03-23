@@ -18,14 +18,14 @@ namespace TCDev.ApiGenerator.Extension
             .Build();
 
 
-         //Load Cache Options
-         CacheOptions = new CacheOptions();
+         //Load Options
          Configuration.Bind("Api:Cache", CacheOptions);
+         Configuration.Bind("Api:Swagger", SwaggerOptions);
       }
 
       private readonly IConfigurationRoot Configuration;
-      public CacheOptions CacheOptions { get; set; }
-
+      public CacheOptions CacheOptions { get; set; } = new CacheOptions();
+      public SwaggerOptions SwaggerOptions { get; set; } = new SwaggerOptions();
 
       public string MetadataRoute { get; set; } = "odata";
    }
@@ -42,5 +42,19 @@ namespace TCDev.ApiGenerator.Extension
       public bool EnableSelect { get; set; } = true;
       public bool EnableFilter { get; set; } = true;
       public bool EnableSort { get; set; } = true;
+   }
+
+   public class SwaggerOptions
+   {
+      /// <summary>
+      /// Enable Swagger in Production
+      /// </summary>
+      public bool EnableProduction { get; set; } = true;
+      public string Description { get; set; } = "Sample for TCDev API Generator";
+      public string Version { get; set; } = "v1";
+      public string Title { get; set; } = "TCDev Api Generator Demo";
+      public string ContactMail { get; set; } = "test@test.de";
+      public string ContactUri { get; set; } = "https://www.test.de";
+      public string Route { get; set; } = "/swagger/v1/swagger.json";
    }
 }

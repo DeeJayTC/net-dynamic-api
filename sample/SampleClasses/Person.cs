@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ApiGeneratorSampleApI.Model
 {
 
-    [GeneratedController( route: "/people2" )]
+    [Api( route: "/people2" )]
     public class PersonAutoMode : IObjectBase<Guid>
     {
 
@@ -24,7 +24,7 @@ namespace ApiGeneratorSampleApI.Model
     }
 
 
-    [GeneratedController(
+    [Api(
         route: "/people",
         authorize: false
     )]
