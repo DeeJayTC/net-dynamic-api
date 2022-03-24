@@ -13,10 +13,9 @@ By using the API Generator, this little code snippet is a fully working CRUD API
 
 
 # How to use:
-* Download sources and link to your project (Nuget soon!)
-* Create a class as you wish
-* Add the "GeneratedController" attribute and set the route name you'd love to use
-* Add the "IObjectBase<T>" interface and implement it
+```
+dotnet add package TCDev.ApiGenerator --version 0.0.2-alpha
+```
 
 * Your class will look similar to this:
 
