@@ -14,7 +14,7 @@ By using the API Generator, this little code snippet is a fully working CRUD API
 
 # How to use:
 ```
-dotnet add package TCDev.ApiGenerator --version 0.0.2-alpha
+dotnet add package TCDev.ApiGenerator --version 0.0.4
 ```
 
 * Your class will look similar to this:
