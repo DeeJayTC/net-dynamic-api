@@ -18,7 +18,7 @@ namespace TCDev.ApiGenerator.Data
 
       void Create(T record);
 
-      void Update(T record);
+      void Update(T record, T oldRecord);
 
       void Delete(TEntityId id);
 

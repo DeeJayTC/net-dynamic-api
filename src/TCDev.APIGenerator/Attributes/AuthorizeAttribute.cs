@@ -3,8 +3,8 @@
 // https://www.github.com/deejaytc/dotnet-utils
 
 using System;
-using System.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace TCDev.ApiGenerator.Attributes
 {

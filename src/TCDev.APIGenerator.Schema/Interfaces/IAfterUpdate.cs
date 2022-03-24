@@ -7,11 +7,9 @@ using TCDev.ApiGenerator.Interfaces;
 
 namespace TCDev.APIGenerator.Schema.Interfaces
 {
-   public interface IEventDelegates<T> where T : class
+
+   public interface IAfterUpdate<T> where T : class
    {
-
-      Task<T> BeforeUpdate(T item);
-      Task<T> AfterUpdate(T item);
-
+      Task<T> AfterUpdate(T newItem, T oldItem);
    }
 }

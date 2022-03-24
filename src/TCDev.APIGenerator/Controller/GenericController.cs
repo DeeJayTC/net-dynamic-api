@@ -45,7 +45,7 @@ namespace TCDev.ApiGenerator
          {
             useCache = optionAttrib.Options.Cache;
             fireEvent = optionAttrib.Options.FireEvents;
-            //methodsToGenerate = optionAttrib.Options.Methods;
+            methodsToGenerate = optionAttrib.Options.Methods;
 
             // Check if we need to remove methods..
 
@@ -72,7 +72,7 @@ namespace TCDev.ApiGenerator
          MaxTop = 200,
          MaxSkip = 199,
          PageSize = 20)]
-      public IActionResult Query(bool includeUnpublished = false)
+      public IActionResult Query()
       {
          // Check if post is enabled
          if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
@@ -140,31 +140,41 @@ namespace TCDev.ApiGenerator
             var existingRecord = await _repository.GetAsync(id);
             if (existingRecord == null) return NotFound();
 
-            _repository.Update(record);
+            _repository.Update(record, existingRecord);
             await _repository.SaveAsync();
 
             return Ok(record);
          }
          catch (Exception ex)
          {
-            return BadRequest();
+            return BadRequest(ex.Message);
          }
       }
 
       [HttpDelete("{id}")]
       public async Task<IActionResult> Delete(TEntityId id)
       {
-         if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
+         try
+         {
+            if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
             return BadRequest($"DELETE is disabled");
 
-         if (!ModelState.IsValid)
-            return BadRequest();
+            if (!ModelState.IsValid)
+               return BadRequest();
 
-         _repository.Delete(id);
-         if (await _repository.SaveAsync() == 0)
-            return BadRequest();
+            var existingRecord = await _repository.GetAsync(id);
+            if (existingRecord == null) return NotFound();
 
-         return NoContent();
+            _repository.Delete(id);
+            if (await _repository.SaveAsync() == 0)
+               return BadRequest();
+
+            return NoContent();
+         }
+         catch (Exception ex)
+         {
+            return BadRequest(ex.Message);
+         }
       }
    }
 }

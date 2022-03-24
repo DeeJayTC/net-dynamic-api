@@ -47,25 +47,31 @@ namespace TCDev.ApiGenerator.Data
          if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields))) _context.Entry(record).Property<DateTime>("Created").CurrentValue = now;
       }
 
-      public void Update(TEntity record)
+      public async void Update(TEntity newRecord, TEntity oldRecord)
       {
-
          // We have a before update handler
-         if (typeof(TEntity).IsAssignableFrom(typeof(IEventDelegates<TEntity>)))
+         if (typeof(TEntity).IsAssignableTo(typeof(IBeforeUpdate<TEntity>)))
          {
-
+            var baseEntity = newRecord as IBeforeUpdate<TEntity>;
+            newRecord = await baseEntity.BeforeUpdate(newRecord, oldRecord);
          }
 
-
-         var entity = _context.Set<TEntity>().Attach(record);
-         entity.DetectChanges();
-         entity.State = EntityState.Modified;
-         _context.Set<TEntity>().Update(record);
+         _context.Set<TEntity>().Attach(oldRecord);
+         oldRecord = newRecord;
 
          if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
          {
-            _context.Entry(record).Property<DateTime>("LastModified").CurrentValue = DateTime.UtcNow;
-            _context.Entry(record).State = EntityState.Modified;
+            _context.Entry(newRecord).Property<DateTime>("LastModified").CurrentValue = DateTime.UtcNow;
+            _context.Entry(newRecord).State = EntityState.Modified;
+         }
+
+         await _context.SaveChangesAsync();
+
+         // We have a after update handler
+         if (typeof(TEntity).IsAssignableTo(typeof(IAfterUpdate<TEntity>)))
+         {
+            var baseEntity = newRecord as IAfterUpdate<TEntity>;
+            await baseEntity.AfterUpdate(newRecord, oldRecord);
          }
       }
 

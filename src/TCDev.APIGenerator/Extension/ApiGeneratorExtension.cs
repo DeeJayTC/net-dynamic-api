@@ -11,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TCDev.ApiGenerator.Data;
 using TCDev.Controllers;
-using Fritz.InstantAPIs;
 using Microsoft.AspNetCore.Routing;
 using TCDev.APIGenerator.Extension;
 using Microsoft.OpenApi.Models;
@@ -98,7 +97,7 @@ namespace TCDev.ApiGenerator.Extension
       public static IEndpointRouteBuilder UseApiGenerator(this IEndpointRouteBuilder builder)
       {
 
-         builder.MapInstantAPIs<GenericDbContext>();
+
          return builder;
       }
 

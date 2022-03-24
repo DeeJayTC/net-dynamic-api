@@ -54,7 +54,7 @@
                Default cache duration
             </summary>
         </member>
-        <member name="M:TCDev.ApiGenerator.GenericController`2.Query(System.Boolean)">
+        <member name="M:TCDev.ApiGenerator.GenericController`2.Query">
             <summary>
                Returns a list of <see cref="!:T" /> entries
             </summary>

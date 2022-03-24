@@ -2,6 +2,7 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
+using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
@@ -14,9 +15,9 @@ namespace TCDev.ApiGenerator.Extension
          Configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
+            .AddJsonFile("secrets.json", true)
             .AddEnvironmentVariables()
             .Build();
-
 
          //Load Options
          Configuration.Bind("Api:Cache", CacheOptions);
