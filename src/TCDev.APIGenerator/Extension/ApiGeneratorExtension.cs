@@ -14,6 +14,7 @@ using TCDev.Controllers;
 using Microsoft.AspNetCore.Routing;
 using TCDev.APIGenerator.Extension;
 using Microsoft.OpenApi.Models;
+using EFCore.AutomaticMigrations;
 
 namespace TCDev.ApiGenerator.Extension
 {
@@ -86,6 +87,22 @@ namespace TCDev.ApiGenerator.Extension
       }
 
 
+      public static IApplicationBuilder UseAutomaticAPIMigrations(this IApplicationBuilder app, bool AllowDataLoss = false)
+      {
+         using(var serviceScope = app.ApplicationServices.CreateScope())
+         {
+            var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
+
+            dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+            {
+               AutomaticMigrationsEnabled = true,
+               AutomaticMigrationDataLossAllowed = AllowDataLoss
+            });
+         }
+         
+         return app;
+      }
+
       public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app)
       {
 
@@ -94,10 +111,8 @@ namespace TCDev.ApiGenerator.Extension
          return app;
       }
 
-      public static IEndpointRouteBuilder UseApiGenerator(this IEndpointRouteBuilder builder)
+      public static IEndpointRouteBuilder UseApiGeneratorEndpoints(this IEndpointRouteBuilder builder)
       {
-
-
          return builder;
       }
 

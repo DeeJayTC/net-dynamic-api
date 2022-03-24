@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Reflection;
 using TCDev.ApiGenerator.Data;
@@ -16,19 +14,10 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseApiGenerator();
-app.UseAutomaticAPIMigrations(true);
-
 app.UseHttpsRedirection();
 
-app.UseRouting();
-
-app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => {
-   endpoints.UseApiGeneratorEndpoints();
-   endpoints.MapControllers();
-});
+app.MapControllers();
 
 app.Run();
