@@ -1,15 +1,27 @@
 # Turn your models into fully working APIs in minutes
 
+<a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.4-orange"></a>
 <a href="https://discord.gg/vBPpJkS"><img src="https://img.shields.io/badge/chat-discord-brightgreen.svg?logo=discord&style=flat"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
 
+
 First of all this is a really early Alpha, consider things with care. 
-Currently it only supports SQL Server
 
 By using the API Generator, this little code snippet is a fully working CRUD API
 
-![image](https://user-images.githubusercontent.com/4077759/158908404-9298f82a-1cbe-4a5a-822a-536714123d75.png)
-
+```
+/// <summary>
+/// This is the minimal sample, yes this is a working api ;)
+/// </summary>
+[Api("/minimal")]
+public class MinimalSample : IObjectBase<int>
+{
+  public int Id { get; set; }
+  public string Name { get; set; }
+  public int Value { get; set; }
+}
+```
+The API Generator takes any class you like and generates a fully working CRUD API with Odata filter+select enabled. Eventually it will evolve into a full Database to API Microservice with no boilerplate code needed. 
 
 
 # How to use:
@@ -21,5 +33,7 @@ dotnet add package TCDev.ApiGenerator --version 0.0.4-alpha
 
 [https://tcdev.gitbook.io/](https://tcdev.gitbook.io/)
 
-* Your class will look similar to this:
+# Samples
+[https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample](https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample)
+
 
