@@ -17,35 +17,9 @@ By using the API Generator, this little code snippet is a fully working CRUD API
 dotnet add package TCDev.ApiGenerator --version 0.0.4-alpha
 ```
 
+# Getting Started & Docoumentation
+
+[https://tcdev.gitbook.io/](https://tcdev.gitbook.io/)
+
 * Your class will look similar to this:
 
-```
-   [Api("/people")]
-   public class Person : Trackable, IObjectBase<Guid>
-   {
-      public string Name { get; set; }
-      public DateTime Date { get; set; }
-      public string Description { get; set; }
-      public int Age { get; set; }
-
-      public IEnumerable<PersonLink> Links { get; set; }
-      public Guid Id { get; set; }
-   }
-```
-  
-* Add the initialization to your startup.cs or program.cs (when using the new .NET 6 approach)
-```
-  // Add the API Generator Services, point to the assembly where the classes are you want to use
-  services.AddApiGeneratorServices(Configuration, Assembly.GetExecutingAssembly());
-```
-
-* Add a connection string in appsettings.json named 'ApiGeneratorDatabase'
-
-```
-  "ConnectionStrings": {
-    "ApiGeneratorDatabase": "Server=localhost;database=maximago_dev_222222;user=sa;password=Password123;"
-  },
-```
-
-   
-...et voila start your app and you're done. 
