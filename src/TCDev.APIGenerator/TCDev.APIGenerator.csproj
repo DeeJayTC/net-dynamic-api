@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 	<PackageId>TCDev.APIGenerator</PackageId>
-	<Version>0.0.2-alpha</Version>
+	<Version>0.0.4-alpha</Version>
 	<Authors>Tim Cadenbach</Authors>
 	<Company>TCDev</Company>
 	<Description>Creates fully working CRUD Apis from just class files</Description>

@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EntityFramework.Triggers" Version="6.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.8" />
+    <PackageReference Include="Microsoft.OData.Edm" Version="7.10.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="TCDev.ApiGenerator" Version="0.0.2" />
+    <PackageReference Include="TCDev.ApiGenerator" Version="0.0.4" />
   </ItemGroup>
 
 </Project>

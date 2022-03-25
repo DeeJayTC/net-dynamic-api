@@ -1,6 +1,5 @@
 using System.Configuration;
 using System.Reflection;
-using TCDev.ApiGenerator.Data;
 using TCDev.ApiGenerator.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
