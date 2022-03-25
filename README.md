@@ -14,13 +14,13 @@ By using the API Generator, this little code snippet is a fully working CRUD API
 
 # How to use:
 ```
-dotnet add package TCDev.ApiGenerator --version 0.0.4
+dotnet add package TCDev.ApiGenerator --version 0.0.4-alpha
 ```
 
 * Your class will look similar to this:
 
 ```
-   [GeneratedController("/people")]
+   [Api("/people")]
    public class Person : Trackable, IObjectBase<Guid>
    {
       public string Name { get; set; }
