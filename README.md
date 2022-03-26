@@ -21,7 +21,8 @@ public class MinimalSample : IObjectBase<int>
   public int Value { get; set; }
 }
 ```
-The API Generator takes any class you like and generates a fully working CRUD API with Odata filter+select enabled. Eventually it will evolve into a full Database to API Microservice with no boilerplate code needed. 
+The API Generator takes any class you like and generates a fully working CRUD API with Odata filter+select enabled. 
+In future the service will evolve into a full instant "Database to API" Microservice with no boilerplate code needed. 
 
 Heres another sample:
 
