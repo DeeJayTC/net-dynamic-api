@@ -23,6 +23,23 @@ public class MinimalSample : IObjectBase<int>
 ```
 The API Generator takes any class you like and generates a fully working CRUD API with Odata filter+select enabled. Eventually it will evolve into a full Database to API Microservice with no boilerplate code needed. 
 
+Heres another sample:
+
+```
+ [Api("/people", ApiMethodsToGenerate.All )]
+ public class Person : Trackable, 
+    IObjectBase<Guid>,
+    IBeforeUpdate<Person>, // Before Update Hook
+    IBeforeDelete<Person>, // BeforeDelete Hook
+ {
+    public string Name { get; set; }
+    public DateTime Date { get; set; }
+    public string Description { get; set; }
+    public int Age { get; set; }
+    public Guid Id { get; set; }
+ }
+```
+
 
 # How to use:
 ```
