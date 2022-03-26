@@ -1,7 +1,6 @@
 # Turn your models into fully working APIs in minutes
 
 <a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.4-orange"></a>
-<a href="https://discord.gg/vBPpJkS"><img src="https://img.shields.io/badge/chat-discord-brightgreen.svg?logo=discord&style=flat"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
 
 
