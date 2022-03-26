@@ -15,13 +15,14 @@ using Microsoft.AspNetCore.Routing;
 using TCDev.APIGenerator.Extension;
 using Microsoft.OpenApi.Models;
 using EFCore.AutomaticMigrations;
+using System;
 
 namespace TCDev.ApiGenerator.Extension
 {
    public static class ApiGeneratorExtension
    {
 
-      public static ApiGeneratorConfig ApiGeneratorConfig { get; set; } = new ApiGeneratorConfig();
+      public static ApiGeneratorConfig ApiGeneratorConfig { get; set; } = new ApiGeneratorConfig(null);
 
       public static IServiceCollection AddApiGeneratorServices(
          this IServiceCollection services,
@@ -29,12 +30,29 @@ namespace TCDev.ApiGenerator.Extension
          Assembly assembly)
       {
 
-         var apiConfig = new ApiGeneratorConfig();
+         ApiGeneratorConfig = new ApiGeneratorConfig(config);
 
          // Add Database Context
-         services.AddDbContext<GenericDbContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("ApiGeneratorDatabase"),
-               b => b.MigrationsAssembly(assembly.FullName)));
+
+         switch(ApiGeneratorConfig.DatabaseOptions.DatabaseType)
+         {
+            case DBType.InMemory:
+               services.AddDbContext<GenericDbContext>(options =>
+                  options.UseInMemoryDatabase("ApiGeneratorDB"));
+               break;
+            case DBType.SQL:
+               services.AddDbContext<GenericDbContext>(options =>
+                  options.UseSqlServer(config.GetConnectionString("ApiGeneratorDatabase"),
+                  b => b.MigrationsAssembly(assembly.FullName)));
+               break;
+            case DBType.SQLite:
+               services.AddDbContext<GenericDbContext>(options =>
+                  options.UseSqlite(config.GetConnectionString("ApiGeneratorDatabase"),
+                  b => b.MigrationsAssembly(assembly.FullName)));
+               break;
+            default:
+               throw new Exception("Database Type Unkown");
+         }
 
          services
             .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
@@ -69,7 +87,7 @@ namespace TCDev.ApiGenerator.Extension
                });
 
             c.DocumentFilter<ShowInSwaggerFilter>();
-            c.IncludeXmlComments("ApiGeneratorSampleApp.xml", true);
+            c.IncludeXmlComments($"{assembly.FullName}.xml", true);
          });
 
 

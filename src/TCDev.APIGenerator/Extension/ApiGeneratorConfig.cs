@@ -10,23 +10,29 @@ namespace TCDev.ApiGenerator.Extension
 {
    public class ApiGeneratorConfig
    {
-      public ApiGeneratorConfig()
+      IConfiguration configuration;
+      public ApiGeneratorConfig(IConfiguration config)
       {
-         Configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .AddJsonFile("secrets.json", true)
-            .AddEnvironmentVariables()
-            .Build();
+         configuration = config;
+         if(configuration == null) {
+            configuration = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json")
+               .AddJsonFile("secrets.json", true)
+               .AddEnvironmentVariables()
+               .Build();
+         }
 
          //Load Options
-         Configuration.Bind("Api:Cache", CacheOptions);
-         Configuration.Bind("Api:Swagger", SwaggerOptions);
+         configuration.Bind("Api:Cache", CacheOptions);
+         configuration.Bind("Api:Swagger", SwaggerOptions);
+         configuration.Bind("Api:Database", DatabaseOptions);
       }
 
       private readonly IConfigurationRoot Configuration;
       public CacheOptions CacheOptions { get; set; } = new CacheOptions();
       public SwaggerOptions SwaggerOptions { get; set; } = new SwaggerOptions();
+      public DatabaseOptions DatabaseOptions { get; set; } = new DatabaseOptions();
 
       public string MetadataRoute { get; set; } = "odata";
    }
@@ -37,6 +43,21 @@ namespace TCDev.ApiGenerator.Extension
       public string Connection { get; set; } = "redis";
    }
 
+
+   public enum DBType
+   {
+      InMemory,
+      SQL,
+      //Postgres,
+      SQLite
+   }
+
+   public class DatabaseOptions
+   {
+      public DBType DatabaseType { get; set; } = DBType.InMemory;
+      public string? Connection { get; set; } = String.Empty;
+      public bool EnableAutomaticMigration { get; set; } = true;
+   }
 
    public class ODataFunctions
    {

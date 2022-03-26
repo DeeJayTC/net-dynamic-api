@@ -4,7 +4,7 @@ using TCDev.ApiGenerator.Interfaces;
 namespace SampleAppNuget
 {
 
-   [Api("/simple")]
+   [Api("/weather")]
    public class WeatherForecast : IObjectBase<int>
    {
       public DateTime Date { get; set; }
