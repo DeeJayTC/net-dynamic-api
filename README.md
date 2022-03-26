@@ -3,7 +3,6 @@
 <a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.6-orange"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
 
-
 First of all this is a really early Alpha, consider things with care. 
 
 By using the API Generator, this little code snippet is a fully working CRUD API
@@ -47,6 +46,8 @@ dotnet add package TCDev.ApiGenerator --version 0.0.6-alpha
 ```
 
 # Getting Started & Docoumentation
+
+[https://www.tcdev.de/tcdev-api-generator-getting-started](https://www.tcdev.de/tcdev-api-generator-getting-started)
 
 [https://tcdev.gitbook.io/](https://tcdev.gitbook.io/)
 
