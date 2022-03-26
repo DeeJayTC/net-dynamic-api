@@ -7,9 +7,14 @@
 	<Authors>Tim Cadenbach</Authors>
 	<Company>TCDev</Company>
 	<Description>Creates fully working CRUD Apis from just class files</Description>
+	<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>TCDev.ApiGenerator.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithSampleApp|AnyCPU'">
     <DocumentationFile>TCDev.ApiGenerator.xml</DocumentationFile>
   </PropertyGroup>
 

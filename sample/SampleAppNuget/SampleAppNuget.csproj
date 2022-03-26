@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 using TCDev.ApiGenerator.Attributes;
+using TCDev.ApiGenerator.Extension;
 
 namespace TCDev.ApiGenerator.Data
 {
@@ -26,7 +28,7 @@ namespace TCDev.ApiGenerator.Data
 
       public GenericDbContext(
          DbContextOptions<GenericDbContext> options,
-         IConfiguration Config,
+         IConfiguration config,
          IHttpContextAccessor httpContextAccessor) : base(options)
       {
          HttpContextAccessor = httpContextAccessor;
@@ -41,12 +43,31 @@ namespace TCDev.ApiGenerator.Data
       {
          if (!optionsBuilder.IsConfigured)
          {
+            var config = new ApiGeneratorConfig(null);
             var configuration = new ConfigurationBuilder()
                .SetBasePath(Directory.GetCurrentDirectory())
                .AddJsonFile("appsettings.json")
                .Build();
             var connectionString = configuration.GetConnectionString("ApiGeneratorDatabase");
-            optionsBuilder.UseSqlServer(connectionString);
+
+            // Add Database Context
+
+            switch (config.DatabaseOptions.DatabaseType)
+            {
+               case DBType.InMemory:
+                  optionsBuilder.UseInMemoryDatabase("ApiGeneratorDB");
+                  break;
+               case DBType.SQL:
+                  optionsBuilder.UseSqlServer(connectionString);
+                  break;
+               case DBType.SQLite:
+                  optionsBuilder.UseSqlite(connectionString);
+                  break;
+               default:
+                  throw new Exception("Database Type Unkown");
+            }
+
+
          }
       }
 

@@ -3,10 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>aspnet-ApiGeneratorSampleApp-56AA10DB-26A2-414F-AFD8-1D3546BD678D</UserSecretsId>
+    <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>ApiGeneratorSampleApp.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithSampleApp|AnyCPU'">
+    <DocumentationFile>ApiGeneratorSampleApI.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

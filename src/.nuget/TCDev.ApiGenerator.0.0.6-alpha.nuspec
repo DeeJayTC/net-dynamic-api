@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>TCDev.ApiGenerator</id>
+    <version>0.0.6-alpha</version>
+    <title>API-Generator</title>
+    <authors>Tim Cadenbach</authors>
+    <owners>TCDev</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/DeeJayTC/net-dynamic-api/blob/main/LICENSE</licenseUrl>
+    <icon>ac20.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/DeeJayTC/net-dynamic-api</projectUrl>
+    <description>A library that turns classes into fully working API's</description>
+    <summary>A library that turns classes into fully working API's</summary>
+    <tags>entity-framework-core, dotnet-core</tags>
+    <dependencies>
+      <group targetFramework="net6.0">
+        <dependency id="Microsoft.EntityFrameworkCore" version="6.0.3" />
+        <dependency id="Swashbuckle.AspNetCore.Swagger" version="6.3.0" />
+        <dependency id="Microsoft.EntityFrameworkCore.SqlServer" version="6.0.3" />
+        <dependency id="Microsoft.EntityFrameworkCore.Relational" version="6.0.3" />
+        <dependency id="EntityFramework.Triggers" version="6.2.3" />
+        <dependency id="Swashbuckle.AspNetCore.SwaggerGen" version="6.3.0" />
+        <dependency id="Microsoft.AspNetCore.OData" version="8.0.8" />
+        <dependency id="Microsoft.OData.Edm" version="7.10.0" />
+        <dependency id="Microsoft.EntityFrameworkCore.Sqlite" version="6.0.2" />
+        <dependency id="Microsoft.EntityFrameworkCore.InMemory" version="6.0.2" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\net6.0\TCDev.APIGenerator.dll" target="lib\net6.0\TCDev.APIGenerator.dll" />
+    <file src="lib\net6.0\TCDev.APIGenerator.pdb" target="lib\net6.0\TCDev.APIGenerator.pdb" />
+    <file src="lib\net6.0\TCDev.APIGenerator.runtimeconfig.json" target="lib\net6.0\TCDev.APIGenerator.runtimeconfig.json" />
+    <file src="lib\net6.0\TCDev.APIGenerator.Schema.dll" target="lib\net6.0\TCDev.APIGenerator.Schema.dll" />
+    <file src="lib\net6.0\TCDev.APIGenerator.Schema.pdb" target="lib\net6.0\TCDev.APIGenerator.Schema.pdb" />
+    <file src="lib\net6.0\TCDev.ApiGenerator.xml" target="lib\net6.0\TCDev.ApiGenerator.xml" />
+    <file src="ac20.png" target="ac20.png" />
+    <file src="README.md" target="README.md" />
+  </files>
+</package>

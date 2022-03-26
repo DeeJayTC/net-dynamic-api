@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>TCDev.APIGenerator</name>
+        <name>TCDev.ApiGenerator</name>
     </assembly>
     <members>
         <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">

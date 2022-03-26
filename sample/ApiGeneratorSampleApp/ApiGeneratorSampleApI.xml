@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiGeneratorSampleApI</name>
+    </assembly>
+    <members>
+        <member name="T:ApiGeneratorSampleApI.Model.MinimalSample">
+            <summary>
+            This is the minimal sample, yes this is a working api ;)
+            </summary>
+        </member>
+        <member name="M:ApiGeneratorSampleApI.Model.Person.BeforeDelete(ApiGeneratorSampleApI.Model.Person)">
+            <summary>
+            Before Delete Hook
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiGeneratorSampleApI.Model.Person.BeforeUpdate(ApiGeneratorSampleApI.Model.Person,ApiGeneratorSampleApI.Model.Person)">
+            <summary>
+            Before Update Hook
+            </summary>
+            <param name="newPerson"></param>
+            <param name="oldPerson"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

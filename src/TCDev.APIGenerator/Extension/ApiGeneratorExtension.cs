@@ -87,7 +87,7 @@ namespace TCDev.ApiGenerator.Extension
                });
 
             c.DocumentFilter<ShowInSwaggerFilter>();
-            c.IncludeXmlComments($"{assembly.FullName}.xml", true);
+            //c.IncludeXmlComments($"{assembly.GetName().Name}.xml", true);
          });
 
 
@@ -110,12 +110,13 @@ namespace TCDev.ApiGenerator.Extension
          using(var serviceScope = app.ApplicationServices.CreateScope())
          {
             var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
-
-            dbContext.MigrateToLatestVersion(new DbMigrationsOptions
-            {
-               AutomaticMigrationsEnabled = true,
-               AutomaticMigrationDataLossAllowed = AllowDataLoss
-            });
+            if(ApiGeneratorConfig.DatabaseOptions.DatabaseType != DBType.InMemory) { 
+               dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+               {
+                  AutomaticMigrationsEnabled = true,
+                  AutomaticMigrationDataLossAllowed = AllowDataLoss
+               });
+            }
          }
          
          return app;
@@ -125,7 +126,7 @@ namespace TCDev.ApiGenerator.Extension
       {
 
          app.UseSwagger();
-         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TCDev.ApiGenerator v1"));
+         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"));
          return app;
       }
 
