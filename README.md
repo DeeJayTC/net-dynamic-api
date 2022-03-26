@@ -41,12 +41,6 @@ Heres another sample:
  }
 ```
 
-
-# How to use:
-```csharp
-dotnet add package TCDev.ApiGenerator --version 0.0.6-alpha
-```
-
 # Getting Started & Docoumentation
 
 [https://www.tcdev.de/tcdev-api-generator-getting-started](https://www.tcdev.de/tcdev-api-generator-getting-started)
