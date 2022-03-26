@@ -8,7 +8,7 @@ First of all this is a really early Alpha, consider things with care.
 
 By using the API Generator, this little code snippet is a fully working CRUD API
 
-```
+```csharp
 /// <summary>
 /// This is the minimal sample, yes this is a working api ;)
 /// </summary>
@@ -25,7 +25,7 @@ In future the service will evolve into a full instant "Database to API" Microser
 
 Heres another sample:
 
-```
+```csharp
  [Api("/people", ApiMethodsToGenerate.All )]
  public class Person : Trackable, 
     IObjectBase<Guid>,
@@ -42,8 +42,8 @@ Heres another sample:
 
 
 # How to use:
-```
-dotnet add package TCDev.ApiGenerator --version 0.0.4-alpha
+```csharp
+dotnet add package TCDev.ApiGenerator --version 0.0.6-alpha
 ```
 
 # Getting Started & Docoumentation
