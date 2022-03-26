@@ -14,8 +14,8 @@ using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace ApiGeneratorSampleApI.Model
 {
-   [Api("/people", ApiMethodsToGenerate.All )]
-   public class Person : Trackable, 
+   [Api("/people", ApiMethodsToGenerate.All)]
+   public class Person : Trackable,
       IObjectBase<Guid>,
       IBeforeUpdate<Person>, // Before Update Hook
       IBeforeDelete<Person>, // BeforeDelete Hook
@@ -58,11 +58,6 @@ namespace ApiGeneratorSampleApI.Model
          return Task.FromResult(newPerson);
       }
 
-      public void Configure(EntityTypeBuilder<Person> builder)
-      {
-         builder.ToTable("MyFancyTableName");
-         //....all the other EF Core Options
-      }
    }
 
 }
