@@ -61,7 +61,6 @@ namespace TCDev.ApiGenerator
       /// <summary>
       ///    Returns a list of <see cref="T" /> entries
       /// </summary>
-      /// <param name="includeUnpublished"></param>
       /// <returns cref="List{T}"></returns>
       [Produces("application/json")]
       [ProducesErrorResponseType(typeof(BadRequestResult))]
@@ -100,11 +99,13 @@ namespace TCDev.ApiGenerator
          return Ok(record);
       }
 
+
       [HttpPost]
       public async Task<IActionResult> Create([FromBody] T record)
       {
          try
          {
+
             // Check if post is enabled
             if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Insert))
                return BadRequest($"POST is disabled for {record.GetType().Name}");

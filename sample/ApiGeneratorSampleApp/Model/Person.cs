@@ -27,13 +27,6 @@ namespace ApiGeneratorSampleApI.Model
       public int Age { get; set; }
       public Guid Id { get; set; }
 
-
-      public void Configure(EntityTypeBuilder<Person> builder)
-      {
-         builder.ToTable("MyFancyTableName");
-         //....all the other EF Core Options
-      }
-
       /// <summary>
       /// Before Delete Hook
       /// </summary>
