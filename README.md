@@ -3,6 +3,8 @@
 <a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.8-orange"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
 
+Little Sneak here -> https://www.youtube.com/watch?v=25lxRLQuxrs
+
 First of all this is a really early Alpha, consider things with care. 
 
 The API Generator takes any class you like and generates a fully working CRUD API with Odata filter+select support, Database (SQL SQLLite or InMemory)
