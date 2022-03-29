@@ -1,6 +1,6 @@
 # Turn your models into fully working APIs in minutes
 
-<a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.6-orange"></a>
+<a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.8-orange"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
 
 First of all this is a really early Alpha, consider things with care. 
