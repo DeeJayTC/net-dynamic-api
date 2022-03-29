@@ -24,17 +24,30 @@ namespace TCDev.ApiGenerator.Extension
          }
 
          //Load Options
+         configuration.Bind("API:Basic", APIOptions);
          configuration.Bind("Api:Cache", CacheOptions);
          configuration.Bind("Api:Swagger", SwaggerOptions);
          configuration.Bind("Api:Database", DatabaseOptions);
+         configuration.Bind("Api:Odata", ODataOptions);
       }
 
       private readonly IConfigurationRoot Configuration;
       public CacheOptions CacheOptions { get; set; } = new CacheOptions();
+
+      public APIOptions APIOptions { get; set; } = new APIOptions();
+
       public SwaggerOptions SwaggerOptions { get; set; } = new SwaggerOptions();
       public DatabaseOptions DatabaseOptions { get; set; } = new DatabaseOptions();
+      public ODataFunctions ODataOptions { get; set; } = new ODataFunctions();
 
       public string MetadataRoute { get; set; } = "odata";
+   }
+
+
+   public class APIOptions
+   {
+      public bool UseXMLComments { get; set; } = false;
+      public string XMLCommentsFile { get; set; } = string.Empty;
    }
 
    public class CacheOptions
@@ -61,6 +74,7 @@ namespace TCDev.ApiGenerator.Extension
 
    public class ODataFunctions
    {
+      public bool EnableOData = false;
       public bool EnableSelect { get; set; } = true;
       public bool EnableFilter { get; set; } = true;
       public bool EnableSort { get; set; } = true;

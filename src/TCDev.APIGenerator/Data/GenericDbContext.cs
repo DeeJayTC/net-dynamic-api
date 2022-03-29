@@ -43,13 +43,12 @@ namespace TCDev.ApiGenerator.Data
       {
          if (!optionsBuilder.IsConfigured)
          {
-            var config = new ApiGeneratorConfig(null);
             var configuration = new ConfigurationBuilder()
                .SetBasePath(Directory.GetCurrentDirectory())
                .AddJsonFile("appsettings.json")
+               .AddJsonFile("secrets.json")
                .Build();
-            var connectionString = configuration.GetConnectionString("ApiGeneratorDatabase");
-
+            var config = new ApiGeneratorConfig(configuration);
             // Add Database Context
 
             switch (config.DatabaseOptions.DatabaseType)
@@ -58,10 +57,12 @@ namespace TCDev.ApiGenerator.Data
                   optionsBuilder.UseInMemoryDatabase("ApiGeneratorDB");
                   break;
                case DBType.SQL:
-                  optionsBuilder.UseSqlServer(connectionString);
+                  var connectionStringSQL = configuration.GetConnectionString("ApiGeneratorDatabase");
+                  optionsBuilder.UseSqlServer(connectionStringSQL);
                   break;
                case DBType.SQLite:
-                  optionsBuilder.UseSqlite(connectionString);
+                  var connectionStringSQLite = configuration.GetConnectionString("ApiGeneratorDatabase");
+                  optionsBuilder.UseSqlite(connectionStringSQLite);
                   break;
                default:
                   throw new Exception("Database Type Unkown");

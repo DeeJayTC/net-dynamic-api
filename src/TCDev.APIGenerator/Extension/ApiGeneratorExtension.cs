@@ -87,19 +87,31 @@ namespace TCDev.ApiGenerator.Extension
                });
 
             c.DocumentFilter<ShowInSwaggerFilter>();
-            //c.IncludeXmlComments($"{assembly.GetName().Name}.xml", true);
+            if(ApiGeneratorConfig.APIOptions.UseXMLComments)
+            {
+               if (!string.IsNullOrEmpty(ApiGeneratorConfig.APIOptions.XMLCommentsFile))
+               {
+                  throw new Exception("You need to set XMLCommentsFile option when using XMl Comments");
+               } else  {
+                  c.IncludeXmlComments(ApiGeneratorConfig.APIOptions.XMLCommentsFile, true);
+               }
+            }
+
          });
 
 
-         services.AddControllers().AddOData(opt =>
+         if(ApiGeneratorConfig.ODataOptions.EnableOData)
+         {
+            services.AddControllers().AddOData(opt =>
             {
                opt.AddRouteComponents("odata", GenericDbContext.EdmModel);
                opt.EnableNoDollarQueryOptions = true;
                opt.EnableQueryFeatures(20000);
                opt.Select().Expand().Filter();
-            }
-         );
-
+            });
+         } else {
+            services.AddControllers();
+         }
 
          return services;
       }
