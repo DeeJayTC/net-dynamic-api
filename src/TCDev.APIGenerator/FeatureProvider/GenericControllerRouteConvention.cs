@@ -9,12 +9,14 @@ using TCDev.ApiGenerator.Attributes;
 
 namespace TCDev.Controllers
 {
+
    /// <summary>
    ///    Applies route conventions to allow routes for auto generated controllers
    ///    One of the main pieces to make the magic work.
    /// </summary>
    public class GenericControllerRouteConvention : IControllerModelConvention
    {
+     
       public void Apply(ControllerModel controller)
       {
          if (controller.ControllerType.IsGenericType)

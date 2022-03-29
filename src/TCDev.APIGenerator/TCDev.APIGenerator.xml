@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>TCDev.ApiGenerator</name>
+        <name>TCDev.APIGenerator</name>
     </assembly>
     <members>
         <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
@@ -58,7 +58,6 @@
             <summary>
                Returns a list of <see cref="!:T" /> entries
             </summary>
-            <param name="includeUnpublished"></param>
             <returns cref="T:System.Collections.Generic.List`1"></returns>
         </member>
         <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel">
