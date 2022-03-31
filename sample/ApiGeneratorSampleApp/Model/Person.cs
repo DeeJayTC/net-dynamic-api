@@ -22,8 +22,6 @@ namespace ApiGeneratorSampleApI.Model
       IEntityTypeConfiguration<Person> // Configure Table Options yourself
    {
       public string Name { get; set; }
-
-
       public DateTime Date { get; set; }
       public string Description { get; set; }
       public int Age { get; set; }

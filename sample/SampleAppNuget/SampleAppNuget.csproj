@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.OData.Edm" Version="7.10.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="TCDev.ApiGenerator" Version="0.0.6-alpha" />
+    <PackageReference Include="TCDev.ApiGenerator" Version="0.1.0-alpha" />
   </ItemGroup>
 
 </Project>

@@ -28,12 +28,6 @@ namespace ApiGeneratorSampleApI.Model
       public Guid Id { get; set; }
 
 
-      public void Configure(EntityTypeBuilder<Person> builder)
-      {
-         builder.ToTable("MyFancyTableName");
-         //....all the other EF Core Options
-      }
-
       /// <summary>
       /// Before Delete Hook
       /// </summary>
@@ -58,6 +52,10 @@ namespace ApiGeneratorSampleApI.Model
          return Task.FromResult(newPerson);
       }
 
+      public void Configure(EntityTypeBuilder<Person> builder)
+      {
+        
+      }
    }
 
 }

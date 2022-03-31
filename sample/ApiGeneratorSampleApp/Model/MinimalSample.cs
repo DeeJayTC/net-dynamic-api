@@ -1,4 +1,6 @@
-﻿using TCDev.ApiGenerator.Attributes;
+﻿using System;
+using System.Text.Json.Serialization;
+using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Interfaces;
 
 namespace ApiGeneratorSampleApI.Model
@@ -14,4 +16,13 @@ namespace ApiGeneratorSampleApI.Model
       public string Name { get; set; }
       public int Value { get; set; }
    }
+
+   [JsonConverter(typeof(JsonStringEnumConverter))]
+   public enum OperationEnum
+   {
+      INSERT,
+      UPDATE,
+      DELETE
+   }
+
 }

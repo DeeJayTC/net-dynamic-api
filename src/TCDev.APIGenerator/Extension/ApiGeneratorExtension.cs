@@ -87,7 +87,9 @@ namespace TCDev.ApiGenerator.Extension
                });
 
             c.DocumentFilter<ShowInSwaggerFilter>();
-            if(ApiGeneratorConfig.APIOptions.UseXMLComments)
+            c.SchemaFilter<SwaggerSchemaFilter>();
+
+            if (ApiGeneratorConfig.APIOptions.UseXMLComments)
             {
                if (!string.IsNullOrEmpty(ApiGeneratorConfig.APIOptions.XMLCommentsFile))
                {
@@ -100,17 +102,30 @@ namespace TCDev.ApiGenerator.Extension
          });
 
 
-         if(ApiGeneratorConfig.ODataOptions.EnableOData)
+         if(ApiGeneratorConfig.ODataOptions.Enabled)
          {
-            services.AddControllers().AddOData(opt =>
-            {
-               opt.AddRouteComponents("odata", GenericDbContext.EdmModel);
-               opt.EnableNoDollarQueryOptions = true;
-               opt.EnableQueryFeatures(20000);
-               opt.Select().Expand().Filter();
-            });
+            services
+               .AddControllers()
+               .AddOData(opt =>
+               {
+                  opt.AddRouteComponents("odata", GenericDbContext.EdmModel);
+                  opt.EnableNoDollarQueryOptions = true;
+                  opt.EnableQueryFeatures(20000);
+                  opt.Select().Expand().Filter();
+               })
+               .AddJsonOptions(o =>
+               {
+               o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+               }
+            );
+
          } else {
-            services.AddControllers();
+            services
+               .AddControllers()
+               .AddJsonOptions(o =>
+            {
+               o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
          }
 
          return services;

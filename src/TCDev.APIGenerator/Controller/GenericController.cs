@@ -18,6 +18,7 @@ namespace TCDev.ApiGenerator
 {
    [Route("api/[controller]")]
    [Produces("application/json")]
+
    public class GenericController<T, TEntityId> : ODataController
       where T : class,
       IObjectBase<TEntityId>

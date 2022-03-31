@@ -24,7 +24,7 @@ namespace TCDev.ApiGenerator.Extension
          }
 
          //Load Options
-         configuration.Bind("API:Basic", APIOptions);
+         configuration.Bind("Api:Basic", APIOptions);
          configuration.Bind("Api:Cache", CacheOptions);
          configuration.Bind("Api:Swagger", SwaggerOptions);
          configuration.Bind("Api:Database", DatabaseOptions);
@@ -74,7 +74,7 @@ namespace TCDev.ApiGenerator.Extension
 
    public class ODataFunctions
    {
-      public bool EnableOData = false;
+      public bool Enabled { get; set; } = false;
       public bool EnableSelect { get; set; } = true;
       public bool EnableFilter { get; set; } = true;
       public bool EnableSort { get; set; } = true;

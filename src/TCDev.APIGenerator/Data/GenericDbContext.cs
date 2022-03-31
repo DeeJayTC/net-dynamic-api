@@ -20,8 +20,13 @@ using TCDev.ApiGenerator.Extension;
 
 namespace TCDev.ApiGenerator.Data
 {
+
+
    public class GenericDbContext : DbContext
    {
+
+
+      
       public GenericDbContext()
       {
       }
@@ -46,7 +51,7 @@ namespace TCDev.ApiGenerator.Data
             var configuration = new ConfigurationBuilder()
                .SetBasePath(Directory.GetCurrentDirectory())
                .AddJsonFile("appsettings.json")
-               .AddJsonFile("secrets.json")
+               .AddJsonFile("secrets.json", true)
                .Build();
             var config = new ApiGeneratorConfig(configuration);
             // Add Database Context
