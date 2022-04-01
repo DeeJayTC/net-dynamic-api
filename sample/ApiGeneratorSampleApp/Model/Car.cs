@@ -14,12 +14,28 @@ namespace ApiGeneratorSampleApI.Model
    {
       [Key]
       [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-      [SwaggerSchema(ReadOnly = true)]
       [SwaggerIgnore]
       public Guid Id { get; set; } = Guid.NewGuid();
 
-
-      [SwaggerSchema(ReadOnly = true)]
       public string Name { get; set; }
+
+      public string Description { get; set; }
+
+      public string Color { get; set; }
+
+      public Make? Make { get; set; }
+   }
+
+
+   [Api("/carMakes")]
+   public class Make : IObjectBase<Guid>
+   {
+      [Key]
+      [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+      [SwaggerIgnore]
+      public Guid Id { get; set; } = Guid.NewGuid();
+      public string Name { get; set; }
+
+      public string Description { get; set; }
    }
 }

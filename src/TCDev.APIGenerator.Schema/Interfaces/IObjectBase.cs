@@ -5,7 +5,7 @@
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using TCDev.ApiGenerator.Attributes;
 
 namespace TCDev.ApiGenerator.Interfaces
 {
@@ -14,6 +14,7 @@ namespace TCDev.ApiGenerator.Interfaces
       [Key]
       [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
       [SwaggerSchema(ReadOnly = true)]
+      [SwaggerIgnore]
       TId Id { get; set; }
    }
 }
