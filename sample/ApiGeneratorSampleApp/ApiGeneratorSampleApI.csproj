@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TCDev.APIGenerator\TCDev.APIGenerator.csproj" />
+    <ProjectReference Include="..\..\src\TCDev.ApiGenerator.Json\TCDev.ApiGenerator.Json.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

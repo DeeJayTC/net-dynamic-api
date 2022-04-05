@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample App", "Sample App", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleAppNuget", "sample\SampleAppNuget\SampleAppNuget.csproj", "{BA9E04E6-4B66-4369-9B2F-C6CEC9499851}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCDev.APIGenerator.DbFirst", "src\TCDev.APIGenerator.DbFirst\TCDev.APIGenerator.DbFirst.csproj", "{7F3574D1-7421-4824-A0BB-522F3BC9BAC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCDev.APIGenerator.Json", "src\TCDev.APIGenerator.DbFirst\TCDev.APIGenerator.Json.csproj", "{7F3574D1-7421-4824-A0BB-522F3BC9BAC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
