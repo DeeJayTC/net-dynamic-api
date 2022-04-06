@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 using TCDev.ApiGenerator.Attributes;
+using TCDev.APIGenerator.Services;
 
 namespace TCDev.ApiGenerator.Data;
 
@@ -23,20 +24,20 @@ public class GenericDbContext : DbContext
 {
    protected IHttpContextAccessor HttpContextAccessor { get; }
 
-   public static IModel StaticModel { get; } = BuildStaticModel();
+   //public static IModel StaticModel { get; } = BuildStaticModel();
    public static IEdmModel EdmModel { get; } = GetEdmModel();
+   private readonly AssemblyService assemblyService;
 
-
-   public GenericDbContext()
-   {
-   }
+   //public GenericDbContext()
+   //{
+   //}
 
    public GenericDbContext(
       DbContextOptions<GenericDbContext> options,
       IConfiguration config,
-      IHttpContextAccessor httpContextAccessor) : base(options)
+      AssemblyService assemblyService) : base(options)
    {
-      this.HttpContextAccessor = httpContextAccessor;
+      this.assemblyService = assemblyService;
    }
 
    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -83,12 +84,8 @@ public class GenericDbContext : DbContext
       // Add all types T using IEntityTypeConfiguration
       builder.ApplyConfigurationsFromAssembly(Assembly.GetEntryAssembly());
 
-      // Add all other types (auto mode)
-      var customTypes = Assembly.GetEntryAssembly()
-         .GetExportedTypes()
-         .Where(x => x.GetCustomAttributes<ApiAttribute>()
-            .Any());
-      foreach (var customType in customTypes.Where(x => x.GetInterface("IEntityTypeConfiguration`1") == null))
+
+      foreach (var customType in assemblyService.Types.Where(x => x.GetInterface("IEntityTypeConfiguration`1") == null))
          builder.Entity(customType);
 
       base.OnModelCreating(builder);
@@ -135,11 +132,11 @@ public class GenericDbContext : DbContext
    //}
 
 
-   private static IModel BuildStaticModel()
-   {
-      using var dbContext = new GenericDbContext();
-      return dbContext.Model;
-   }
+   //private static IModel BuildStaticModel()
+   //{
+   //   using var dbContext = new GenericDbContext();
+   //   return dbContext.Model;
+   //}
 
 
    #region If you're targeting EF Core

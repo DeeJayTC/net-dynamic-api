@@ -2,6 +2,7 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -16,6 +17,30 @@ namespace TCDev.Controllers
    /// </summary>
    public class GenericControllerRouteConvention : IControllerModelConvention
    {
+
+
+      public void bla()
+      {
+         var blubb = new int[]
+         {
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+         };
+
+         var result = blubb.Select((n, idx) => new
+            {
+               n, idx
+            })
+            .OrderByDescending(r => r.idx)
+            .Select(r => r.n)
+            .ToArray();
+
+
+      }
      
       public void Apply(ControllerModel controller)
       {

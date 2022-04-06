@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget</Configurations>
+    <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +12,10 @@
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TCDev.APIGenerator.Schema\TCDev.APIGenerator.Schema.csproj" />
   </ItemGroup>
 
 </Project>

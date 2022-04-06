@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using EFCore.AutomaticMigrations;
 using EntityFramework.Triggers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,13 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.APIGenerator.Extension;
 using TCDev.ApiGenerator.Json;
 using TCDev.APIGenerator.Schema;
+using TCDev.APIGenerator.Services;
 using TCDev.Controllers;
 
 namespace TCDev.ApiGenerator.Extension;
@@ -29,6 +32,7 @@ namespace TCDev.ApiGenerator.Extension;
 public static class ApiGeneratorExtension
 {
    public static ApiGeneratorConfig ApiGeneratorConfig { get; set; } = new(null);
+   public static List<JsonClassDefinition> JsonClasses { get; set; } = new List<JsonClassDefinition>();
 
    public static IServiceCollection AddApiGeneratorServices(
       this IServiceCollection services,
@@ -62,46 +66,19 @@ public static class ApiGeneratorExtension
       services
          .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
          .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
-         .AddSingleton(typeof(ITriggers), typeof(Triggers));
-
-      // Add Services
-      services.AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
-
+         .AddSingleton(typeof(ITriggers), typeof(Triggers))
+         .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
       //Add Framework Services & Options, we use the current assembly to get classes. 
+      var assemblyService = new AssemblyService();
+      services.AddSingleton<AssemblyService>(assemblyService);
 
 
-      var JsonDef = new JsonClassDefinition()
-      {
-         Name = "TestGenerated",
-         RouteTemplate = "/testGenerated",
-         Fields = new List<Field>(){
-            new Field
-            {
-               Name = "Id",
-               Type = "int"
-            },
-            new Field
-            {
-               Name = "Name",
-               Type = "string"
-            },
+      var jsonDefs = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(System.IO.File.ReadAllText("./ApiDefinition.json"));
+      var jsonTypes = jsonDefs.Select(tp => JsonClassBuilder.CreateClass(tp)).ToList();
 
-         }
-      };
-
-      // Get all types defined in JSON
-      var genericAssembly = JsonClassBuilder.CreateClass(JsonDef);
-
-      // Get all types in entry assembly
-      var types = assembly.GetExportedTypes().Where(x => x.GetCustomAttributes<ApiAttribute>().Any());
-
-      // generate type list
-      var typesToLoad = new List<Type>
-      {
-         genericAssembly
-      };
-      typesToLoad.AddRange(types);
+      assemblyService.Types.AddRange(jsonTypes);
+      assemblyService.Types.AddRange(assembly.GetExportedTypes().Where(x => x.GetCustomAttributes<ApiAttribute>().Any()));
 
 
       // Put everything together
@@ -109,7 +86,7 @@ public static class ApiGeneratorExtension
             options.Conventions.Add(new GenericControllerRouteConvention()))
             .ConfigureApplicationPartManager(manager =>
                // Add our controller feature provider
-               manager.FeatureProviders.Add(new GenericTypeControllerFeatureProvider(typesToLoad))
+               manager.FeatureProviders.Add(new GenericTypeControllerFeatureProvider(assemblyService.Types))
          );
 
 

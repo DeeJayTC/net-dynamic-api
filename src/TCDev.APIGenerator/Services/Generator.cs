@@ -16,6 +16,7 @@ using TCDev.APIGenerator.Schema;
 
 namespace TCDev.ApiGenerator.Json;
 
+
 public class JsonClassBuilder
 {
 
@@ -43,15 +44,14 @@ public class JsonClassBuilder
           ";
 
          // Add all fields
-         var result1 = definition.Fields.Aggregate(string.Empty, (current, field) => current + $@" public {field.Type} {field.Name} {{ get; set;}}");
+         var result1 = definition.Fields.Aggregate(string.Empty, (current, field) => 
+            current + $@" public {field.Type} {field.Name}{(field.Nullable ? "?" : "")} {{ get; set;}}");
          
          // Complete class
          classCode += result1;
          classCode += $@"}} }}";
 
-         MetadataReference[] assemblies = AppDomain
-            .CurrentDomain
-            .GetAssemblies()
+         MetadataReference[] assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(p=>!p.IsDynamic)
             .Where(a => !string.IsNullOrEmpty(a.Location))
             .Select(a => MetadataReference.CreateFromFile(a.Location))
             .ToArray();

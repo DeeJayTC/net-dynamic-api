@@ -2,20 +2,30 @@
 // TCDev.APIGenerator.Generator.cs
 // https://www.github.com/deejaytc/dotnet-utils
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Newtonsoft.Json;
+using TCDev.APIGenerator.Schema;
+
 
 namespace TCDev.ApiGenerator.Json;
 
 public class JsonClassBuilder
 {
-   public const string TestClass = $@" // Auto-generated code
+
+   public static Type CreateClass(JsonClassDefinition definition)
+   {
+      try
+      {
+         var classCode = $@" // Auto-generated code
          using System;
          using Swashbuckle.AspNetCore.Annotations;
-         using System;
          using System.ComponentModel.DataAnnotations;
          using System.ComponentModel.DataAnnotations.Schema;
          using System.Text.Json.Serialization;
@@ -24,40 +34,73 @@ public class JsonClassBuilder
 
          namespace TCDev.ApiGenerator
          {{
-             [Api('/carsgen')]
-             public class CarsGenerated : IObjectBase<int>
-             {{
-                 public int Id {{ get; set;}}
-                 public string Name {{ get; set;}}
-             }}
-         }}
-         ";
+             [Api(""{ definition.RouteTemplate }"")]
+             public class { definition.Name } : IObjectBase<{definition.IdType}>
+            
+            // Add Properties
+            {{
+               public {definition.IdType} Id {{ get; set;}}
+          ";
 
-   public void LoadJsonClass()
-   {
+         // Add all fields
+         var result1 = definition.Fields.Aggregate(string.Empty, (current, field) => 
+            current + $@" public {field.Type} {field.Name}{(field.Nullable ? "?" : "")} {{ get; set;}}");
+         
+         // Complete class
+         classCode += result1;
+         classCode += $@"}} }}";
 
-      var compilation = CSharpCompilation.Create("DynamicAssembly", new[] { CSharpSyntaxTree.ParseText(TestClass) },
-         new[]
+         MetadataReference[] assemblies = AppDomain
+            .CurrentDomain
+            .GetAssemblies()
+            .Where(a => !string.IsNullOrEmpty(a.Location))
+            .Select(a => MetadataReference.CreateFromFile(a.Location))
+            .ToArray();
+         classCode = FormatUsingRoslyn(classCode);
+
+         var syntaxTree = CSharpSyntaxTree.ParseText(classCode);
+
+         var compilation = CSharpCompilation
+            .Create("TCDev.ApiGenerator")
+            .AddSyntaxTrees(syntaxTree)
+            .AddReferences(assemblies)
+            .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+         using var ms = new MemoryStream();
+         var result = compilation.Emit(ms);
+
+         if (result.Success)
          {
-            MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
-         },
-         new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            ms.Seek(0, SeekOrigin.Begin);
+            var assembly = Assembly.Load(ms.ToArray());
 
-      using (var ms = new MemoryStream())
-      {
-         var emitResult = compilation.Emit(ms);
+            var newTypeFullName = $"TCDev.ApiGenerator.{definition.Name}";
 
-         if (!emitResult.Success)
-         {
-            // handle, log errors etc
-            Debug.WriteLine("Compilation failed!");
-            return;
+            var type = assembly.GetType(newTypeFullName);
+            return type;
          }
 
-         ms.Seek(0, SeekOrigin.Begin);
-         var assembly = Assembly.Load(ms.ToArray());
-         var candidates = assembly.GetExportedTypes();
+         var failures = result.Diagnostics.Where(diagnostic =>
+            diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
 
+         foreach (var diagnostic in failures) Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+
+         return null;
+      }
+      catch (Exception e)
+      {
+         Console.WriteLine(e);
+         throw;
       }
    }
+
+   public static string FormatUsingRoslyn(string csCode)
+   {
+      var tree = CSharpSyntaxTree.ParseText(csCode);
+      var root = tree.GetRoot()
+         .NormalizeWhitespace();
+      var result = root.ToFullString();
+      return result;
+   }
+
 }

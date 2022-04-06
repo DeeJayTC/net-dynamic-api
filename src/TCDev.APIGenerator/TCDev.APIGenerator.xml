@@ -83,11 +83,11 @@
             </summary>
             <param name="assemblies">Names of assemblies to search for classes</param>
         </member>
-        <member name="M:TCDev.Controllers.GenericTypeControllerFeatureProvider.#ctor(System.Type[])">
+        <member name="M:TCDev.Controllers.GenericTypeControllerFeatureProvider.#ctor(System.Collections.Generic.List{System.Type})">
             <summary>
                Initiate the Controller generator
             </summary>
-            <param name="assemblies">Names of assemblies to search for classes</param>
+            <param name="types">Names of assemblies to search for classes</param>
         </member>
     </members>
 </doc>
