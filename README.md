@@ -1,7 +1,7 @@
 # Turn your models into fully working APIs in minutes
-
-<a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.8-orange"></a>
+<a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.9-orange"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
+<img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/main?label=Main"> <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/vnext?label=vnext"> <img src="https://img.shields.io/github/sponsors/deejaytc?label=Lovely%20Sponsors" />
 
 Little Sneak here -> https://www.youtube.com/watch?v=25lxRLQuxrs
 
