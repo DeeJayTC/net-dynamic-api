@@ -2,24 +2,31 @@ name: .NET
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+    - vnext
+    - main
+
+env:
+  WORKING_DIRECTORY: \src\TCDev.APIGenerator
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Setup SwashBuckle .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.SWASHBUCKLE_DOTNET_CORE_VERSION }}
+    - name: Restore
+      run: dotnet restore ${{ env.WORKING_DIRECTORY }}
     - name: Build
-      run: dotnet build -c release
+      run: dotnet build ${{ env.WORKING_DIRECTORY }} --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
