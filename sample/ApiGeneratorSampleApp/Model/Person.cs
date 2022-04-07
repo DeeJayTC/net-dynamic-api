@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Interfaces;
-using TCDev.ApiGenerator.Schemes.Interfaces;
 using TCDev.APIGenerator.Schema.Interfaces;
+using TCDev.ApiGenerator.Schemes;
 
 namespace ApiGeneratorSampleApI.Model
 {

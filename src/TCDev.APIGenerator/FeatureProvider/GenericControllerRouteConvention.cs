@@ -17,55 +17,28 @@ namespace TCDev.Controllers
    /// </summary>
    public class GenericControllerRouteConvention : IControllerModelConvention
    {
-
-
-      public void bla()
-      {
-         var blubb = new int[]
-         {
-            1,
-            2,
-            3,
-            4,
-            5,
-            6
-         };
-
-         var result = blubb.Select((n, idx) => new
-            {
-               n, idx
-            })
-            .OrderByDescending(r => r.idx)
-            .Select(r => r.n)
-            .ToArray();
-
-
-      }
-     
       public void Apply(ControllerModel controller)
       {
-         if (controller.ControllerType.IsGenericType)
-         {
-            var genericType = controller.ControllerType.GenericTypeArguments[0];
-            var customNameAttribute = genericType.GetCustomAttribute<ApiAttribute>();
-            controller.ControllerName = genericType.Name;
+          if (!controller.ControllerType.IsGenericType) return;
 
-            if (customNameAttribute?.Route != null)
-            {
-               if (controller.Selectors.Count > 0)
-               {
-                  var currentSelector = controller.Selectors[0];
-                  currentSelector.AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(customNameAttribute.Route));
-               }
-               else
-               {
-                  controller.Selectors.Add(new SelectorModel
-                  {
-                     AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(customNameAttribute.Route))
-                  });
-               }
-            }
-         }
+          var genericType = controller.ControllerType.GenericTypeArguments[0];
+          var customNameAttribute = genericType.GetCustomAttribute<ApiAttribute>();
+          controller.ControllerName = genericType.Name;
+
+          if (customNameAttribute?.Route == null) return;
+
+          if (controller.Selectors.Count > 0)
+          {
+              var currentSelector = controller.Selectors[0];
+              currentSelector.AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(customNameAttribute.Route));
+          }
+          else
+          {
+              controller.Selectors.Add(new SelectorModel
+              {
+                  AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(customNameAttribute.Route))
+              });
+          }
       }
    }
 }

@@ -60,9 +60,9 @@
             </summary>
             <returns cref="T:System.Collections.Generic.List`1"></returns>
         </member>
-        <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel">
+        <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel(TCDev.APIGenerator.Services.AssemblyService)">
             <summary>
-               Generate EDM Model for OData functionalities
+                Generate EDM Model for OData functionality
             </summary>
             <returns></returns>
         </member>
