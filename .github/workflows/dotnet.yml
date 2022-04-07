@@ -30,8 +30,3 @@ jobs:
       run: dotnet build ${{ env.WORKING_DIRECTORY }} --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-© 2022 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
