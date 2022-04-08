@@ -3,7 +3,7 @@
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
 <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/main?label=Main"> <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/vnext?label=vnext"> <img src="https://img.shields.io/github/sponsors/deejaytc?label=Lovely%20Sponsors" />
 
-Little Sneak here -> https://www.youtube.com/watch?v=25lxRLQuxrs
+Watch the video -> https://youtu.be/TI5CeNq3-o8
 
 First of all this is a really early Alpha, consider things with care. 
 
