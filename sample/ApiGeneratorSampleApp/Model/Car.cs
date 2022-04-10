@@ -7,7 +7,7 @@ using TCDev.ApiGenerator.Interfaces;
 namespace ApiGeneratorSampleApI.Model
 {
 
-   [Api("/car")]
+   [Api("/car", authorize: true)]
    public class Car : IObjectBase<Guid>
    {
       [Key]

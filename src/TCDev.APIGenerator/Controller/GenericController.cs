@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.Identity.Web.Resource;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.ApiGenerator.Interfaces;
@@ -18,6 +19,7 @@ namespace TCDev.ApiGenerator;
 
 [Route("api/[controller]")]
 [Produces("application/json")]
+[ApiAuthAttribute]
 public class GenericController<T, TEntityId> : ODataController
    where T : class,
    IObjectBase<TEntityId>
@@ -48,7 +50,7 @@ public class GenericController<T, TEntityId> : ODataController
          this.FireEvent = optionAttrib.Options.FireEvents;
          this.MethodsToGenerate = optionAttrib.Options.Methods;
 
-         // Check if we need to remove methods..
+         // Check if we need to remove methods.
       }
       else
       {
@@ -66,14 +68,16 @@ public class GenericController<T, TEntityId> : ODataController
    [EnableQuery(
       AllowedQueryOptions = AllowedQueryOptions.All,
       AllowedFunctions = AllowedFunctions.All,
-      MaxTop = 200,
-      MaxSkip = 199,
-      PageSize = 20)]
+      PageSize = 20)
+   ]
    public IActionResult Query()
    {
       // Check if post is enabled
       if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
          return BadRequest($"GET is disabled for {typeof(T).Name}");
+
+      HttpContext.VerifyUserHasAnyAcceptedScope("read_all");
+
 
       if (!this.ModelState.IsValid)
          return BadRequest();
@@ -87,6 +91,9 @@ public class GenericController<T, TEntityId> : ODataController
       // Check if post is enabled
       if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
          return BadRequest($"GET is disabled for {typeof(T).Name}");
+
+
+      
 
       if (!this.ModelState.IsValid)
          return BadRequest();

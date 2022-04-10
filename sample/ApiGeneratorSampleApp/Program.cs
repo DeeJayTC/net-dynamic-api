@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using TCDev.ApiGenerator.Extension;
+using TCDev.APIGenerator.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-//builder.Services.AddApiGeneratorServices(builder.Configuration, JsonClassBuilder.CreateClass());
+builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
@@ -23,8 +24,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseApiGeneratorAuthentication();
 
 app.UseEndpoints(endpoints =>
 {

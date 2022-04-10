@@ -69,6 +69,10 @@ namespace TCDev.ApiGenerator.Extension
                 .AddSingleton(typeof(ITriggers), typeof(Triggers))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
+
+
+
+            
             //Add Framework Services & Options, we use the current assembly to get classes. 
             var assemblyService = new AssemblyService();
             services.AddSingleton(assemblyService);
@@ -129,6 +133,10 @@ namespace TCDev.ApiGenerator.Extension
                         opt.EnableQueryFeatures(20000);
                         opt.Select()
                             .Expand()
+                            .OrderBy()
+                            .SetMaxTop(10000)
+                            .Count()
+                            .SkipToken()
                             .Filter();
                     })
                     .AddJsonOptions(o => { o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); }

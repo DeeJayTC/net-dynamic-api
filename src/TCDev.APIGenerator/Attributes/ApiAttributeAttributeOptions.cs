@@ -22,7 +22,7 @@ namespace TCDev.ApiGenerator.Attributes
       /// <summary>
       ///    Wether authorized access is required or not
       /// </summary>
-      public bool Authorize { get; set; } = true;
+      public bool Authorize { get; set; } = false;
 
       /// <summary>
       ///    Cache responses

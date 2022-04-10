@@ -3,28 +3,40 @@
 // https://www.github.com/deejaytc/dotnet-utils
 
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using TCDev.APIGenerator.Services;
 
 namespace TCDev.ApiGenerator.Attributes
 {
-   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-   public class PatientAuthorizeAttribute : TypeFilterAttribute
-   {
-      public PatientAuthorizeAttribute() : base(typeof(AuthFilter))
-      {
-      }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    public class ApiAuthAttribute : Attribute, IAuthorizationFilter
+    {
+        private readonly AssemblyService _assemblies;
 
-      private class AuthFilter : IActionFilter
-      {
-         public void OnActionExecuted(ActionExecutedContext filterContext)
-         {
-            throw new NotImplementedException();
-         }
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            var _assemblies = context.HttpContext.RequestServices.GetService(typeof(AssemblyService)) as AssemblyService;
+            var _type = _assemblies.Types.FirstOrDefault(p => p.Name == "Car");
 
-         public void OnActionExecuting(ActionExecutingContext context)
-         {
-         }
-      }
-   }
+            if (_type == null) return;
+
+            var attrs = Attribute.GetCustomAttributes(_type, typeof(ApiAttribute));
+            if (attrs.FirstOrDefault(p => p.GetType() == typeof(ApiAttribute)) is ApiAttribute optionAttrib)
+            {
+                if (!optionAttrib.Options.Authorize) return;
+
+                if (context.HttpContext.User.Identity != null && !context.HttpContext.User.Identity.IsAuthenticated)
+                {
+                    context.Result = new UnauthorizedResult();
+                }
+            }
+            else
+            {
+                throw new Exception($"Could not find ApiAttribute on Class: {_type.GetType()}");
+            }
+
+        }
+    }
 }

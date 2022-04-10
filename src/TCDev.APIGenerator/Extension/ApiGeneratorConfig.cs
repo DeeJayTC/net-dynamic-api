@@ -10,14 +10,11 @@ namespace TCDev.ApiGenerator;
 public class ApiGeneratorConfig
 {
    public CacheOptions CacheOptions { get; set; } = new();
-
    public ApiOptions ApiOptions { get; set; } = new();
-
    public SwaggerOptions SwaggerOptions { get; set; } = new();
    public DatabaseOptions DatabaseOptions { get; set; } = new();
    public ODataFunctions ODataOptions { get; set; } = new();
-
-   public string MetadataRoute { get; set; } = "odata";
+   public IdentityOptions IdentityOptions { get; set; } = new();
    private readonly IConfiguration configuration;
 
    public ApiGeneratorConfig(IConfiguration config)
@@ -26,6 +23,7 @@ public class ApiGeneratorConfig
                            ?? new ConfigurationBuilder()
                               .SetBasePath(Directory.GetCurrentDirectory())
                               .AddJsonFile("appsettings.json")
+                              .AddJsonFile("apiGeneratorConfig.json",true)
                               .AddJsonFile("secrets.json", true)
                               .AddEnvironmentVariables()
                               .Build();
@@ -36,7 +34,8 @@ public class ApiGeneratorConfig
       this.configuration.Bind("Api:Swagger", this.SwaggerOptions);
       this.configuration.Bind("Api:Database", this.DatabaseOptions);
       this.configuration.Bind("Api:Odata", this.ODataOptions);
-   }
+      this.configuration.Bind("Api:Identity", this.IdentityOptions);
+    }
 }
 
 public class ApiOptions
@@ -88,4 +87,17 @@ public class SwaggerOptions
    public string ContactMail { get; set; } = "test@test.de";
    public string ContactUri { get; set; } = "https://www.test.de";
    public string Route { get; set; } = "/swagger/v1/swagger.json";
+}
+
+public class IdentityOptions
+{
+    public string EnableIdentity { get; set; } = "false";
+    public string Audience { get; set; } = "TCDevApiGenerator";
+    public string Authority { get; set; } = "https://localhost:44300";
+    public string[] Scopes { get; set; } = { "ReadWrite.All" };
+
+    public bool ValidateIssuer { get; set; } = true;
+    public bool ValidateAudience { get; set; } = true;
+    public bool ValidateLifetime { get; set; } = true;
+    public bool ValidateIssuerSigningKey { get; set; } = true;
 }

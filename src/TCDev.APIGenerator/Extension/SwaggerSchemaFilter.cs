@@ -25,7 +25,7 @@ namespace TCDev.APIGenerator.Extension
          foreach (var ignoreDataMemberProperty in ignoreDataMemberProperties)
          {
             var propertyToHide = schema.Properties.Keys
-                .SingleOrDefault(x => x.ToLower() == ignoreDataMemberProperty.Name.ToLower());
+                .SingleOrDefault(x => string.Equals(x, ignoreDataMemberProperty.Name, StringComparison.CurrentCultureIgnoreCase));
 
             if (propertyToHide != null)
             {
