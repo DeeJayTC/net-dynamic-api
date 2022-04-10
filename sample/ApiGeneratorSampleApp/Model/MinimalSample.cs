@@ -2,7 +2,6 @@
 // ApiGeneratorSampleApI.MinimalSample.cs
 // https://github.com/DeeJayTC/net-dynamic-api
 
-using System.Text.Json.Serialization;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Interfaces;
 
@@ -17,19 +16,5 @@ namespace ApiGeneratorSampleApI.Model
         public string Name { get; set; }
         public int Value { get; set; }
         public int Id { get; set; }
-
-
-        public string CalculateSum(int a, int b)
-        {
-            return $"{a} + {b} = {a + b}";
-        }
-    }
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum OperationEnum
-    {
-        Insert,
-        Update,
-        Delete
     }
 }

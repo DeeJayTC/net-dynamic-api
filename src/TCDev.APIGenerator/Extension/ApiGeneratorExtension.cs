@@ -74,10 +74,7 @@ namespace TCDev.ApiGenerator.Extension
             services.AddSingleton(assemblyService);
 
             var jsonDefs = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(File.ReadAllText("./ApiDefinition.json"));
-            var jsonTypes = jsonDefs.Select(tp => JsonClassBuilder.CreateClass(tp))
-                .ToList();
-
-            assemblyService.Types.AddRange(jsonTypes);
+            assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefs));
             assemblyService.Types.AddRange(assembly.GetExportedTypes()
                 .Where(x => x.GetCustomAttributes<ApiAttribute>()
                     .Any()));
@@ -167,10 +164,15 @@ namespace TCDev.ApiGenerator.Extension
         public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint(
-                "/swagger/v1/swagger.json",
-                $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"
-            ));
+            app.UseSwaggerUI(c =>
+            {
+                c.InjectStylesheet("/SwaggerDarkTheme.css");
+                c.SwaggerEndpoint(
+                    "/swagger/v1/swagger.json",
+                    $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"
+                );
+            });
+
             return app;
         }
 

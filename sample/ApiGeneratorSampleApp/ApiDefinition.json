@@ -1,17 +1,41 @@
 ﻿[
+
   {
-    "name": "Car",
-    "route": "/cars",
-    "caching": true,
-    "cacheLiveTime": 1000,
-    "events": "POST,PUT,DELETE",
+    "name": "MakeJSON",
+    "route": "/MakeJSON",
     "idType": "int",
     "Fields": [
       {
         "name": "Name",
-        "type": "String",
-        "maxLength": "200",
-        "nullable": false
+        "type": "string"
+      },
+      {
+        "name": "Description",
+        "Type": "string"
+
+      }
+    ]
+  },
+  {
+    "name": "CarJSON",
+    "route": "/CarJSON",
+    "idType": "int",
+    "Fields": [
+      {
+        "name": "Name",
+        "type": "string"
+      },
+      {
+        "name": "Description",
+        "Type": "string"
+      },
+      {
+        "name": "Make",
+        "type": "virtual MakeJSON"
+      },
+      {
+        "name": "MakeId",
+        "type": "int"
       }
     ]
   }

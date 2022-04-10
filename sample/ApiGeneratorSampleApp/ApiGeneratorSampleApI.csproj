@@ -40,4 +40,10 @@
     <ProjectReference Include="..\..\src\TCDev.ApiGenerator.Json\TCDev.ApiGenerator.Json.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\SwaggerDarkTheme.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

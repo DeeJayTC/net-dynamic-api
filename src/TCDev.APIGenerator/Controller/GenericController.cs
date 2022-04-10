@@ -123,7 +123,7 @@ public class GenericController<T, TEntityId> : ODataController
       }
       catch (Exception ex)
       {
-         return BadRequest(ex);
+          return BadRequest(ex.Message);
       }
    }
 

@@ -1,12 +1,7 @@
-// TCDev.de 2022/03/16
-// ApiGeneratorSampleApI.Program.cs
-// https://www.github.com/deejaytc/dotnet-utils
-
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using TCDev.ApiGenerator.Extension;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +20,7 @@ app.UseApiGenerator();
 app.UseAutomaticApiMigrations(true);
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();

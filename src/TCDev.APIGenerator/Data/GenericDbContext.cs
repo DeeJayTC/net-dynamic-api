@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EntityFrameworkCore.Triggers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OData.Edm;
@@ -64,9 +63,11 @@ namespace TCDev.ApiGenerator.Data
             }
 
             // Add all other custom types, not implementing IEntityTypeConfiguration
-            foreach (var customType in this.assemblyService.Types.Where(x => x.IsAssignableFrom(typeof(IEntityTypeConfiguration<>))))
+            foreach (var customType in this.assemblyService.Types.Where(x => !x.IsAssignableFrom(typeof(IEntityTypeConfiguration<>))))
             {
                 builder.Entity(customType);
+
+                //builder.Model.AddEntityType(customType);
             }
 
             base.OnModelCreating(builder);
