@@ -12,9 +12,6 @@ namespace TCDev.ApiGenerator.Interfaces
    public interface IObjectBase<TId>
    {
       [Key]
-      [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-      [SwaggerSchema(ReadOnly = true)]
-      [SwaggerIgnore]
       TId Id { get; set; }
    }
 }

@@ -1,6 +1,6 @@
-﻿// TCDev 2022/03/16
-// Apache 2.0 License
-// https://www.github.com/deejaytc/dotnet-utils
+﻿// TCDev.de 2022/03/16
+// TCDev.APIGenerator.GenericController.cs
+// https://github.com/DeeJayTC/net-dynamic-api
 
 using System;
 using System.Collections.Generic;
@@ -14,169 +14,167 @@ using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.ApiGenerator.Interfaces;
 
-namespace TCDev.ApiGenerator
+namespace TCDev.ApiGenerator;
+
+[Route("api/[controller]")]
+[Produces("application/json")]
+public class GenericController<T, TEntityId> : ODataController
+   where T : class,
+   IObjectBase<TEntityId>
 {
-   [Route("api/[controller]")]
-   [Produces("application/json")]
+   private bool UseCache { get; set; }
+   private bool FireEvent { get; set; }
 
-   public class GenericController<T, TEntityId> : ODataController
-      where T : class,
-      IObjectBase<TEntityId>
+   private readonly IAuthorizationService authorizationService;
+   private readonly IGenericRespository<T, TEntityId> repository;
+
+   public ApiMethodsToGenerate MethodsToGenerate;
+
+   public GenericController(IAuthorizationService authorizationService, IGenericRespository<T, TEntityId> repository)
    {
-      public GenericController(IAuthorizationService authorizationService, IGenericRespository<T, TEntityId> repository)
+      this.repository = repository;
+      this.authorizationService = authorizationService;
+
+      ConfigureController();
+   }
+
+   private void ConfigureController()
+   {
+      // Get attribute config from underlying type T
+      var attrs = Attribute.GetCustomAttributes(typeof(T));
+      if (attrs.FirstOrDefault(p => p.GetType() == typeof(ApiAttribute)) is ApiAttribute optionAttrib)
       {
-         _repository = repository;
-         _authorizationService = authorizationService;
+         this.UseCache = optionAttrib.Options.Cache;
+         this.FireEvent = optionAttrib.Options.FireEvents;
+         this.MethodsToGenerate = optionAttrib.Options.Methods;
 
-         ConfigureController();
+         // Check if we need to remove methods..
       }
-
-      private readonly IAuthorizationService _authorizationService;
-      private readonly IGenericRespository<T, TEntityId> _repository;
-      private bool useCache { get; set; }
-      private bool fireEvent { get; set; }
-
-      public ApiMethodsToGenerate methodsToGenerate;
-
-      private void ConfigureController()
+      else
       {
-         // Get attribute config from underlying type T
-         var attrs = Attribute.GetCustomAttributes(typeof(T));
-         if (attrs.FirstOrDefault(p => p.GetType() == typeof(ApiAttribute)) is ApiAttribute optionAttrib)
-         {
-            useCache = optionAttrib.Options.Cache;
-            fireEvent = optionAttrib.Options.FireEvents;
-            methodsToGenerate = optionAttrib.Options.Methods;
-
-            // Check if we need to remove methods..
-
-
-
-         }
-         else
-         {
-            throw new Exception($"Could not find ApiAttribute on Class: {typeof(T)}");
-         }
+         throw new Exception($"Could not find ApiAttribute on Class: {typeof(T)}");
       }
+   }
 
-      /// <summary>
-      ///    Returns a list of <see cref="T" /> entries
-      /// </summary>
-      /// <returns cref="List{T}"></returns>
-      [Produces("application/json")]
-      [ProducesErrorResponseType(typeof(BadRequestResult))]
-      [HttpGet]
-      [EnableQuery(
-         AllowedQueryOptions = AllowedQueryOptions.All,
-         AllowedFunctions = AllowedFunctions.All,
-         MaxTop = 200,
-         MaxSkip = 199,
-         PageSize = 20)]
-      public IActionResult Query()
+   /// <summary>
+   ///    Returns a list of <see cref="T" /> entries
+   /// </summary>
+   /// <returns cref="List{T}"></returns>
+   [Produces("application/json")]
+   [ProducesErrorResponseType(typeof(BadRequestResult))]
+   [HttpGet]
+   [EnableQuery(
+      AllowedQueryOptions = AllowedQueryOptions.All,
+      AllowedFunctions = AllowedFunctions.All,
+      MaxTop = 200,
+      MaxSkip = 199,
+      PageSize = 20)]
+   public IActionResult Query()
+   {
+      // Check if post is enabled
+      if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+         return BadRequest($"GET is disabled for {typeof(T).Name}");
+
+      if (!this.ModelState.IsValid)
+         return BadRequest();
+
+      return Ok(this.repository.Get());
+   }
+
+   [HttpGet("{id}")]
+   public async Task<IActionResult> Find(TEntityId id)
+   {
+      // Check if post is enabled
+      if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+         return BadRequest($"GET is disabled for {typeof(T).Name}");
+
+      if (!this.ModelState.IsValid)
+         return BadRequest();
+
+      var record = await this.repository.GetAsync(id);
+
+
+      return Ok(record);
+   }
+
+
+   [HttpPost]
+   public async Task<IActionResult> Create([FromBody] T record)
+   {
+      try
       {
          // Check if post is enabled
-         if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
-            return BadRequest($"GET is disabled for {typeof(T).Name}");
+         if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Insert))
+            return BadRequest($"POST is disabled for {record.GetType().Name}");
 
-         if (!ModelState.IsValid) 
+         // Check if payload is valid
+         if (!this.ModelState.IsValid)
             return BadRequest();
 
-         return Ok(_repository.Get());
+         // Create the new entry
+         this.repository.Create(record);
+         await this.repository.SaveAsync();
+
+         // respond with the newly created record
+         return CreatedAtAction("Find", new
+         {
+            id = record.Id
+         }, record);
       }
-
-      [HttpGet("{id}")]
-      public async Task<IActionResult> Find(TEntityId id)
+      catch (Exception ex)
       {
-         // Check if post is enabled
-         if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
-            return BadRequest($"GET is disabled for {typeof(T).Name}");
+          return BadRequest(ex.Message);
+      }
+   }
 
-         if (!ModelState.IsValid)
+   [HttpPut("{id}")]
+   public async Task<IActionResult> Update(TEntityId id, [FromBody] T record)
+   {
+      try
+      {
+         if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Update))
+            return BadRequest($"PUT is disabled for {record.GetType().Name}");
+
+         if (!this.ModelState.IsValid)
             return BadRequest();
 
-         var record = await _repository.GetAsync(id);
+         var existingRecord = await this.repository.GetAsync(id);
+         if (existingRecord == null) return NotFound();
 
+         this.repository.Update(record, existingRecord);
+         await this.repository.SaveAsync();
 
          return Ok(record);
       }
-
-
-      [HttpPost]
-      public async Task<IActionResult> Create([FromBody] T record)
+      catch (Exception ex)
       {
-         try
-         {
-
-            // Check if post is enabled
-            if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Insert))
-               return BadRequest($"POST is disabled for {record.GetType().Name}");
-
-            // Check if payload is valid
-            if (!ModelState.IsValid)
-               return BadRequest();
-
-            // Create the new entry
-            _repository.Create(record);
-            await _repository.SaveAsync();              
-
-            // respond with the newly created record
-            return CreatedAtAction("Find", new { id = record.Id }, record);
-         }
-         catch (Exception ex)
-         {
-            return BadRequest(ex);
-         }
+         return BadRequest(ex.Message);
       }
+   }
 
-      [HttpPut("{id}")]
-      public async Task<IActionResult> Update(TEntityId id, [FromBody] T record)
+   [HttpDelete("{id}")]
+   public async Task<IActionResult> Delete(TEntityId id)
+   {
+      try
       {
-         try
-         {
-            if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Update))
-               return BadRequest($"PUT is disabled for {record.GetType().Name}");
+         if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
+            return BadRequest("DELETE is disabled");
 
-            if (!ModelState.IsValid)
-               return BadRequest();
+         if (!this.ModelState.IsValid)
+            return BadRequest();
 
-            var existingRecord = await _repository.GetAsync(id);
-            if (existingRecord == null) return NotFound();
+         var existingRecord = await this.repository.GetAsync(id);
+         if (existingRecord == null) return NotFound();
 
-            _repository.Update(record, existingRecord);
-            await _repository.SaveAsync();
+         this.repository.Delete(id);
+         if (await this.repository.SaveAsync() == 0)
+            return BadRequest();
 
-            return Ok(record);
-         }
-         catch (Exception ex)
-         {
-            return BadRequest(ex.Message);
-         }
+         return NoContent();
       }
-
-      [HttpDelete("{id}")]
-      public async Task<IActionResult> Delete(TEntityId id)
+      catch (Exception ex)
       {
-         try
-         {
-            if (!methodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
-            return BadRequest($"DELETE is disabled");
-
-            if (!ModelState.IsValid)
-               return BadRequest();
-
-            var existingRecord = await _repository.GetAsync(id);
-            if (existingRecord == null) return NotFound();
-
-            _repository.Delete(id);
-            if (await _repository.SaveAsync() == 0)
-               return BadRequest();
-
-            return NoContent();
-         }
-         catch (Exception ex)
-         {
-            return BadRequest(ex.Message);
-         }
+         return BadRequest(ex.Message);
       }
    }
 }

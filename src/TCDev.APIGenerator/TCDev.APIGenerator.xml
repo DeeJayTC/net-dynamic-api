@@ -60,15 +60,15 @@
             </summary>
             <returns cref="T:System.Collections.Generic.List`1"></returns>
         </member>
-        <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel">
+        <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel(TCDev.APIGenerator.Services.AssemblyService)">
             <summary>
-               Generate EDM Model for OData functionalities
+                Generate EDM Model for OData functionality
             </summary>
             <returns></returns>
         </member>
-        <member name="P:TCDev.ApiGenerator.Extension.SwaggerOptions.EnableProduction">
+        <member name="P:TCDev.ApiGenerator.SwaggerOptions.EnableProduction">
             <summary>
-            Enable Swagger in Production
+               Enable Swagger in Production
             </summary>
         </member>
         <member name="T:TCDev.Controllers.GenericControllerRouteConvention">
@@ -77,11 +77,17 @@
                One of the main pieces to make the magic work.
             </summary>
         </member>
-        <member name="M:TCDev.Controllers.GenericTypeControllerFeatureProvider.#ctor(System.String[])">
+        <member name="M:TCDev.Controllers.GenericAssemblyControllerFeatureProvider.#ctor(System.Reflection.Assembly[])">
             <summary>
                Initiate the Controller generator
             </summary>
             <param name="assemblies">Names of assemblies to search for classes</param>
+        </member>
+        <member name="M:TCDev.Controllers.GenericTypeControllerFeatureProvider.#ctor(System.Collections.Generic.List{System.Type})">
+            <summary>
+               Initiate the Controller generator
+            </summary>
+            <param name="types">Names of assemblies to search for classes</param>
         </member>
     </members>
 </doc>

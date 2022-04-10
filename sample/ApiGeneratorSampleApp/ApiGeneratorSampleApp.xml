@@ -6,7 +6,7 @@
     <members>
         <member name="T:ApiGeneratorSampleApI.Model.MinimalSample">
             <summary>
-            This is the minimal sample, yes this is a working api ;)
+                This is the minimal sample, yes this is a working api ;)
             </summary>
         </member>
         <member name="M:ApiGeneratorSampleApI.Model.Person.BeforeDelete(ApiGeneratorSampleApI.Model.Person)">

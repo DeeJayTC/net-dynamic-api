@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>aspnet-ApiGeneratorSampleApp-56AA10DB-26A2-414F-AFD8-1D3546BD678D</UserSecretsId>
-    <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget</Configurations>
+    <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithSampleApp|AnyCPU'">
+    <DocumentationFile>ApiGeneratorSampleApI.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SampleAppJson|AnyCPU'">
     <DocumentationFile>ApiGeneratorSampleApI.xml</DocumentationFile>
   </PropertyGroup>
 
@@ -33,6 +37,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TCDev.APIGenerator\TCDev.APIGenerator.csproj" />
+    <ProjectReference Include="..\..\src\TCDev.ApiGenerator.Json\TCDev.ApiGenerator.Json.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\SwaggerDarkTheme.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

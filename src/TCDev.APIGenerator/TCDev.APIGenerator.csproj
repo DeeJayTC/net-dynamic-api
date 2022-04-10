@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 	<PackageId>TCDev.APIGenerator</PackageId>
-	<Version>0.1.1-alpha</Version>
+	<Version>0.1.0-alpha-4a262d</Version>
 	<Authors>Tim Cadenbach</Authors>
 	<Company>TCDev</Company>
 	<Description>Creates fully working CRUD Apis from just models</Description>
-	<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget</Configurations>
+	<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithSampleApp|AnyCPU'">
+    <DocumentationFile>TCDev.ApiGenerator.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SampleAppJson|AnyCPU'">
     <DocumentationFile>TCDev.ApiGenerator.xml</DocumentationFile>
   </PropertyGroup>
 
