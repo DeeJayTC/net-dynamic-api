@@ -17,8 +17,8 @@ namespace TCDev.APIGenerator.Identity
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = domain;
-                    options.Audience = configuration["Auth0:Audience"];
+                    options.Authority = "https://structures.eu.auth0.com/";
+                    options.Audience = "https://www.smoower.com";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = ClaimTypes.NameIdentifier

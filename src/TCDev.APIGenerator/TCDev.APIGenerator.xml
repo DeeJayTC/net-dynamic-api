@@ -4,15 +4,13 @@
         <name>TCDev.APIGenerator</name>
     </assembly>
     <members>
-        <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
+        <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
             <summary>
                Attribute defining auto generated controller for the class
             </summary>
             <param name="route">The full base route for the class ie /myclass/ </param>
-            <param name="requiredReadClaims"></param>
-            <param name="requiredWriteClaims"></param>
-            <param name="requiredRolesRead"></param>
-            <param name="requiredRolesWrite"></param>
+            <param name="requiredReadScopes"></param>
+            <param name="requiredWriteScopes"></param>
             <param name="fireEvents"></param>
             <param name="authorize"></param>
             <param name="cache"></param>
@@ -24,12 +22,12 @@
                Configuration settings for generated controller behaviour
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredReadClaims">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredReadScopes">
             <summary>
                Claims required for read access
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredWriteClaims">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredWriteScopes">
             <summary>
                Claims required for write access
             </summary>

@@ -17,10 +17,8 @@ namespace TCDev.ApiGenerator.Attributes
         ///    Attribute defining auto generated controller for the class
         /// </summary>
         /// <param name="route">The full base route for the class ie /myclass/ </param>
-        /// <param name="requiredReadClaims"></param>
-        /// <param name="requiredWriteClaims"></param>
-        /// <param name="requiredRolesRead"></param>
-        /// <param name="requiredRolesWrite"></param>
+        /// <param name="requiredReadScopes"></param>
+        /// <param name="requiredWriteScopes"></param>
         /// <param name="fireEvents"></param>
         /// <param name="authorize"></param>
         /// <param name="cache"></param>
@@ -29,10 +27,8 @@ namespace TCDev.ApiGenerator.Attributes
         public ApiAttribute(
             string route,
             ApiMethodsToGenerate methods = ApiMethodsToGenerate.All,
-            string[] requiredReadClaims = null,
-            string[] requiredWriteClaims = null,
-            string[] requiredRolesRead = null,
-            string[] requiredRolesWrite = null,
+            string[] requiredReadScopes = null,
+            string[] requiredWriteScopes = null,
             bool fireEvents = false,
             bool authorize = true,
             bool cache = false,
@@ -41,8 +37,8 @@ namespace TCDev.ApiGenerator.Attributes
             this.Route = route;
             this.Options = new ApiAttributeAttributeOptions
             {
-                RequiredReadClaims = requiredReadClaims, 
-                RequiredWriteClaims = requiredWriteClaims, 
+                RequiredReadScopes = requiredReadScopes, 
+                RequiredWriteScopes = requiredWriteScopes, 
                 Authorize = authorize, 
                 Cache = cache, 
                 CacheDuration = cacheDuration, 

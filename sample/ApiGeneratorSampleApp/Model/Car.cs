@@ -7,8 +7,11 @@ using TCDev.ApiGenerator.Interfaces;
 namespace ApiGeneratorSampleApI.Model
 {
 
-   [Api("/car", authorize: true)]
-   public class Car : IObjectBase<Guid>
+   [Api("/car", 
+       authorize: true,
+       requiredReadScopes: new string[] { "all.read" },
+       requiredWriteScopes: new string[] { "all.write" })]
+    public class Car : IObjectBase<Guid>
    {
       [Key]
       [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

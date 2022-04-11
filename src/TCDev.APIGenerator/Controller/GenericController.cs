@@ -10,178 +10,234 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Microsoft.Identity.Web.Resource;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.ApiGenerator.Interfaces;
 
-namespace TCDev.ApiGenerator;
-
-[Route("api/[controller]")]
-[Produces("application/json")]
-[ApiAuthAttribute]
-public class GenericController<T, TEntityId> : ODataController
-   where T : class,
-   IObjectBase<TEntityId>
+namespace TCDev.ApiGenerator
 {
-   private bool UseCache { get; set; }
-   private bool FireEvent { get; set; }
+    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [ApiAuthAttribute]
+    public class GenericController<T, TEntityId> : ODataController
+        where T : class,
+        IObjectBase<TEntityId>
+    {
+        private bool Authorize { get; set; }
+        private bool UseCache { get; set; }
+        private bool FireEvent { get; set; }
+        private string[] readScopes { get; set; }
+        private string[] writeScopes { get; set; }
 
-   private readonly IAuthorizationService authorizationService;
-   private readonly IGenericRespository<T, TEntityId> repository;
+        private readonly IAuthorizationService authorizationService;
+        private readonly IGenericRespository<T, TEntityId> repository;
 
-   public ApiMethodsToGenerate MethodsToGenerate;
+        public ApiMethodsToGenerate MethodsToGenerate;
 
-   public GenericController(IAuthorizationService authorizationService, IGenericRespository<T, TEntityId> repository)
-   {
-      this.repository = repository;
-      this.authorizationService = authorizationService;
+        private void ConfigureController()
+        {
+            // Get attribute config from underlying type T
+            var attrs = Attribute.GetCustomAttributes(typeof(T));
+            if (attrs.FirstOrDefault(p => p.GetType() == typeof(ApiAttribute)) is ApiAttribute optionAttrib)
+            {
+                this.UseCache = optionAttrib.Options.Cache;
+                this.FireEvent = optionAttrib.Options.FireEvents;
+                this.MethodsToGenerate = optionAttrib.Options.Methods;
+                this.readScopes = optionAttrib.Options.RequiredReadScopes;
+                this.writeScopes = optionAttrib.Options.RequiredReadScopes;
+                this.Authorize = optionAttrib.Options.Authorize;
 
-      ConfigureController();
-   }
+                // Check if we need to remove methods.
+            }
+            else
+            {
+                throw new Exception($"Could not find ApiAttribute on Class: {typeof(T)}");
+            }
+        }
 
-   private void ConfigureController()
-   {
-      // Get attribute config from underlying type T
-      var attrs = Attribute.GetCustomAttributes(typeof(T));
-      if (attrs.FirstOrDefault(p => p.GetType() == typeof(ApiAttribute)) is ApiAttribute optionAttrib)
-      {
-         this.UseCache = optionAttrib.Options.Cache;
-         this.FireEvent = optionAttrib.Options.FireEvents;
-         this.MethodsToGenerate = optionAttrib.Options.Methods;
+        /// <summary>
+        ///     Returns a list of <see cref="T" /> entries
+        /// </summary>
+        /// <returns cref="List{T}"></returns>
+        [Produces("application/json")]
+        [ProducesErrorResponseType(typeof(BadRequestResult))]
+        [HttpGet]
+        [EnableQuery(
+            AllowedQueryOptions = AllowedQueryOptions.All,
+            AllowedFunctions = AllowedFunctions.All,
+            PageSize = 20)
+        ]
+        public IActionResult Query()
+        {
+            // Check if post is enabled
+            if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+            {
+                return BadRequest($"GET is disabled for {typeof(T).Name}");
+            }
 
-         // Check if we need to remove methods.
-      }
-      else
-      {
-         throw new Exception($"Could not find ApiAttribute on Class: {typeof(T)}");
-      }
-   }
+            if (this.Authorize && !this.HttpContext.ValidateScopes(this.readScopes, ""))
+            {
+                return Forbid();
+            }
 
-   /// <summary>
-   ///    Returns a list of <see cref="T" /> entries
-   /// </summary>
-   /// <returns cref="List{T}"></returns>
-   [Produces("application/json")]
-   [ProducesErrorResponseType(typeof(BadRequestResult))]
-   [HttpGet]
-   [EnableQuery(
-      AllowedQueryOptions = AllowedQueryOptions.All,
-      AllowedFunctions = AllowedFunctions.All,
-      PageSize = 20)
-   ]
-   public IActionResult Query()
-   {
-      // Check if post is enabled
-      if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
-         return BadRequest($"GET is disabled for {typeof(T).Name}");
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-      HttpContext.VerifyUserHasAnyAcceptedScope("read_all");
+            return Ok(this.repository.Get());
 
+        }
 
-      if (!this.ModelState.IsValid)
-         return BadRequest();
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Find(TEntityId id)
+        {
+            // Check if post is enabled
+            if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+            {
+                return BadRequest($"GET is disabled for {typeof(T).Name}");
+            }
 
-      return Ok(this.repository.Get());
-   }
+            if (this.Authorize && !this.HttpContext.ValidateScopes(this.readScopes, ""))
+            {
+                return Forbid();
+            }
 
-   [HttpGet("{id}")]
-   public async Task<IActionResult> Find(TEntityId id)
-   {
-      // Check if post is enabled
-      if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
-         return BadRequest($"GET is disabled for {typeof(T).Name}");
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-
-      
-
-      if (!this.ModelState.IsValid)
-         return BadRequest();
-
-      var record = await this.repository.GetAsync(id);
-
-
-      return Ok(record);
-   }
+            var record = await this.repository.GetAsync(id);
 
 
-   [HttpPost]
-   public async Task<IActionResult> Create([FromBody] T record)
-   {
-      try
-      {
-         // Check if post is enabled
-         if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Insert))
-            return BadRequest($"POST is disabled for {record.GetType().Name}");
+            return Ok(record);
 
-         // Check if payload is valid
-         if (!this.ModelState.IsValid)
-            return BadRequest();
+        }
 
-         // Create the new entry
-         this.repository.Create(record);
-         await this.repository.SaveAsync();
 
-         // respond with the newly created record
-         return CreatedAtAction("Find", new
-         {
-            id = record.Id
-         }, record);
-      }
-      catch (Exception ex)
-      {
-          return BadRequest(ex.Message);
-      }
-   }
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] T record)
+        {
+            try
+            {
+                // Check if post is enabled
+                if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Insert))
+                {
+                    return BadRequest($"POST is disabled for {record.GetType().Name}");
+                }
 
-   [HttpPut("{id}")]
-   public async Task<IActionResult> Update(TEntityId id, [FromBody] T record)
-   {
-      try
-      {
-         if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Update))
-            return BadRequest($"PUT is disabled for {record.GetType().Name}");
+                if (this.Authorize && !this.HttpContext.ValidateScopes(this.writeScopes, ""))
+                {
+                    return Forbid();
+                }
 
-         if (!this.ModelState.IsValid)
-            return BadRequest();
+                // Check if payload is valid
+                if (!this.ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
 
-         var existingRecord = await this.repository.GetAsync(id);
-         if (existingRecord == null) return NotFound();
+                // Create the new entry
+                this.repository.Create(record);
+                await this.repository.SaveAsync();
 
-         this.repository.Update(record, existingRecord);
-         await this.repository.SaveAsync();
+                // respond with the newly created record
+                return CreatedAtAction("Find", new
+                {
+                    id = record.Id
+                }, record);
 
-         return Ok(record);
-      }
-      catch (Exception ex)
-      {
-         return BadRequest(ex.Message);
-      }
-   }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-   [HttpDelete("{id}")]
-   public async Task<IActionResult> Delete(TEntityId id)
-   {
-      try
-      {
-         if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
-            return BadRequest("DELETE is disabled");
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(TEntityId id, [FromBody] T record)
+        {
+            try
+            {
+                if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Update))
+                {
+                    return BadRequest($"PUT is disabled for {record.GetType().Name}");
+                }
 
-         if (!this.ModelState.IsValid)
-            return BadRequest();
+                if (this.Authorize && !this.HttpContext.ValidateScopes(this.writeScopes, ""))
+                {
+                    return Forbid();
+                }
 
-         var existingRecord = await this.repository.GetAsync(id);
-         if (existingRecord == null) return NotFound();
+                if (!this.ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
 
-         this.repository.Delete(id);
-         if (await this.repository.SaveAsync() == 0)
-            return BadRequest();
+                var existingRecord = await this.repository.GetAsync(id);
+                if (existingRecord == null)
+                {
+                    return NotFound();
+                }
 
-         return NoContent();
-      }
-      catch (Exception ex)
-      {
-         return BadRequest(ex.Message);
-      }
-   }
+                this.repository.Update(record, existingRecord);
+                await this.repository.SaveAsync();
+
+                return Ok(record);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(TEntityId id)
+        {
+            try
+            {
+                if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
+                {
+                    return BadRequest("DELETE is disabled");
+                }
+
+                if (this.Authorize && !this.HttpContext.ValidateScopes(this.writeScopes, ""))
+                {
+                    return Forbid();
+                }
+
+                if (!this.ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+
+                var existingRecord = await this.repository.GetAsync(id);
+                if (existingRecord == null)
+                {
+                    return NotFound();
+                }
+
+                this.repository.Delete(id);
+                if (await this.repository.SaveAsync() == 0)
+                {
+                    return BadRequest();
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public GenericController(IAuthorizationService authorizationService, IGenericRespository<T, TEntityId> repository)
+        {
+            this.repository = repository;
+            this.authorizationService = authorizationService;
+
+            ConfigureController();
+        }
+    }
 }
