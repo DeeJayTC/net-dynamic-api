@@ -27,6 +27,8 @@ namespace ApiGeneratorSampleApI.Model
       public string Color { get; set; }
 
       public Make? Make { get; set; }
+
+      public Model? Model { get; set; }
    }
 
 
@@ -40,5 +42,23 @@ namespace ApiGeneratorSampleApI.Model
       public string Name { get; set; }
 
       public string Description { get; set; }
+
+
+      public Model? Model { get; set; }
+    }
+
+
+
+   [Api("/carModel")]
+   public class Model : IObjectBase<Guid>
+   {
+       [Key]
+       [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+       [SwaggerIgnore]
+       public Guid Id { get; set; } = Guid.NewGuid();
+       public string Name { get; set; }
+
+       public string Description { get; set; }
    }
+
 }

@@ -4,15 +4,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.OData.Edm;
+using Microsoft.OData.UriParser;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.ApiGenerator.Interfaces;
+using TCDev.APIGenerator.Services;
 
 namespace TCDev.ApiGenerator
 {
@@ -23,16 +27,10 @@ namespace TCDev.ApiGenerator
         where T : class,
         IObjectBase<TEntityId>
     {
-        private bool Authorize { get; set; }
-        private bool UseCache { get; set; }
-        private bool FireEvent { get; set; }
-        private string[] readScopes { get; set; }
-        private string[] writeScopes { get; set; }
-
+        private  ApiAttributeAttributeOptions options;
         private readonly IAuthorizationService authorizationService;
         private readonly IGenericRespository<T, TEntityId> repository;
-
-        public ApiMethodsToGenerate MethodsToGenerate;
+        private readonly ODataScopeLookup<T, TEntityId> scopeLookup;
 
         private void ConfigureController()
         {
@@ -40,14 +38,7 @@ namespace TCDev.ApiGenerator
             var attrs = Attribute.GetCustomAttributes(typeof(T));
             if (attrs.FirstOrDefault(p => p.GetType() == typeof(ApiAttribute)) is ApiAttribute optionAttrib)
             {
-                this.UseCache = optionAttrib.Options.Cache;
-                this.FireEvent = optionAttrib.Options.FireEvents;
-                this.MethodsToGenerate = optionAttrib.Options.Methods;
-                this.readScopes = optionAttrib.Options.RequiredReadScopes;
-                this.writeScopes = optionAttrib.Options.RequiredReadScopes;
-                this.Authorize = optionAttrib.Options.Authorize;
-
-                // Check if we need to remove methods.
+                this.options = optionAttrib.Options;
             }
             else
             {
@@ -67,15 +58,18 @@ namespace TCDev.ApiGenerator
             AllowedFunctions = AllowedFunctions.All,
             PageSize = 20)
         ]
-        public IActionResult Query()
+        public IActionResult Query(ODataQueryOptions<T> options)
         {
             // Check if post is enabled
-            if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+            if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Get))
             {
                 return BadRequest($"GET is disabled for {typeof(T).Name}");
             }
 
-            if (this.Authorize && !this.HttpContext.ValidateScopes(this.readScopes, ""))
+
+            var requiredScopes = this.scopeLookup.GetRequestedScopes(options);
+
+            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredReadScopes, ""))
             {
                 return Forbid();
             }
@@ -93,12 +87,12 @@ namespace TCDev.ApiGenerator
         public async Task<IActionResult> Find(TEntityId id)
         {
             // Check if post is enabled
-            if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Get))
+            if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Get))
             {
                 return BadRequest($"GET is disabled for {typeof(T).Name}");
             }
 
-            if (this.Authorize && !this.HttpContext.ValidateScopes(this.readScopes, ""))
+            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredReadScopes, ""))
             {
                 return Forbid();
             }
@@ -122,12 +116,12 @@ namespace TCDev.ApiGenerator
             try
             {
                 // Check if post is enabled
-                if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Insert))
+                if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Insert))
                 {
                     return BadRequest($"POST is disabled for {record.GetType().Name}");
                 }
 
-                if (this.Authorize && !this.HttpContext.ValidateScopes(this.writeScopes, ""))
+                if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredWriteScopes, ""))
                 {
                     return Forbid();
                 }
@@ -160,12 +154,12 @@ namespace TCDev.ApiGenerator
         {
             try
             {
-                if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Update))
+                if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Update))
                 {
                     return BadRequest($"PUT is disabled for {record.GetType().Name}");
                 }
 
-                if (this.Authorize && !this.HttpContext.ValidateScopes(this.writeScopes, ""))
+                if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredWriteScopes, ""))
                 {
                     return Forbid();
                 }
@@ -197,12 +191,12 @@ namespace TCDev.ApiGenerator
         {
             try
             {
-                if (!this.MethodsToGenerate.HasFlag(ApiMethodsToGenerate.Delete))
+                if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Delete))
                 {
                     return BadRequest("DELETE is disabled");
                 }
 
-                if (this.Authorize && !this.HttpContext.ValidateScopes(this.writeScopes, ""))
+                if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredWriteScopes, ""))
                 {
                     return Forbid();
                 }
@@ -232,10 +226,14 @@ namespace TCDev.ApiGenerator
             }
         }
 
-        public GenericController(IAuthorizationService authorizationService, IGenericRespository<T, TEntityId> repository)
+        public GenericController(
+            IAuthorizationService authorizationService, 
+            IGenericRespository<T, TEntityId> repository, 
+            ODataScopeLookup<T, TEntityId> scopeLookup)
         {
             this.repository = repository;
             this.authorizationService = authorizationService;
+            this.scopeLookup = scopeLookup;
 
             ConfigureController();
         }

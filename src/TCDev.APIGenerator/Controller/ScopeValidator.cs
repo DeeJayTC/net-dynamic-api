@@ -12,6 +12,14 @@ namespace TCDev.ApiGenerator
                 .FirstOrDefault(p => p.Type == "scope" || p.Type == "scp").Value
                 .Split(" ")
                 .ToArray();
+
+            var query = context.Request.Query.ToDictionary(p => p.Key, p => p.Value);
+            if (query.ContainsKey($"$expand"))
+            {
+
+            }
+
+
             return userScopes.Any(compareScopes.Contains);
         }
     }

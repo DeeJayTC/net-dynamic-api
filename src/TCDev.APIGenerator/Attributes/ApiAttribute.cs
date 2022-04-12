@@ -27,7 +27,7 @@ namespace TCDev.ApiGenerator.Attributes
         public ApiAttribute(
             string route,
             ApiMethodsToGenerate methods = ApiMethodsToGenerate.All,
-            string[] requiredReadScopes = null,
+            string[] requiredReadScopes =  null,
             string[] requiredWriteScopes = null,
             bool fireEvents = false,
             bool authorize = true,

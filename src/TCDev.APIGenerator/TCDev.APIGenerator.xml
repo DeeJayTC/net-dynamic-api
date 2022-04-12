@@ -52,9 +52,9 @@
                Default cache duration
             </summary>
         </member>
-        <member name="M:TCDev.ApiGenerator.GenericController`2.Query">
+        <member name="M:TCDev.ApiGenerator.GenericController`2.Query(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
             <summary>
-               Returns a list of <see cref="!:T" /> entries
+                Returns a list of <see cref="!:T" /> entries
             </summary>
             <returns cref="T:System.Collections.Generic.List`1"></returns>
         </member>
@@ -68,6 +68,23 @@
             <summary>
                Enable Swagger in Production
             </summary>
+        </member>
+        <member name="M:TCDev.APIGenerator.Services.ODataScopeLookup`2.GetRequestedScopes(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
+            <summary>
+            Get all scopes required for the given query
+            walks along all $expand properties and checks all required scopes
+            returns a list of all scopes required
+            </summary>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TCDev.APIGenerator.Services.ODataScopeLookup`2.GetRequestedTypes(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
+            <summary>
+            Get all types requested in the OData query,
+            walks along all $expand properties and returns all types requested
+            </summary>
+            <param name="options"></param>
+            <returns></returns>
         </member>
         <member name="T:TCDev.Controllers.GenericControllerRouteConvention">
             <summary>

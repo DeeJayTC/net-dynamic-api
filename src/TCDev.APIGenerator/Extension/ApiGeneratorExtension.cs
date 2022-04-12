@@ -67,6 +67,7 @@ namespace TCDev.ApiGenerator.Extension
                 .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
                 .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
                 .AddSingleton(typeof(ITriggers), typeof(Triggers))
+                .AddScoped(typeof(ODataScopeLookup<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
 

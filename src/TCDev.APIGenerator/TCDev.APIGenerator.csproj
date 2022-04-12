@@ -61,5 +61,9 @@
     <ProjectReference Include="..\TCDev.ApiGenerator.Schema\TCDev.ApiGenerator.Schema.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extension\Tools\" />
+  </ItemGroup>
+
 
 </Project>
