@@ -66,10 +66,7 @@ namespace TCDev.ApiGenerator
                 return BadRequest($"GET is disabled for {typeof(T).Name}");
             }
 
-
-            var requiredScopes = this.scopeLookup.GetRequestedScopes(options);
-
-            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredReadScopes, ""))
+            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.scopeLookup.GetRequestedScopes(options), ""))
             {
                 return Forbid();
             }
@@ -84,7 +81,7 @@ namespace TCDev.ApiGenerator
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Find(TEntityId id)
+        public async Task<IActionResult> Find(TEntityId id, ODataQueryOptions<T> options)
         {
             // Check if post is enabled
             if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Get))
@@ -92,7 +89,7 @@ namespace TCDev.ApiGenerator
                 return BadRequest($"GET is disabled for {typeof(T).Name}");
             }
 
-            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredReadScopes, ""))
+            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.scopeLookup.GetRequestedScopes(options), ""))
             {
                 return Forbid();
             }

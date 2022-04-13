@@ -13,14 +13,7 @@ namespace TCDev.ApiGenerator
                 .Split(" ")
                 .ToArray();
 
-            var query = context.Request.Query.ToDictionary(p => p.Key, p => p.Value);
-            if (query.ContainsKey($"$expand"))
-            {
-
-            }
-
-
-            return userScopes.Any(compareScopes.Contains);
+            return userScopes.All(compareScopes.Contains);
         }
     }
 }

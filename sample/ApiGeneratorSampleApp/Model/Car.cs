@@ -9,8 +9,8 @@ namespace ApiGeneratorSampleApI.Model
 
    [Api("/car", 
        authorize: true,
-       requiredReadScopes: new string[] { "all.read" },
-       requiredWriteScopes: new string[] { "all.write" })]
+       requiredReadScopes: new string[] { "car.read" },
+       requiredWriteScopes: new string[] { "car.write" })]
     public class Car : IObjectBase<Guid>
    {
       [Key]
@@ -32,8 +32,11 @@ namespace ApiGeneratorSampleApI.Model
    }
 
 
-   [Api("/carMakes")]
-   public class Make : IObjectBase<Guid>
+   [Api("/carMakes",
+       authorize: true,
+       requiredReadScopes: new string[] { "make.read" },
+       requiredWriteScopes: new string[] { "make.write" })]
+    public class Make : IObjectBase<Guid>
    {
       [Key]
       [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -49,8 +52,11 @@ namespace ApiGeneratorSampleApI.Model
 
 
 
-   [Api("/carModel")]
-   public class Model : IObjectBase<Guid>
+   [Api("/carModel",
+       authorize: true,
+       requiredReadScopes: new string[] { "model.read" },
+       requiredWriteScopes: new string[] { "model.write" })]
+    public class Model : IObjectBase<Guid>
    {
        [Key]
        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

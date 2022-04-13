@@ -32,6 +32,8 @@ namespace TCDev.APIGenerator.Schema
       [JsonProperty("idType")]
       public string IdType { get; set; } = "int";
 
+      public bool Authorize { get; set; } = false;
+        
       public List<Field> Fields { get; set; }
    }
 

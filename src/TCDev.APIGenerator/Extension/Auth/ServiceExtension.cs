@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using TCDev.ApiGenerator;
 
 namespace TCDev.APIGenerator.Identity
 {
@@ -12,12 +13,13 @@ namespace TCDev.APIGenerator.Identity
     {
         public static IServiceCollection AddApiGeneratorIdentity(this IServiceCollection services, IConfiguration configuration)
         {
-            string domain = $"https://{configuration["Auth0:Domain"]}/";
+            var config = new ApiGeneratorConfig(configuration);
+
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = "https://structures.eu.auth0.com/";
+                    options.Authority = config.IdentityOptions.Authority;
                     options.Audience = "https://www.smoower.com";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
