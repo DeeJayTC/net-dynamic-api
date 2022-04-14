@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.APIGenerator.Extension;
@@ -107,7 +108,6 @@ namespace TCDev.ApiGenerator.Extension
                             Email = ApiGeneratorConfig.SwaggerOptions.ContactMail, Url = new Uri(ApiGeneratorConfig.SwaggerOptions.ContactUri)
                         }
                     });
-
                 c.DocumentFilter<ShowInSwaggerFilter>();
                 c.SchemaFilter<SwaggerSchemaFilter>();
 
@@ -176,6 +176,13 @@ namespace TCDev.ApiGenerator.Extension
             app.UseSwaggerUI(c =>
             {
                 c.InjectStylesheet("/SwaggerDarkTheme.css");
+                c.OAuthConfigObject = new OAuthConfigObject()
+                {
+                    AppName = "ApiGenerator",
+                    ClientId = string.Empty,
+                    ClientSecret = string.Empty,
+                    
+                };
                 c.SwaggerEndpoint(
                     "/swagger/v1/swagger.json",
                     $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"

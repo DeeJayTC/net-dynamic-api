@@ -78,13 +78,18 @@ public class JsonClassBuilder
 
          namespace TCDev.ApiGenerator
          {{
-             [Api(""{definition.RouteTemplate}"",
-                    authorize: {definition.Authorize},
-                    requiredReadScopes: new string[] {{ \""car.read\"" }}
-                    requiredWriteScopes: new string[] {{\""car.read\""}})]
-                    
-             )]          
-             public class {definition.Name} : IObjectBase<{definition.IdType}>
+             [Api(""{definition.RouteTemplate}"" ";
+
+        if (definition.Authorize)
+        {
+            classCode += $@",authorize: true";
+            if(definition.ScopesRead != string.Empty) classCode += $@",requiredReadScopes: new string[] {{ { definition.ScopesRead } }}";
+            if (definition.ScopesWrite != string.Empty) classCode += $@",requiredWriteScopes: new string[] {{ { definition.ScopesWrite } }}";
+        }
+               
+        classCode += $@")]          
+
+           public class {definition.Name} : IObjectBase<{definition.IdType}>
             
             // Add Properties
             {{
