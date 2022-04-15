@@ -15,9 +15,7 @@
 | VNext |  <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/vnext?label=vnext"> | [0.1.0-alpha-4a262d](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.0-alpha-4a262d)
 
 ## About
-*Note: this is a really early Alpha, consider things with care. 
-
-The API Generator takes any class (or json definition) you like and turns it into a fully working CRUD API with Odata support, Database (SQL SQLLite or InMemory), Events, Caching and everything else handled automatically for you. 
+The API Generator automatically generates a fully working CRUD Microservice from just your Model (C# Classes) or a JSON Definition. Everything from routes, database handling, migrations, openapi spec, OData etc is working magically out of the box! You just write your model and get a fully working CRUD api with filtering, sorting, selectable fields and everything else OData and classic REST offers.
 
 
 By using the API Generator, this little code snippet is already a working CRUD API
@@ -50,6 +48,29 @@ Heres another sample:
     public Guid Id { get; set; }
  }
 ```
+
+And this is also the FULL code for a working API using the JSON mode:
+
+```json
+[
+    {
+      "name": "Car",
+      "route": "/cars",
+      "caching": true,
+      "cacheLiveTime": 1000,
+      "events": "POST,PUT,DELETE",
+      "idType":  "int", 
+      "Fields": [
+        {
+          "name": "Name",
+          "type": "String",
+          "maxLength": "200",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+ ```
 
 # Getting Started & Docoumentation
 
