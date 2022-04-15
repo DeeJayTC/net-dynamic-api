@@ -1,0 +1,45 @@
+﻿[
+
+  {
+    "name": "MakeJSON",
+    "route": "/MakeJSON",
+    "idType": "int",
+    "authorize": true,
+    "scopesRead": [ "all.read" ],
+    "scopesWrite": [ "all.write" ],
+    "Fields": [
+      {
+        "name": "Name",
+        "type": "string"
+      },
+      {
+        "name": "Description",
+        "Type": "string"
+
+      }
+    ]
+  },
+  {
+    "name": "CarJSON",
+    "route": "/CarJSON",
+    "idType": "int",
+    "Fields": [
+      {
+        "name": "Name",
+        "type": "string"
+      },
+      {
+        "name": "Description",
+        "Type": "string"
+      },
+      {
+        "name": "Make",
+        "type": "virtual MakeJSON"
+      },
+      {
+        "name": "MakeId",
+        "type": "int"
+      }
+    ]
+  }
+]

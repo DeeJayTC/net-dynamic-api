@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 	<PackageId>TCDev.APIGenerator</PackageId>
-	<Version>0.0.5-alpha</Version>
+	<Version>0.1.2</Version>
 	<Authors>Tim Cadenbach</Authors>
 	<Company>TCDev</Company>
-	<Description>Creates fully working CRUD Apis from just class files</Description>
-	<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget</Configurations>
+	<Description>Creates fully working CRUD Apis from just models</Description>
+	<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithSampleApp|AnyCPU'">
+    <DocumentationFile>TCDev.ApiGenerator.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SampleAppJson|AnyCPU'">
     <DocumentationFile>TCDev.ApiGenerator.xml</DocumentationFile>
   </PropertyGroup>
 
@@ -33,12 +37,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.2" />
-
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -55,6 +59,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TCDev.ApiGenerator.Schema\TCDev.ApiGenerator.Schema.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extension\Tools\" />
   </ItemGroup>
 
 

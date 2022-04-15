@@ -1,0 +1,18 @@
+﻿[
+    {
+      "name": "Car",
+      "route": "/cars",
+      "caching": true,
+      "cacheLiveTime": 1000,
+      "events": "POST,PUT,DELETE",
+      "idType":  "int", 
+      "Fields": [
+        {
+          "name": "Name",
+          "type": "String",
+          "maxLength": "200",
+          "nullable": false
+        }
+      ]
+    }
+  ]

@@ -12,17 +12,17 @@ namespace TCDev.ApiGenerator.Attributes
       /// <summary>
       ///    Claims required for read access
       /// </summary>
-      public string[] RequiredReadClaims { get; set; } = new string[0];
+      public string[] RequiredReadScopes { get; set; } = new string[0];
 
       /// <summary>
       ///    Claims required for write access
       /// </summary>
-      public string[] RequiredWriteClaims { get; set; } = new string[0];
+      public string[] RequiredWriteScopes { get; set; } = new string[0];
 
       /// <summary>
       ///    Wether authorized access is required or not
       /// </summary>
-      public bool Authorize { get; set; } = true;
+      public bool Authorize { get; set; } = false;
 
       /// <summary>
       ///    Cache responses

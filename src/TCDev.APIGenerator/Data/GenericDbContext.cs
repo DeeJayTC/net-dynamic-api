@@ -1,167 +1,126 @@
-﻿// TCDev 2022/03/16
-// Apache 2.0 License
-// https://www.github.com/deejaytc/dotnet-utils
+﻿// TCDev.de 2022/03/16
+// TCDev.APIGenerator.GenericDbContext.cs
+// https://github.com/DeeJayTC/net-dynamic-api
 
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EntityFrameworkCore.Triggers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
-using TCDev.ApiGenerator.Attributes;
-using TCDev.ApiGenerator.Extension;
+using TCDev.APIGenerator.Services;
 
 namespace TCDev.ApiGenerator.Data
 {
-   public class GenericDbContext : DbContext
-   {
-      public GenericDbContext()
-      {
-      }
+    public class GenericDbContext : DbContext
+    {
+        //public static IModel StaticModel { get; } = BuildStaticModel();
+        private readonly AssemblyService assemblyService;
 
-      public GenericDbContext(
-         DbContextOptions<GenericDbContext> options,
-         IConfiguration config,
-         IHttpContextAccessor httpContextAccessor) : base(options)
-      {
-         HttpContextAccessor = httpContextAccessor;
-      }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (optionsBuilder.IsConfigured)
+            {
+                return;
+            }
 
-      protected IHttpContextAccessor HttpContextAccessor { get; }
-
-      public static IModel StaticModel { get; } = BuildStaticModel();
-      public static IEdmModel EdmModel { get; } = GetEdmModel();
-
-      protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      {
-         if (!optionsBuilder.IsConfigured)
-         {
-            var config = new ApiGeneratorConfig(null);
             var configuration = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile("appsettings.json")
-               .Build();
-            var connectionString = configuration.GetConnectionString("ApiGeneratorDatabase");
-
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile("secrets.json", true)
+                .Build();
+            var config = new ApiGeneratorConfig(configuration);
             // Add Database Context
 
             switch (config.DatabaseOptions.DatabaseType)
             {
-               case DBType.InMemory:
-                  optionsBuilder.UseInMemoryDatabase("ApiGeneratorDB");
-                  break;
-               case DBType.SQL:
-                  optionsBuilder.UseSqlServer(connectionString);
-                  break;
-               case DBType.SQLite:
-                  optionsBuilder.UseSqlite(connectionString);
-                  break;
-               default:
-                  throw new Exception("Database Type Unkown");
+                case DbType.InMemory:
+                    optionsBuilder.UseInMemoryDatabase("ApiGeneratorDB");
+                    break;
+                case DbType.Sql:
+                    var connectionStringSql = configuration.GetConnectionString("ApiGeneratorDatabase");
+                    optionsBuilder.UseSqlServer(connectionStringSql);
+                    break;
+                case DbType.SqLite:
+                    var connectionStringSqLite = configuration.GetConnectionString("ApiGeneratorDatabase");
+                    optionsBuilder.UseSqlite(connectionStringSqLite);
+                    break;
+                default:
+                    throw new Exception("Database Type Unknown");
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            // Add all types T using IEntityTypeConfiguration
+            foreach (var asm in this.assemblyService.Assemblies)
+            {
+                builder.ApplyConfigurationsFromAssembly(asm);
             }
 
+            // Add all other custom types, not implementing IEntityTypeConfiguration
+            foreach (var customType in this.assemblyService.Types.Where(x => !x.IsAssignableFrom(typeof(IEntityTypeConfiguration<>))))
+            {
+                builder.Entity(customType);
 
-         }
-      }
+                //builder.Model.AddEntityType(customType);
+            }
 
-      // -> Tenant Isolation
-      //public void SetGlobalQuery<T>(ModelBuilder builder) where T : EntityBase<T>
-      //{
-      //    var user = HttpContextAccessor.HttpContext.GetUser();
-      //    builder.Entity<T>().HasKey(e => e.Id);
-      //    builder.Entity<T>().HasQueryFilter(e => e.TenantId == user.TenantId);
-      //}
-
-      protected override void OnModelCreating(ModelBuilder builder)
-      {
-         // Add all types T using IEntityTypeConfiguration
-         builder.ApplyConfigurationsFromAssembly(Assembly.GetEntryAssembly());
-
-         // Add all other types (auto mode)
-         var customTypes = Assembly.GetEntryAssembly().GetExportedTypes()
-            .Where(x => x.GetCustomAttributes<ApiAttribute>().Any());
-         foreach (var customType in customTypes.Where(x => x.GetInterface("IEntityTypeConfiguration`1") == null))
-            builder.Entity(customType);
-
-         base.OnModelCreating(builder);
-      }
+            base.OnModelCreating(builder);
+        }
 
 
-      /// <summary>
-      ///    Generate EDM Model for OData functionalities
-      /// </summary>
-      /// <returns></returns>
-      public static IEdmModel GetEdmModel()
-      {
-         var customTypes = Assembly.GetEntryAssembly().GetExportedTypes()
-            .Where(x => x.GetCustomAttributes<ApiAttribute>().Any());
-         var builder = new ODataConventionModelBuilder();
-         foreach (var customType in customTypes)
-         {
-            var newType = builder.AddEntityType(customType);
-         }
+        /// <summary>
+        ///     Generate EDM Model for OData functionality
+        /// </summary>
+        /// <returns></returns>
+        public static IEdmModel GetEdmModel(AssemblyService service)
+        {
+            var builder = new ODataConventionModelBuilder();
+            foreach (var customType in service.Types)
+            {
+                builder.AddEntityType(customType);
+            }
 
-         return builder.GetEdmModel();
-      }
+            return builder.GetEdmModel();
+        }
 
 
-      //public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-      //{
-      //          //var entries = ChangeTracker
-      //          //    .Entries()
-      //          //    .Where(e =>
-      //          //            e.Entity is IObjectBase<string>
-      //          //         && (e.State == EntityState.Added
-      //          //         || e.State == EntityState.Modified
-      //          //         || e.State == EntityState.Deleted
-      //          //         )
-      //          //    );
+        public GenericDbContext(
+            DbContextOptions<GenericDbContext> options,
+            IConfiguration config,
+            AssemblyService assemblyService) : base(options)
+        {
+            this.assemblyService = assemblyService;
+        }
 
-      //          //UpdateEntries<int>(user, entries);
-      //          //UpdateEntries<string>(user, entries);
-      //          //UpdateEntries<Guid>(user, entries);
+        #region If you're targeting EF Core
 
-      //          return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-      //}
+        public override int SaveChanges()
+        {
+            return this.SaveChangesWithTriggers(base.SaveChanges);
+        }
 
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            return this.SaveChangesWithTriggers(base.SaveChanges, acceptAllChangesOnSuccess);
+        }
 
-      private static IModel BuildStaticModel()
-      {
-         using var dbContext = new GenericDbContext();
-         return dbContext.Model;
-      }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, true, cancellationToken);
+        }
 
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
+        {
+            return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, acceptAllChangesOnSuccess, cancellationToken);
+        }
 
-      #region If you're targeting EF Core
-
-      public override int SaveChanges()
-      {
-         return this.SaveChangesWithTriggers(base.SaveChanges);
-      }
-
-      public override int SaveChanges(bool acceptAllChangesOnSuccess)
-      {
-         return this.SaveChangesWithTriggers(base.SaveChanges, acceptAllChangesOnSuccess);
-      }
-
-      public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-      {
-         return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, true, cancellationToken);
-      }
-
-      public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
-         CancellationToken cancellationToken = default)
-      {
-         return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, acceptAllChangesOnSuccess, cancellationToken);
-      }
-
-      #endregion
-   }
+        #endregion
+    }
 }

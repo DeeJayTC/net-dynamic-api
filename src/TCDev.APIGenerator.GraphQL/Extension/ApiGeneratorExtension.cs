@@ -1,5 +1,5 @@
-﻿// TCDev 2022/03/16
-// Apache 2.0 License
+﻿// TCDev.de 2022/03/16
+// TCDev.APIGenerator.GraphQL.ApiGeneratorExtension.cs
 // https://www.github.com/deejaytc/dotnet-utils
 
 using System.Reflection;
@@ -9,28 +9,27 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TCDev.ApiGenerator.Extension
+namespace TCDev.ApiGenerator.Extension;
+
+public static class ApiGeneratorExtension
 {
-   public static class ApiGeneratorExtension
+   public static IServiceCollection AddApiGeneratorGraphQl(this IServiceCollection services, IConfiguration config, Assembly assembly)
    {
-      public static IServiceCollection AddApiGeneratorGraphQL(this IServiceCollection services, IConfiguration config, Assembly assembly)
-      {
-         services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
+      services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
 
-         return services;
-      }
+      return services;
+   }
 
 
-      public static IApplicationBuilder UseAPIGeneratorGraphQL(this IApplicationBuilder app)
-      {
-         return app;
-      }
+   public static IApplicationBuilder UseApiGeneratorGraphQl(this IApplicationBuilder app)
+   {
+      return app;
+   }
 
 
-      public static IEndpointRouteBuilder UseGraphQLEndpoint(this IEndpointRouteBuilder endpoints)
-      {
-         endpoints.MapGraphQL();
-         return endpoints;
-      }
+   public static IEndpointRouteBuilder UseGraphQlEndpoint(this IEndpointRouteBuilder endpoints)
+   {
+      endpoints.MapGraphQL();
+      return endpoints;
    }
 }

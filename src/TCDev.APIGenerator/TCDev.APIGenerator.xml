@@ -4,15 +4,13 @@
         <name>TCDev.APIGenerator</name>
     </assembly>
     <members>
-        <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
+        <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
             <summary>
                Attribute defining auto generated controller for the class
             </summary>
             <param name="route">The full base route for the class ie /myclass/ </param>
-            <param name="requiredReadClaims"></param>
-            <param name="requiredWriteClaims"></param>
-            <param name="requiredRolesRead"></param>
-            <param name="requiredRolesWrite"></param>
+            <param name="requiredReadScopes"></param>
+            <param name="requiredWriteScopes"></param>
             <param name="fireEvents"></param>
             <param name="authorize"></param>
             <param name="cache"></param>
@@ -24,12 +22,12 @@
                Configuration settings for generated controller behaviour
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredReadClaims">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredReadScopes">
             <summary>
                Claims required for read access
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredWriteClaims">
+        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredWriteScopes">
             <summary>
                Claims required for write access
             </summary>
@@ -54,22 +52,39 @@
                Default cache duration
             </summary>
         </member>
-        <member name="M:TCDev.ApiGenerator.GenericController`2.Query">
+        <member name="M:TCDev.ApiGenerator.GenericController`2.Query(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
             <summary>
-               Returns a list of <see cref="!:T" /> entries
+                Returns a list of <see cref="!:T" /> entries
             </summary>
             <returns cref="T:System.Collections.Generic.List`1"></returns>
         </member>
-        <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel">
+        <member name="M:TCDev.ApiGenerator.Data.GenericDbContext.GetEdmModel(TCDev.APIGenerator.Services.AssemblyService)">
             <summary>
-               Generate EDM Model for OData functionalities
+                Generate EDM Model for OData functionality
             </summary>
             <returns></returns>
         </member>
-        <member name="P:TCDev.ApiGenerator.Extension.SwaggerOptions.EnableProduction">
+        <member name="P:TCDev.ApiGenerator.SwaggerOptions.EnableProduction">
             <summary>
-            Enable Swagger in Production
+               Enable Swagger in Production
             </summary>
+        </member>
+        <member name="M:TCDev.APIGenerator.Services.ODataScopeLookup`2.GetRequestedScopes(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
+            <summary>
+            Get all scopes required for the given query
+            walks along all $expand properties and checks all required scopes
+            returns a list of all scopes required
+            </summary>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TCDev.APIGenerator.Services.ODataScopeLookup`2.GetRequestedTypes(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
+            <summary>
+            Get all types requested in the OData query,
+            walks along all $expand properties and returns all types requested
+            </summary>
+            <param name="options"></param>
+            <returns></returns>
         </member>
         <member name="T:TCDev.Controllers.GenericControllerRouteConvention">
             <summary>
@@ -77,11 +92,17 @@
                One of the main pieces to make the magic work.
             </summary>
         </member>
-        <member name="M:TCDev.Controllers.GenericTypeControllerFeatureProvider.#ctor(System.String[])">
+        <member name="M:TCDev.Controllers.GenericAssemblyControllerFeatureProvider.#ctor(System.Reflection.Assembly[])">
             <summary>
                Initiate the Controller generator
             </summary>
             <param name="assemblies">Names of assemblies to search for classes</param>
+        </member>
+        <member name="M:TCDev.Controllers.GenericTypeControllerFeatureProvider.#ctor(System.Collections.Generic.List{System.Type})">
+            <summary>
+               Initiate the Controller generator
+            </summary>
+            <param name="types">Names of assemblies to search for classes</param>
         </member>
     </members>
 </doc>

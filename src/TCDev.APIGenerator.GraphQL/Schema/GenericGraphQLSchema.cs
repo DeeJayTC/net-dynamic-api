@@ -1,20 +1,23 @@
-﻿// TCDev 2022/03/16
-// Apache 2.0 License
+﻿// TCDev.de 2022/03/16
+// TCDev.APIGenerator.GraphQL.GenericGraphQLSchema.cs
 // https://www.github.com/deejaytc/dotnet-utils
 
 using System;
 using System.Reflection;
 
-namespace TCDev.ApiGenerator.GraphQL
+namespace TCDev.ApiGenerator.GraphQL;
+
+public class GenericGraphQlSchema
 {
-   public class GenericGraphQLSchema
+   public GenericGraphQlSchema(IServiceProvider sp)
    {
-      public GenericGraphQLSchema(IServiceProvider sp)
+      string[] assemblies =
       {
-         string[] assemblies = {Assembly.GetEntryAssembly().FullName};
-         foreach (var assembly in assemblies)
-         {
-         }
+         Assembly.GetEntryAssembly()
+            .FullName
+      };
+      foreach (var assembly in assemblies)
+      {
       }
    }
 }
