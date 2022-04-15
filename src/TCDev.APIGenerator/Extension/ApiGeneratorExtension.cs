@@ -18,9 +18,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.APIGenerator.Extension;
+using TCDev.APIGenerator.Extension.Swagger;
 using TCDev.ApiGenerator.Json;
 using TCDev.APIGenerator.Schema;
 using TCDev.APIGenerator.Services;
@@ -67,8 +69,13 @@ namespace TCDev.ApiGenerator.Extension
                 .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
                 .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
                 .AddSingleton(typeof(ITriggers), typeof(Triggers))
+                .AddScoped(typeof(ODataScopeLookup<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
+
+
+
+            
             //Add Framework Services & Options, we use the current assembly to get classes. 
             var assemblyService = new AssemblyService();
             services.AddSingleton(assemblyService);
@@ -102,10 +109,15 @@ namespace TCDev.ApiGenerator.Extension
                             Email = ApiGeneratorConfig.SwaggerOptions.ContactMail, Url = new Uri(ApiGeneratorConfig.SwaggerOptions.ContactUri)
                         }
                     });
-
                 c.DocumentFilter<ShowInSwaggerFilter>();
                 c.SchemaFilter<SwaggerSchemaFilter>();
+                c.OperationFilter<IgnoreODataQueryOptionOperationFilter>();
 
+                if (ApiGeneratorConfig.ODataOptions.Enabled)
+                {
+                    c.OperationFilter<EnableQueryFiler>();
+                }
+                
                 if (ApiGeneratorConfig.ApiOptions.UseXmlComments)
                 {
                     if (!string.IsNullOrEmpty(ApiGeneratorConfig.ApiOptions.XmlCommentsFile))
@@ -129,6 +141,10 @@ namespace TCDev.ApiGenerator.Extension
                         opt.EnableQueryFeatures(20000);
                         opt.Select()
                             .Expand()
+                            .OrderBy()
+                            .SetMaxTop(10000)
+                            .Count()
+                            .SkipToken()
                             .Filter();
                     })
                     .AddJsonOptions(o => { o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); }
@@ -167,6 +183,13 @@ namespace TCDev.ApiGenerator.Extension
             app.UseSwaggerUI(c =>
             {
                 c.InjectStylesheet("/SwaggerDarkTheme.css");
+                c.OAuthConfigObject = new OAuthConfigObject()
+                {
+                    AppName = "ApiGenerator",
+                    ClientId = string.Empty,
+                    ClientSecret = string.Empty,
+                    
+                };
                 c.SwaggerEndpoint(
                     "/swagger/v1/swagger.json",
                     $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"

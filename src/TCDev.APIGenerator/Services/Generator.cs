@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using TCDev.ApiGenerator.Interfaces;
 using TCDev.APIGenerator.Schema;
 
 namespace TCDev.ApiGenerator.Json;
@@ -77,8 +78,18 @@ public class JsonClassBuilder
 
          namespace TCDev.ApiGenerator
          {{
-             [Api(""{definition.RouteTemplate}"")]
-             public class {definition.Name} : IObjectBase<{definition.IdType}>
+             [Api(""{definition.RouteTemplate}"" ";
+
+        if (definition.Authorize)
+        {
+            classCode += $@",authorize: true";
+            if(definition.ScopesRead != string.Empty) classCode += $@",requiredReadScopes: new string[] {{ { definition.ScopesRead } }}";
+            if (definition.ScopesWrite != string.Empty) classCode += $@",requiredWriteScopes: new string[] {{ { definition.ScopesWrite } }}";
+        }
+               
+        classCode += $@")]          
+
+           public class {definition.Name} : IObjectBase<{definition.IdType}>
             
             // Add Properties
             {{

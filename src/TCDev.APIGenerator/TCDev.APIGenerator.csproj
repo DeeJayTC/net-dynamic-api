@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 	<PackageId>TCDev.APIGenerator</PackageId>
-	<Version>0.1.0-alpha-4a262d</Version>
+	<Version>0.1.2</Version>
 	<Authors>Tim Cadenbach</Authors>
 	<Company>TCDev</Company>
 	<Description>Creates fully working CRUD Apis from just models</Description>
@@ -59,6 +59,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TCDev.ApiGenerator.Schema\TCDev.ApiGenerator.Schema.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extension\Tools\" />
   </ItemGroup>
 
 

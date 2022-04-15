@@ -4,6 +4,9 @@
     "name": "MakeJSON",
     "route": "/MakeJSON",
     "idType": "int",
+    "authorize": true,
+    "scopesRead": [ "all.read" ],
+    "scopesWrite": [ "all.write" ],
     "Fields": [
       {
         "name": "Name",
