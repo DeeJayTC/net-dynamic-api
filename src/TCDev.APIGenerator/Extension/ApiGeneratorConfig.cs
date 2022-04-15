@@ -97,6 +97,8 @@ public class IdentityOptions
     public string[] Scopes { get; set; } = { "ReadWrite.All" };
 
     public bool ValidateIssuer { get; set; } = true;
+    public string MetaDataUri { get; set; } = "";
+    
     public bool ValidateAudience { get; set; } = true;
     public bool ValidateLifetime { get; set; } = true;
     public bool ValidateIssuerSigningKey { get; set; } = true;

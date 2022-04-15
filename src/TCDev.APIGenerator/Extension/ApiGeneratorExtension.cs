@@ -22,6 +22,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
 using TCDev.APIGenerator.Extension;
+using TCDev.APIGenerator.Extension.Swagger;
 using TCDev.ApiGenerator.Json;
 using TCDev.APIGenerator.Schema;
 using TCDev.APIGenerator.Services;
@@ -110,7 +111,13 @@ namespace TCDev.ApiGenerator.Extension
                     });
                 c.DocumentFilter<ShowInSwaggerFilter>();
                 c.SchemaFilter<SwaggerSchemaFilter>();
+                c.OperationFilter<IgnoreODataQueryOptionOperationFilter>();
 
+                if (ApiGeneratorConfig.ODataOptions.Enabled)
+                {
+                    c.OperationFilter<EnableQueryFiler>();
+                }
+                
                 if (ApiGeneratorConfig.ApiOptions.UseXmlComments)
                 {
                     if (!string.IsNullOrEmpty(ApiGeneratorConfig.ApiOptions.XmlCommentsFile))

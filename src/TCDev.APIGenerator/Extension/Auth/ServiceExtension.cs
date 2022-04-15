@@ -20,9 +20,14 @@ namespace TCDev.APIGenerator.Identity
                 .AddJwtBearer(options =>
                 {
                     options.Authority = config.IdentityOptions.Authority;
-                    options.Audience = "https://www.smoower.com";
+                    options.Audience = config.IdentityOptions.Audience;
+                    options.RequireHttpsMetadata = false;
+                    options.MetadataAddress = config.IdentityOptions.MetaDataUri;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ValidateIssuer = config.IdentityOptions.ValidateIssuer,
+                        ValidateLifetime = config.IdentityOptions.ValidateLifetime,
+                        ValidateIssuerSigningKey = config.IdentityOptions.ValidateIssuerSigningKey,
                         NameClaimType = ClaimTypes.NameIdentifier
                     };
                 });

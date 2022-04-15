@@ -14,7 +14,7 @@ builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExec
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseAutomaticApiMigrations();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
