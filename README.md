@@ -73,10 +73,21 @@ And this is also the FULL code for a working API using the JSON mode:
  ```
 
 # Getting Started & Docoumentation
+Read this for a more detailed guide -> [https://www.tcdev.de/tcdev-api-generator-getting-started](https://www.tcdev.de/tcdev-api-generator-getting-started)
+Or just follow these steps:
 
-[https://www.tcdev.de/tcdev-api-generator-getting-started](https://www.tcdev.de/tcdev-api-generator-getting-started)
+* Install the package
+```csharp
+dotnet add package TCDev.ApiGenerator --prerelease
+```
+after the package is installed add this to your program.cs (or startup.cs)
 
-[https://tcdev.gitbook.io/](https://tcdev.gitbook.io/)
+```csharp
+// Add API Generator and load data
+builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
+```
+
+### Documentation -> [https://tcdev.gitbook.io/](https://tcdev.gitbook.io/)
 
 # Samples
 [https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample](https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample)
