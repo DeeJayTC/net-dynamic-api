@@ -18,7 +18,8 @@ namespace TCDev.ApiGenerator.Attributes
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var _assemblies = context.HttpContext.RequestServices.GetService(typeof(AssemblyService)) as AssemblyService;
-            var _type = _assemblies.Types.FirstOrDefault(p => p.Name == "Car");
+            var _type = _assemblies.Types.FirstOrDefault(p => p.Name ==
+                                                              ((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor).ControllerName);
 
             if (_type == null) return;
 
