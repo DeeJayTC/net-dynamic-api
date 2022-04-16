@@ -11,8 +11,8 @@
 
 | Version | Build | Nuget 
 |--------------|-----------------|-------------------|
-| Main | <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/main?label=Main"> | [0.1.2](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.1-alpha) | [![Build Status Installer pipeline](https://dev.azure.com/microsoft/Dart/_apis/build/status/microsoft.PowerToys?branchName=main)](https://dev.azure.com/microsoft/Dart/_build/latest?definitionId=76541&branchName=main) |
-| VNext |  <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/vnext?label=vnext"> | [0.1.0-alpha-4a262d](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.0-alpha-4a262d)
+| Main | <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/main?label=Main"> | [0.1.3](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.1-alpha) | [![Build Status Installer pipeline](https://dev.azure.com/microsoft/Dart/_apis/build/status/microsoft.PowerToys?branchName=main)](https://dev.azure.com/microsoft/Dart/_build/latest?definitionId=76541&branchName=main) |
+| VNext |  <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/vnext?label=vnext"> | [0.1.2-alpha-6ffff](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.0-alpha-4a262d)
 
 ## About
 The API Generator automatically generates a fully working CRUD Microservice from just your Model (C# Classes) or a JSON Definition. Everything from routes, database handling, migrations, openapi spec, OData etc is working magically out of the box! You just write your model and get a fully working CRUD api with filtering, sorting, selectable fields and everything else OData and classic REST offers.
