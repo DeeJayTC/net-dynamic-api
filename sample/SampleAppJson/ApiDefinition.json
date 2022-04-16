@@ -1,18 +1,48 @@
 ﻿[
-    {
-      "name": "Car",
-      "route": "/cars",
-      "caching": true,
-      "cacheLiveTime": 1000,
-      "events": "POST,PUT,DELETE",
-      "idType":  "int", 
-      "Fields": [
-        {
-          "name": "Name",
-          "type": "String",
-          "maxLength": "200",
-          "nullable": false
-        }
-      ]
-    }
-  ]
+  {
+    "name": "Make",
+    "route": "/make",
+    "idType": "int",
+    "Fields": [
+      {
+        "name": "Name",
+        "type": "String"
+      },
+      {
+        "name": "Description",
+        "type": "String"
+      },
+      {
+        "name": "Year",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "name": "Car",
+    "route": "/cars",
+    "idType": "int",
+    "Fields": [
+      {
+        "name": "Name",
+        "type": "String"
+      },
+      {
+        "name": "Description",
+        "type": "String"
+      },
+      {
+        "name": "Year",
+        "type": "int"
+      },
+      {
+        "name": "Make",
+        "type": "virtual Make"
+      },
+      {
+        "name": "MakeId",
+        "type": "int"
+      }
+    ]
+  }
+]
