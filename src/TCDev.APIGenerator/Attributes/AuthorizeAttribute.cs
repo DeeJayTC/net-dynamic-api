@@ -10,7 +10,7 @@ using TCDev.APIGenerator.Services;
 
 namespace TCDev.ApiGenerator.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Class )]
     public class ApiAuthAttribute : Attribute, IAuthorizationFilter
     {
 
