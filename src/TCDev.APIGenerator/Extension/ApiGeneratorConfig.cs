@@ -91,7 +91,7 @@ public class SwaggerOptions
 
 public class IdentityOptions
 {
-    public string EnableIdentity { get; set; } = "false";
+    public bool EnableIdentity { get; set; } = false;
     public string Audience { get; set; } = "TCDevApiGenerator";
     public string Authority { get; set; } = "https://localhost:44300";
     public string[] Scopes { get; set; } = { "ReadWrite.All" };

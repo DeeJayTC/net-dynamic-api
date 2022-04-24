@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TCDev.ApiGenerator.Attributes;
@@ -7,10 +8,50 @@ using TCDev.ApiGenerator.Interfaces;
 namespace ApiGeneratorSampleApI.Model
 {
 
-   [Api("/car", 
-       authorize: true,
-       requiredReadScopes: new string[] { "car.read" },
-       requiredWriteScopes: new string[] { "car.write" })]
+    [Api("/students")]
+    public class Student: IObjectBase<int>
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
+    
+        public void BeforeDelete(Student student)
+        {
+            // Before Delete hook to make custom validations
+        }
+    
+    }
+    
+
+    [Api("/teachers")]
+    public class Teacher : IObjectBase<int>
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
+
+        public void BeforeCreate(Teacher newTeacher)
+        {
+            // Before Create hook to make custom validations
+        }
+    }
+
+
+    [Api("/courses")]
+    public class Course : IObjectBase<int>
+    {
+        public int Id { get; set; }
+        public List<Student> Students { get; set; }
+        public Teacher Teacher { get; set; }
+        public List<DateTime> Schedule { get; set; }
+    }
+
+
+
+
+    [Api("/car"]
     public class Car : IObjectBase<Guid>
    {
       [Key]
@@ -56,7 +97,7 @@ namespace ApiGeneratorSampleApI.Model
        authorize: true,
        requiredReadScopes: new string[] { "model.read" },
        requiredWriteScopes: new string[] { "model.write" })]
-    public class Model : IObjectBase<Guid>
+    public class Model : IObjectBase<Guid>, I
    {
        [Key]
        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
