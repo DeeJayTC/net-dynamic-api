@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using EFCore.AutomaticMigrations;
 using EntityFramework.Triggers;
 using Microsoft.AspNetCore.Builder;
@@ -35,7 +37,7 @@ namespace TCDev.ApiGenerator.Extension
     {
         public static ApiGeneratorConfig ApiGeneratorConfig { get; set; } = new(null);
 
-        public static IServiceCollection AddApiGeneratorServices(
+        public static async Task<IServiceCollection> AddApiGeneratorServices(
             this IServiceCollection services,
             IConfiguration config,
             Assembly assembly)
@@ -115,14 +117,42 @@ namespace TCDev.ApiGenerator.Extension
             var assemblyService = new AssemblyService();
             services.AddSingleton(assemblyService);
 
-            if(File.Exists("./ApiDefinition.json")) { 
-           
-                var jsonDefs = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(File.ReadAllText("./ApiDefinition.json"));
-                assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefs));
-                assemblyService.Types.AddRange(assembly.GetExportedTypes()
-                    .Where(x => x.GetCustomAttributes<ApiAttribute>()
-                        .Any()));
+            switch (ApiGeneratorConfig.ApiOptions.JsonMode)
+            {
+                case "local":
+
+                    try
+                    {
+                        var jsonDefsLocal = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(
+                            File.ReadAllText(ApiGeneratorConfig.ApiOptions.JsonUri));
+                        assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefsLocal));
+                    }
+                    catch (FileNotFoundException ex)
+                    {
+                        throw new Exception($"Json Definition File not found, make sure its stored in {ApiGeneratorConfig.ApiOptions.JsonUri}", ex);
+                    }
+                    break;
+                case "remote":
+
+                    using (var client = new HttpClient())
+                    {
+                        // This is a blocking call, yes, on purpose!
+                        var jsonDefRaw = await client.GetStringAsync(ApiGeneratorConfig.ApiOptions.JsonUri);
+                        var jsonDefRemote = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(jsonDefRaw);
+                        assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefRemote));
+                    }
+
+                    break;
+                default:
+                    throw new Exception("JsonMode not supported, has to be local or remote");
             }
+
+            
+            
+            assemblyService.Types.AddRange(assembly.GetExportedTypes()
+                .Where(x => x.GetCustomAttributes<ApiAttribute>()
+                    .Any()));
+
 
 
             // Put everything together

@@ -30,7 +30,7 @@ namespace TCDev.ApiGenerator.Attributes
             string[] requiredReadScopes =  null,
             string[] requiredWriteScopes = null,
             bool fireEvents = false,
-            bool authorize = true,
+            bool authorize = false,
             bool cache = false,
             int cacheDuration = 50000)
         {
