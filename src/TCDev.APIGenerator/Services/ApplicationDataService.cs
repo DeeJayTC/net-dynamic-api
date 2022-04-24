@@ -8,18 +8,19 @@ using TCDev.ApiGenerator.Data;
 
 namespace TCDev.APIGenerator.Data
 {
-    public class ApplicationData
+    public class ApplicationDataService
     {
         public GenericDbContext GenericData {get;set;}
         public AuthDbContext AuthData { get; set; }
-        
         public HttpContext Context { get; set; }
-        
-        public ApplicationData(GenericDbContext genericData, AuthDbContext authData, HttpContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public ApplicationDataService(GenericDbContext genericData, AuthDbContext authData, IHttpContextAccessor contextAccessor)
         {
             GenericData = genericData;
             AuthData = authData;
-            Context = context;
+            Context = contextAccessor.HttpContext;
+            _httpContextAccessor = contextAccessor;
         }
     }
 }

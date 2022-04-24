@@ -16,9 +16,9 @@ namespace TCDev.ApiGenerator.Data;
 public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntity, TEntityId>
    where TEntity : class, IObjectBase<TEntityId>
 {
-   private readonly ApplicationData data;
+   private readonly ApplicationDataService data;
 
-   public GenericRespository(ApplicationData context)
+   public GenericRespository(ApplicationDataService context)
    {
       this.data = context;
    }
@@ -42,16 +42,14 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
 
    public void Create(TEntity record)
    {
-      var now = DateTime.UtcNow;
-
 
         this.data.GenericData.Add(record);
 
-
-      if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
-            this.data.GenericData.Entry(record)
+        if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
+        this.data.GenericData.Entry(record)
             .Property<DateTime>("Created")
-            .CurrentValue = now;
+            .CurrentValue = DateTime.UtcNow;
+
    }
 
    public async void Update(TEntity newRecord, TEntity oldRecord, HttpContext httpContext)
@@ -154,5 +152,25 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
          }
    }
 
-   #endregion
+    public Task<TEntity> GetAsync(TEntityId id, ApplicationDataService data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Create(TEntity record, ApplicationDataService data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Update(TEntity record, TEntity oldRecord, ApplicationDataService data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Delete(TEntityId id, ApplicationDataService data)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
 }

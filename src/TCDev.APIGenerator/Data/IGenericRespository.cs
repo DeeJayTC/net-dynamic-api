@@ -16,13 +16,13 @@ namespace TCDev.ApiGenerator.Data
 
       T Get(TEntityId id);
 
-      Task<T> GetAsync(TEntityId id, ApplicationData data);
+      Task<T> GetAsync(TEntityId id, ApplicationDataService data);
 
-      void Create(T record, ApplicationData data);
+      void Create(T record, ApplicationDataService data);
 
-      void Update(T record, T oldRecord, ApplicationData data);
+      void Update(T record, T oldRecord, ApplicationDataService data);
 
-      void Delete(TEntityId id, ApplicationData data);
+      void Delete(TEntityId id, ApplicationDataService data);
 
       int Save();
 

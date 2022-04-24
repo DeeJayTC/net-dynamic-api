@@ -13,6 +13,6 @@ namespace TCDev.ApiGenerator.Schema.Interfaces
 
    public interface IAfterUpdate<T> where T : class
    {
-        Task<T> AfterUpdate(T newItem, T oldItem, ApplicationData data);
+        Task<T> AfterUpdate(T newItem, T oldItem, ApplicationDataService data);
     }
 }

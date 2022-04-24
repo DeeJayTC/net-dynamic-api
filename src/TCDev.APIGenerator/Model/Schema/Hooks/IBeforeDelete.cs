@@ -7,6 +7,6 @@ namespace TCDev.ApiGenerator.Schema.Interfaces
 {
    public interface IBeforeDelete<T> where T : class
    {
-      Task<bool> BeforeDelete(T item, ApplicationData data);
+      Task<bool> BeforeDelete(T item, ApplicationDataService data);
     }
 }

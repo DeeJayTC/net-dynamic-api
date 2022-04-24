@@ -27,7 +27,7 @@ namespace TCDev.ApiGenerator.Attributes
         public ApiAttribute(
             string route,
             ApiMethodsToGenerate methods = ApiMethodsToGenerate.All,
-            string[] requiredReadScopes =  null,
+            string[] requiredReadScopes = null,
             string[] requiredWriteScopes = null,
             bool fireEvents = false,
             bool authorize = false,
@@ -37,11 +37,11 @@ namespace TCDev.ApiGenerator.Attributes
             this.Route = route;
             this.Options = new ApiAttributeAttributeOptions
             {
-                RequiredReadScopes = requiredReadScopes, 
-                RequiredWriteScopes = requiredWriteScopes, 
-                Authorize = authorize, 
-                Cache = cache, 
-                CacheDuration = cacheDuration, 
+                RequiredReadScopes = requiredReadScopes,
+                RequiredWriteScopes = requiredWriteScopes,
+                Authorize = authorize,
+                Cache = cache,
+                CacheDuration = cacheDuration,
                 FireEvents = fireEvents,
                 Methods = methods
             };
@@ -49,6 +49,5 @@ namespace TCDev.ApiGenerator.Attributes
 
         public string Route { get; set; }
         public ApiAttributeAttributeOptions Options { get; set; }
-
     }
 }

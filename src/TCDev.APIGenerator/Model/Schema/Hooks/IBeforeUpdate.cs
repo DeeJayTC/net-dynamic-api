@@ -7,6 +7,6 @@ namespace TCDev.ApiGenerator.Schema.Interfaces
 {
    public interface IBeforeUpdate<T> where T : class
    {
-     Task<T> BeforeUpdate(T newItem, T oldItem, ApplicationData data);
+     Task<T> BeforeUpdate(T newItem, T oldItem, ApplicationDataService data);
     }
 }

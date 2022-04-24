@@ -101,12 +101,14 @@ namespace TCDev.ApiGenerator.Extension
                     throw new Exception("Database Type Unkown");
             }
 
+            services.AddHttpContextAccessor();
+
             services
                 .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
                 .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
                 .AddSingleton(typeof(ITriggers), typeof(Triggers))
-                .AddScoped<ApplicationData>()
-                .AddScoped(typeof(ODataScopeLookup<,>))
+                .AddScoped<ApplicationDataService>()
+                .AddScoped(typeof(ODataScopeService<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
 

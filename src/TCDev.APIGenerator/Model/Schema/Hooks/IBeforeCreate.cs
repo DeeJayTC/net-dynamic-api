@@ -7,6 +7,6 @@ namespace TCDev.ApiGenerator.Schema.Interfaces
 {
    public interface IBeforeCreate<T> where T : class
    {
-      Task<T> BeforeCreate(T newItem, ApplicationData data);
+      Task<T> BeforeCreate(T newItem, ApplicationDataService data);
     }
 }
