@@ -5,25 +5,27 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TCDev.ApiGenerator.Interfaces;
-using TCDev.APIGenerator.Schema.Interfaces;
+using TCDev.ApiGenerator.Schema.Interfaces;
+using TCDev.APIGenerator.Data;
 
 namespace TCDev.ApiGenerator.Data;
 
 public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntity, TEntityId>
    where TEntity : class, IObjectBase<TEntityId>
 {
-   private DbContext context;
+   private readonly ApplicationData data;
 
-   public GenericRespository(GenericDbContext context)
+   public GenericRespository(ApplicationData context)
    {
-      this.context = context;
+      this.data = context;
    }
 
    public IQueryable<TEntity> Get()
    {
-      return this.context.Set<TEntity>();
+      return this.data.GenericData.Set<TEntity>();
    }
 
    public TEntity Get(TEntityId id)
@@ -43,45 +45,45 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
       var now = DateTime.UtcNow;
 
 
-      this.context.Add(record);
+        this.data.GenericData.Add(record);
 
 
       if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
-         this.context.Entry(record)
+            this.data.GenericData.Entry(record)
             .Property<DateTime>("Created")
             .CurrentValue = now;
    }
 
-   public async void Update(TEntity newRecord, TEntity oldRecord)
+   public async void Update(TEntity newRecord, TEntity oldRecord, HttpContext httpContext)
    {
       // We have a before update handler
       if (typeof(TEntity).IsAssignableTo(typeof(IBeforeUpdate<TEntity>)))
       {
          var baseEntity = newRecord as IBeforeUpdate<TEntity>;
-         newRecord = await baseEntity.BeforeUpdate(newRecord, oldRecord);
+         newRecord = await baseEntity.BeforeUpdate(newRecord, oldRecord, data);
       }
 
-      this.context.Set<TEntity>()
+        this.data.GenericData.Set<TEntity>()
          .Attach(oldRecord);
       oldRecord = newRecord;
 
       if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
       {
-         this.context.Entry(newRecord)
+            this.data.GenericData.Entry(newRecord)
             .Property<DateTime>("LastModified")
             .CurrentValue = DateTime.UtcNow;
-         this.context.Entry(newRecord)
+            this.data.GenericData.Entry(newRecord)
             .State = EntityState.Modified;
       }
 
-      await this.context.SaveChangesAsync();
+      await this.data.GenericData.SaveChangesAsync();
 
       // We have a after update handler
       if (typeof(TEntity).IsAssignableTo(typeof(IAfterUpdate<TEntity>)))
       {
          var baseEntity = newRecord as IAfterUpdate<TEntity>;
-         await baseEntity.AfterUpdate(newRecord, oldRecord);
-      }
+         await baseEntity.AfterUpdate(newRecord, oldRecord, data);
+        }
    }
 
    public void Delete(TEntityId id)
@@ -93,31 +95,31 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
          // If the entity is using softdelete -> only mark as deleted
          if (typeof(TEntity).IsAssignableFrom(typeof(ISoftDelete)))
          {
-            this.context.Entry(record)
-               .Property<DateTime>("Deleted")
-               .CurrentValue = DateTime.UtcNow;
-            this.context.Entry(record)
-               .Property<bool>("IsDeleted")
-               .CurrentValue = true;
-            this.context.Entry(record)
-               .State = EntityState.Modified;
+            this.data.GenericData.Entry(record)
+            .Property<DateTime>("Deleted")
+            .CurrentValue = DateTime.UtcNow;
+            this.data.GenericData.Entry(record)
+            .Property<bool>("IsDeleted")
+            .CurrentValue = true;
+            this.data.GenericData.Entry(record)
+            .State = EntityState.Modified;
          }
          else
          {
-            this.context.Remove(record);
+            this.data.GenericData.Remove(record);
          }
       }
    }
 
    public Task<int> SaveAsync()
    {
-      return this.context.SaveChangesAsync();
+      return this.data.GenericData.SaveChangesAsync();
    }
 
 
    public int Save()
    {
-      return this.context.SaveChanges();
+      return this.data.GenericData.SaveChanges();
    }
 
    public IQueryable<TEntity> GetQuery(Type entityType)
@@ -145,10 +147,10 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
    protected virtual void Dispose(bool disposing)
    {
       if (disposing)
-         if (this.context != null)
+         if (this.dbContext != null)
          {
-            this.context.Dispose();
-            this.context = null;
+            this.dbContext.Dispose();
+            this.dbContext = null;
          }
    }
 

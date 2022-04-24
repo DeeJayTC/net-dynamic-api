@@ -29,6 +29,7 @@ using TCDev.ApiGenerator.Json;
 using TCDev.APIGenerator.Schema;
 using TCDev.APIGenerator.Services;
 using TCDev.Controllers;
+using TCDev.APIGenerator.Data;
 
 namespace TCDev.ApiGenerator.Extension
 {
@@ -48,10 +49,31 @@ namespace TCDev.ApiGenerator.Extension
             switch (ApiGeneratorConfig.DatabaseOptions.DatabaseType)
             {
                 case DbType.InMemory:
+
+                    if(ApiGeneratorConfig.IdentityOptions.EnableIdentity) { 
+                        services.AddDbContext<AuthDbContext>(options => 
+                            options.UseInMemoryDatabase("ApiGeneratorAuth"));
+                    }
+                    else
+                    {
+                        services.AddDbContext<AuthDbContext>();
+                    }
+
                     services.AddDbContext<GenericDbContext>(options =>
-                        options.UseInMemoryDatabase("ApiGeneratorDB"));
+                        options.UseInMemoryDatabase("ApiGeneratorDatabase"));
                     break;
                 case DbType.Sql:
+                    if (ApiGeneratorConfig.IdentityOptions.EnableIdentity)
+                    {
+                        services.AddDbContext<AuthDbContext>(options =>
+                        options.UseSqlServer(config.GetConnectionString("ApiGeneratorAuth"),
+                            b => b.MigrationsAssembly(assembly.FullName)));
+                    }
+                    else
+                    {
+                        services.AddDbContext<AuthDbContext>();
+                    }
+
                     services.AddDbContext<GenericDbContext>(options =>
                         options.UseSqlServer(config.GetConnectionString("ApiGeneratorDatabase"),
                             b => b.MigrationsAssembly(assembly.FullName)));
@@ -59,6 +81,18 @@ namespace TCDev.ApiGenerator.Extension
 
 
                 case DbType.SqLite:
+
+                    if (ApiGeneratorConfig.IdentityOptions.EnableIdentity)
+                    {
+                        services.AddDbContext<AuthDbContext>(options =>
+                        options.UseSqlite(config.GetConnectionString("ApiGeneratorAuth"),
+                            b => b.MigrationsAssembly(assembly.FullName)));
+                    } else
+                    {
+                        services.AddDbContext<AuthDbContext>();
+                    }
+                    
+
                     services.AddDbContext<GenericDbContext>(options =>
                         options.UseSqlite(config.GetConnectionString("ApiGeneratorDatabase"),
                             b => b.MigrationsAssembly(assembly.FullName)));
@@ -71,6 +105,7 @@ namespace TCDev.ApiGenerator.Extension
                 .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
                 .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
                 .AddSingleton(typeof(ITriggers), typeof(Triggers))
+                .AddScoped<ApplicationData>()
                 .AddScoped(typeof(ODataScopeLookup<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
@@ -81,7 +116,6 @@ namespace TCDev.ApiGenerator.Extension
             //Add Framework Services & Options, we use the current assembly to get classes. 
             var assemblyService = new AssemblyService();
             services.AddSingleton(assemblyService);
-
 
             switch (ApiGeneratorConfig.ApiOptions.JsonMode)
             {
@@ -118,6 +152,7 @@ namespace TCDev.ApiGenerator.Extension
             assemblyService.Types.AddRange(assembly.GetExportedTypes()
                 .Where(x => x.GetCustomAttributes<ApiAttribute>()
                     .Any()));
+
 
 
             // Put everything together
