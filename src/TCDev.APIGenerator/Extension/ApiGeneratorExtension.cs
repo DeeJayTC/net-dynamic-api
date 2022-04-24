@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using EFCore.AutomaticMigrations;
 using EntityFramework.Triggers;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +29,7 @@ using TCDev.ApiGenerator.Json;
 using TCDev.APIGenerator.Schema;
 using TCDev.APIGenerator.Services;
 using TCDev.Controllers;
+using TCDev.APIGenerator.Data;
 
 namespace TCDev.ApiGenerator.Extension
 {
@@ -34,7 +37,7 @@ namespace TCDev.ApiGenerator.Extension
     {
         public static ApiGeneratorConfig ApiGeneratorConfig { get; set; } = new(null);
 
-        public static IServiceCollection AddApiGeneratorServices(
+        public static async Task<IServiceCollection> AddApiGeneratorServices(
             this IServiceCollection services,
             IConfiguration config,
             Assembly assembly)
@@ -46,10 +49,31 @@ namespace TCDev.ApiGenerator.Extension
             switch (ApiGeneratorConfig.DatabaseOptions.DatabaseType)
             {
                 case DbType.InMemory:
+
+                    if(ApiGeneratorConfig.IdentityOptions.EnableIdentity) { 
+                        services.AddDbContext<AuthDbContext>(options => 
+                            options.UseInMemoryDatabase("ApiGeneratorAuth"));
+                    }
+                    else
+                    {
+                        services.AddDbContext<AuthDbContext>();
+                    }
+
                     services.AddDbContext<GenericDbContext>(options =>
-                        options.UseInMemoryDatabase("ApiGeneratorDB"));
+                        options.UseInMemoryDatabase("ApiGeneratorDatabase"));
                     break;
                 case DbType.Sql:
+                    if (ApiGeneratorConfig.IdentityOptions.EnableIdentity)
+                    {
+                        services.AddDbContext<AuthDbContext>(options =>
+                        options.UseSqlServer(config.GetConnectionString("ApiGeneratorAuth"),
+                            b => b.MigrationsAssembly(assembly.FullName)));
+                    }
+                    else
+                    {
+                        services.AddDbContext<AuthDbContext>();
+                    }
+
                     services.AddDbContext<GenericDbContext>(options =>
                         options.UseSqlServer(config.GetConnectionString("ApiGeneratorDatabase"),
                             b => b.MigrationsAssembly(assembly.FullName)));
@@ -57,6 +81,18 @@ namespace TCDev.ApiGenerator.Extension
 
 
                 case DbType.SqLite:
+
+                    if (ApiGeneratorConfig.IdentityOptions.EnableIdentity)
+                    {
+                        services.AddDbContext<AuthDbContext>(options =>
+                        options.UseSqlite(config.GetConnectionString("ApiGeneratorAuth"),
+                            b => b.MigrationsAssembly(assembly.FullName)));
+                    } else
+                    {
+                        services.AddDbContext<AuthDbContext>();
+                    }
+                    
+
                     services.AddDbContext<GenericDbContext>(options =>
                         options.UseSqlite(config.GetConnectionString("ApiGeneratorDatabase"),
                             b => b.MigrationsAssembly(assembly.FullName)));
@@ -65,11 +101,14 @@ namespace TCDev.ApiGenerator.Extension
                     throw new Exception("Database Type Unkown");
             }
 
+            services.AddHttpContextAccessor();
+
             services
                 .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
                 .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
                 .AddSingleton(typeof(ITriggers), typeof(Triggers))
-                .AddScoped(typeof(ODataScopeLookup<,>))
+                .AddScoped<ApplicationDataService>()
+                .AddScoped(typeof(ODataScopeService<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
 
@@ -80,11 +119,42 @@ namespace TCDev.ApiGenerator.Extension
             var assemblyService = new AssemblyService();
             services.AddSingleton(assemblyService);
 
-            var jsonDefs = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(File.ReadAllText("./ApiDefinition.json"));
-            assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefs));
+            switch (ApiGeneratorConfig.ApiOptions.JsonMode)
+            {
+                case "local":
+
+                    try
+                    {
+                        var jsonDefsLocal = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(
+                            File.ReadAllText(ApiGeneratorConfig.ApiOptions.JsonUri));
+                        assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefsLocal));
+                    }
+                    catch (FileNotFoundException ex)
+                    {
+                        throw new Exception($"Json Definition File not found, make sure its stored in {ApiGeneratorConfig.ApiOptions.JsonUri}", ex);
+                    }
+                    break;
+                case "remote":
+
+                    using (var client = new HttpClient())
+                    {
+                        // This is a blocking call, yes, on purpose!
+                        var jsonDefRaw = await client.GetStringAsync(ApiGeneratorConfig.ApiOptions.JsonUri);
+                        var jsonDefRemote = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(jsonDefRaw);
+                        assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefRemote));
+                    }
+
+                    break;
+                default:
+                    throw new Exception("JsonMode not supported, has to be local or remote");
+            }
+
+            
+            
             assemblyService.Types.AddRange(assembly.GetExportedTypes()
                 .Where(x => x.GetCustomAttributes<ApiAttribute>()
                     .Any()));
+
 
 
             // Put everything together

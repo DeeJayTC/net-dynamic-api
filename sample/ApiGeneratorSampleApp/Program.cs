@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
-builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
+await builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
