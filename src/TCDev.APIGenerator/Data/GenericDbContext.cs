@@ -81,9 +81,12 @@ namespace TCDev.ApiGenerator.Data
         public static IEdmModel GetEdmModel(AssemblyService service)
         {
             var builder = new ODataConventionModelBuilder();
+            var entitySetMethod = typeof(ODataConventionModelBuilder).GetMethod(nameof(ODataConventionModelBuilder.EntitySet));
             foreach (var customType in service.Types)
             {
                 builder.AddEntityType(customType);
+                var genericEntitySetMethod = entitySetMethod.MakeGenericMethod(customType);
+                genericEntitySetMethod.Invoke(builder, new object[] { customType.Name });
             }
 
             return builder.GetEdmModel();
