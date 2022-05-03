@@ -46,4 +46,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="ApiDefinition.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

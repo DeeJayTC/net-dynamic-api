@@ -125,9 +125,11 @@ namespace TCDev.ApiGenerator.Extension
 
                     try
                     {
+                        if(File.Exists(ApiGeneratorConfig.ApiOptions.JsonUri)) {
                         var jsonDefsLocal = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(
                             File.ReadAllText(ApiGeneratorConfig.ApiOptions.JsonUri));
                         assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefsLocal));
+                        }
                     }
                     catch (FileNotFoundException ex)
                     {
@@ -252,7 +254,7 @@ namespace TCDev.ApiGenerator.Extension
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.InjectStylesheet("/SwaggerDarkTheme.css");
+                //c.InjectStylesheet("/SwaggerDarkTheme.css");
                 c.OAuthConfigObject = new OAuthConfigObject()
                 {
                     AppName = "ApiGenerator",

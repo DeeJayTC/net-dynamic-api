@@ -145,10 +145,10 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
    protected virtual void Dispose(bool disposing)
    {
       if (disposing)
-         if (this.dbContext != null)
+         if (this.data.GenericData != null)
          {
-            this.dbContext.Dispose();
-            this.dbContext = null;
+             this.data.GenericData.Dispose();
+             this.data.GenericData = null;
          }
    }
 

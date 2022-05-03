@@ -97,7 +97,7 @@ namespace TCDev.ApiGenerator
                 return BadRequest();
             }
 
-            var record = await this.repository.GetAsync(id);
+            var record = await this.repository.GetAsync(id, this.appDataService);
 
 
             return Ok(record);

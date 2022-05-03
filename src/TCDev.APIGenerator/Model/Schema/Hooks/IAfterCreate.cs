@@ -6,6 +6,6 @@ namespace TCDev.ApiGenerator.Schema.Interfaces
 {
    public interface IAfterCreate<T> where T : class
    {
-      Task<T> AfterCreate(T newItem, ApplicationData data);
+      //Task<T> AfterCreate(T newItem, ApplicationData data);
     }
 }
