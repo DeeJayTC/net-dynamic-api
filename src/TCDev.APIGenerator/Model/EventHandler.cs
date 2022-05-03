@@ -7,7 +7,7 @@ using TCDev.APIGenerator.Data;
 
 namespace TCDev.APIGenerator.Model
 {
-    public class EventHandler
+    public class EventHandler<T>
     {
         private readonly ApplicationDataService Data;
         public EventHandler(ApplicationDataService data)
