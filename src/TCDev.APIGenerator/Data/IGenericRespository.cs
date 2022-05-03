@@ -2,9 +2,11 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using TCDev.APIGenerator.Data;
 
 namespace TCDev.ApiGenerator.Data
 {
@@ -14,13 +16,13 @@ namespace TCDev.ApiGenerator.Data
 
       T Get(TEntityId id);
 
-      Task<T> GetAsync(TEntityId id);
+      Task<T> GetAsync(TEntityId id, ApplicationDataService data);
 
-      void Create(T record);
+      void Create(T record, ApplicationDataService data);
 
-      void Update(T record, T oldRecord);
+      void Update(T record, T oldRecord, ApplicationDataService data);
 
-      void Delete(TEntityId id);
+      void Delete(TEntityId id, ApplicationDataService data);
 
       int Save();
 

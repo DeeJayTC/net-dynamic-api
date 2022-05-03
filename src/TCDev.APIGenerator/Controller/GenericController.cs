@@ -1,20 +1,18 @@
-﻿// TCDev.de 2022/03/16
+﻿// TCDev.de 2022/04/15
 // TCDev.APIGenerator.GenericController.cs
 // https://github.com/DeeJayTC/net-dynamic-api
 
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Microsoft.OData.Edm;
-using Microsoft.OData.UriParser;
 using TCDev.ApiGenerator.Attributes;
 using TCDev.ApiGenerator.Data;
+using TCDev.APIGenerator.Data;
 using TCDev.ApiGenerator.Interfaces;
 using TCDev.APIGenerator.Services;
 
@@ -27,10 +25,11 @@ namespace TCDev.ApiGenerator
         where T : class,
         IObjectBase<TEntityId>
     {
-        private  ApiAttributeAttributeOptions options;
+        private readonly ApplicationDataService appDataService;
         private readonly IAuthorizationService authorizationService;
         private readonly IGenericRespository<T, TEntityId> repository;
-        private readonly ODataScopeLookup<T, TEntityId> scopeLookup;
+        private readonly ODataScopeService<T, TEntityId> scopeLookup;
+        private ApiAttributeAttributeOptions options;
 
         private void ConfigureController()
         {
@@ -77,11 +76,10 @@ namespace TCDev.ApiGenerator
             }
 
             return Ok(this.repository.Get());
-
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Find(ODataQueryOptions<T> ODataOpts,TEntityId id )
+        public async Task<IActionResult> Find(ODataQueryOptions<T> ODataOpts, TEntityId id)
         {
             // Check if post is enabled
             if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Get))
@@ -103,7 +101,6 @@ namespace TCDev.ApiGenerator
 
 
             return Ok(record);
-
         }
 
 
@@ -130,7 +127,7 @@ namespace TCDev.ApiGenerator
                 }
 
                 // Create the new entry
-                this.repository.Create(record);
+                this.repository.Create(record, this.appDataService);
                 await this.repository.SaveAsync();
 
                 // respond with the newly created record
@@ -138,7 +135,6 @@ namespace TCDev.ApiGenerator
                 {
                     id = record.Id
                 }, record);
-
             }
             catch (Exception ex)
             {
@@ -166,13 +162,13 @@ namespace TCDev.ApiGenerator
                     return BadRequest();
                 }
 
-                var existingRecord = await this.repository.GetAsync(id);
+                var existingRecord = await this.repository.GetAsync(id, this.appDataService);
                 if (existingRecord == null)
                 {
                     return NotFound();
                 }
 
-                this.repository.Update(record, existingRecord);
+                this.repository.Update(record, existingRecord, this.appDataService);
                 await this.repository.SaveAsync();
 
                 return Ok(record);
@@ -203,13 +199,13 @@ namespace TCDev.ApiGenerator
                     return BadRequest();
                 }
 
-                var existingRecord = await this.repository.GetAsync(id);
+                var existingRecord = await this.repository.GetAsync(id, this.appDataService);
                 if (existingRecord == null)
                 {
                     return NotFound();
                 }
 
-                this.repository.Delete(id);
+                this.repository.Delete(id, this.appDataService);
                 if (await this.repository.SaveAsync() == 0)
                 {
                     return BadRequest();
@@ -224,13 +220,15 @@ namespace TCDev.ApiGenerator
         }
 
         public GenericController(
-            IAuthorizationService authorizationService, 
-            IGenericRespository<T, TEntityId> repository, 
-            ODataScopeLookup<T, TEntityId> scopeLookup)
+            IAuthorizationService authorizationService,
+            IGenericRespository<T, TEntityId> repository,
+            ODataScopeService<T, TEntityId> scopeLookup,
+            ApplicationDataService dataService)
         {
             this.repository = repository;
             this.authorizationService = authorizationService;
             this.scopeLookup = scopeLookup;
+            this.appDataService = dataService;
 
             ConfigureController();
         }

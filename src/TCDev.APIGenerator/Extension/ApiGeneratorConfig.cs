@@ -2,6 +2,7 @@
 // TCDev.APIGenerator.ApiGeneratorConfig.cs
 // https://github.com/DeeJayTC/net-dynamic-api
 
+using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
@@ -42,6 +43,9 @@ public class ApiOptions
 {
    public bool UseXmlComments { get; set; } = false;
    public string XmlCommentsFile { get; set; } = string.Empty;
+
+   public string JsonMode { get; set; } = "local";
+   public string JsonUri { get; set; } = "./ ApiDefinition.json";
 }
 
 public class CacheOptions
@@ -91,7 +95,7 @@ public class SwaggerOptions
 
 public class IdentityOptions
 {
-    public string EnableIdentity { get; set; } = "false";
+    public bool EnableIdentity { get; set; } = false;
     public string Audience { get; set; } = "TCDevApiGenerator";
     public string Authority { get; set; } = "https://localhost:44300";
     public string[] Scopes { get; set; } = { "ReadWrite.All" };

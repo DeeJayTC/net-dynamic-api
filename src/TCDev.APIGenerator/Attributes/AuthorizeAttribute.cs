@@ -10,16 +10,15 @@ using TCDev.APIGenerator.Services;
 
 namespace TCDev.ApiGenerator.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Class )]
     public class ApiAuthAttribute : Attribute, IAuthorizationFilter
     {
-        private readonly AssemblyService _assemblies;
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var _assemblies = context.HttpContext.RequestServices.GetService(typeof(AssemblyService)) as AssemblyService;
-            var _type = _assemblies.Types.FirstOrDefault(p => p.Name ==
-                                                              ((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor).ControllerName);
+            var _type = _assemblies.Types.FirstOrDefault(p => p.Name == 
+                               ((Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor)context.ActionDescriptor).ControllerName);
 
             if (_type == null) return;
 
