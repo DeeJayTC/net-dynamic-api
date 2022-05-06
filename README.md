@@ -11,7 +11,7 @@
 
 | Version | Build | Nuget 
 |--------------|-----------------|-------------------|
-| Main | <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/main?label=Main"> | [0.1.3](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.1-alpha) | [![Build Status Installer pipeline](https://dev.azure.com/microsoft/Dart/_apis/build/status/microsoft.PowerToys?branchName=main)](https://dev.azure.com/microsoft/Dart/_build/latest?definitionId=76541&branchName=main) |
+| Main | <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/main?label=Main"> | [0.1.5](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.5) | [![Build Status Installer pipeline](https://dev.azure.com/microsoft/Dart/_apis/build/status/microsoft.PowerToys?branchName=main)](https://dev.azure.com/microsoft/Dart/_build/latest?definitionId=76541&branchName=main) |
 | VNext |  <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/vnext?label=vnext"> | [0.1.2-alpha-6ffff](https://www.nuget.org/packages/TCDev.ApiGenerator/0.1.0-alpha-4a262d)
 
 ## About
