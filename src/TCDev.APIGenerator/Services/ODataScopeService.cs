@@ -14,10 +14,10 @@ using TCDev.ApiGenerator.Interfaces;
 
 namespace TCDev.APIGenerator.Services
 {
-    public class ODataScopeLookup<T, TId> where T : IObjectBase<TId>
+    public class ODataScopeService<T, TId> where T : IObjectBase<TId>
     {
         private readonly AssemblyService assemblyData;
-        public ODataScopeLookup(AssemblyService assemblyData)
+        public ODataScopeService(AssemblyService assemblyData)
         {
             this.assemblyData = assemblyData;
         }
