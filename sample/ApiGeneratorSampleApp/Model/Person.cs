@@ -2,6 +2,7 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
+using Innofactor.EfCoreJsonValueConverter;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -67,6 +68,8 @@ namespace ApiGeneratorSampleApI.Model
         public int Id { get; set; }
         public List<Student> Students { get; set; }
         public Teacher Teacher { get; set; }
+        
+        [JsonField]
         public List<DateTime> Schedule { get; set; }
     }
 

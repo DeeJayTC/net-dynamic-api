@@ -18,6 +18,7 @@ using TCDev.APIGenerator.Extension;
 using TCDev.ApiGenerator.Interfaces;
 using TCDev.APIGenerator.Services;
 using Directory = System.IO.Directory;
+using Innofactor.EfCoreJsonValueConverter;
 
 namespace TCDev.ApiGenerator.Data
 {
@@ -89,9 +90,10 @@ namespace TCDev.ApiGenerator.Data
             {
                 // Get current tenantID
                 var tenant = this.context.HttpContext.GetUser().Tenant;
-                //builder.Entity(customType).HasQueryFilter(p => p.TenantId == tenant.TenantId);
+                builder.Entity(customType).HasQueryFilter((IHasTenantId p) => Guid.Parse(p.TenantId) == tenant.TenantId);
             }
 
+            builder.AddJsonFields();
 
 
             base.OnModelCreating(builder);
@@ -113,16 +115,18 @@ namespace TCDev.ApiGenerator.Data
         }
 
 
-        //// Applying BaseEntity rules to all entities that inherit from it.
-        //// Define MethodInfo member that is used when model is built.
-        ////
-        //static readonly MethodInfo SetGlobalQueryMethod = typeof(GenericDbContext).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+        // Applying BaseEntity rules to all entities that inherit from it.
+        // Define MethodInfo member that is used when model is built.
+        //
+        //static readonly MethodInfo SetGlobalQueryMethod = 
+        //    typeof(GenericDbContext).GetMethods(BindingFlags.Public | BindingFlags.Instance)
         //    .Single(t => t.IsGenericMethod && t.Name == "SetGlobalQuery");
 
-        //// This method is called for every loaded entity type in OnModelCreating method.
-        //// Here type is known through generic parameter and we can use EF Core methods.
-        //public void SetGlobalQuery<T>(ModelBuilder builder) where T : BaseEntity
+        // This method is called for every loaded entity type in OnModelCreating method.
+        // Here type is known through generic parameter and we can use EF Core methods.
+        //public void SetGlobalQuery<T>(ModelBuilder builder) where T : class
         //{
+            
         //    builder.Entity<T>().HasKey(e => e.Id);
         //    builder.Entity<T>().HasQueryFilter(e => e.TenantId == _tenantProvider.GetTenantId());
         //}

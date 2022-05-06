@@ -34,80 +34,80 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
          .SingleOrDefault(e => e.Id.ToString() == id.ToString());
    }
 
-   public async Task<TEntity> GetAsync(TEntityId id)
-   {
-      return await Get()
-         .SingleOrDefaultAsync(e => e.Id.ToString() == id.ToString());
-   }
+    public async Task<TEntity> GetAsync(TEntityId id, ApplicationDataService data)
+    {
+        return await Get()
+           .SingleOrDefaultAsync(e => e.Id.ToString() == id.ToString());
+    }
 
-   public void Create(TEntity record)
-   {
+    public void Create(TEntity record, ApplicationDataService data)
+    {
 
         this.data.GenericData.Add(record);
 
         if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
-        this.data.GenericData.Entry(record)
-            .Property<DateTime>("Created")
-            .CurrentValue = DateTime.UtcNow;
+            this.data.GenericData.Entry(record)
+                .Property<DateTime>("Created")
+                .CurrentValue = DateTime.UtcNow;
+    }
 
-   }
-
-   public async void Update(TEntity newRecord, TEntity oldRecord, HttpContext httpContext)
-   {
-      // We have a before update handler
-      if (typeof(TEntity).IsAssignableTo(typeof(IBeforeUpdate<TEntity>)))
-      {
-         var baseEntity = newRecord as IBeforeUpdate<TEntity>;
-         newRecord = await baseEntity.BeforeUpdate(newRecord, oldRecord, data);
-      }
+    public async void Update(TEntity newRecord, TEntity oldRecord, ApplicationDataService data)
+    {
+        // We have a before update handler
+        if (typeof(TEntity).IsAssignableTo(typeof(IBeforeUpdate<TEntity>)))
+        {
+            var baseEntity = newRecord as IBeforeUpdate<TEntity>;
+            newRecord = await baseEntity.BeforeUpdate(newRecord, oldRecord, data);
+        }
 
         this.data.GenericData.Set<TEntity>()
          .Attach(oldRecord);
-      oldRecord = newRecord;
+        oldRecord = newRecord;
 
-      if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
-      {
+        if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
+        {
             this.data.GenericData.Entry(newRecord)
             .Property<DateTime>("LastModified")
             .CurrentValue = DateTime.UtcNow;
             this.data.GenericData.Entry(newRecord)
             .State = EntityState.Modified;
-      }
-
-      await this.data.GenericData.SaveChangesAsync();
-
-      // We have a after update handler
-      if (typeof(TEntity).IsAssignableTo(typeof(IAfterUpdate<TEntity>)))
-      {
-         var baseEntity = newRecord as IAfterUpdate<TEntity>;
-         await baseEntity.AfterUpdate(newRecord, oldRecord, data);
         }
-   }
 
-   public void Delete(TEntityId id)
-   {
-      var record = Get(id);
+        await this.data.GenericData.SaveChangesAsync();
 
-      if (record != null)
-      {
-         // If the entity is using softdelete -> only mark as deleted
-         if (typeof(TEntity).IsAssignableFrom(typeof(ISoftDelete)))
-         {
-            this.data.GenericData.Entry(record)
-            .Property<DateTime>("Deleted")
-            .CurrentValue = DateTime.UtcNow;
-            this.data.GenericData.Entry(record)
-            .Property<bool>("IsDeleted")
-            .CurrentValue = true;
-            this.data.GenericData.Entry(record)
-            .State = EntityState.Modified;
-         }
-         else
-         {
-            this.data.GenericData.Remove(record);
-         }
-      }
-   }
+        // We have a after update handler
+        if (typeof(TEntity).IsAssignableTo(typeof(IAfterUpdate<TEntity>)))
+        {
+            var baseEntity = newRecord as IAfterUpdate<TEntity>;
+            await baseEntity.AfterUpdate(newRecord, oldRecord, data);
+        }
+    }
+
+    public void Delete(TEntityId id, ApplicationDataService data)
+    {
+        var record = Get(id);
+
+        if (record != null)
+        {
+            // If the entity is using softdelete -> only mark as deleted
+            if (typeof(TEntity).IsAssignableFrom(typeof(ISoftDelete)))
+            {
+                this.data.GenericData.Entry(record)
+                .Property<DateTime>("Deleted")
+                .CurrentValue = DateTime.UtcNow;
+                this.data.GenericData.Entry(record)
+                .Property<bool>("IsDeleted")
+                .CurrentValue = true;
+                this.data.GenericData.Entry(record)
+                .State = EntityState.Modified;
+            }
+            else
+            {
+                this.data.GenericData.Remove(record);
+            }
+        }
+    }
+
 
    public Task<int> SaveAsync()
    {
@@ -152,25 +152,6 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
          }
    }
 
-    public Task<TEntity> GetAsync(TEntityId id, ApplicationDataService data)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Create(TEntity record, ApplicationDataService data)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Update(TEntity record, TEntity oldRecord, ApplicationDataService data)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(TEntityId id, ApplicationDataService data)
-    {
-        throw new NotImplementedException();
-    }
-
     #endregion
+
 }

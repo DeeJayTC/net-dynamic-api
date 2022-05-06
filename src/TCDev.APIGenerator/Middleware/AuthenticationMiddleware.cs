@@ -58,14 +58,6 @@ namespace TCDev.APIGenerator.Middleware
 				Auth0User authUser = null;
 				var objectId = context.User.GetObjectId();
 
-				using (var client = new HttpClient())
-				{
-					client.DefaultRequestHeaders.Add("Authorization", context.Request.Headers["Authorization"].ToString());
-					var response = await client.GetAsync("https://Rasepi.eu.auth0.com/userinfo");
-					var json = await response.Content.ReadAsStringAsync();
-					authUser = Newtonsoft.Json.JsonConvert.DeserializeObject<Auth0User>(json);
-				}
-
 				if (!string.IsNullOrEmpty(objectId) && authUser != null)
 				{
 					//var cacheKey = string.Format("Users_Login_{0}_aa", objectId);
