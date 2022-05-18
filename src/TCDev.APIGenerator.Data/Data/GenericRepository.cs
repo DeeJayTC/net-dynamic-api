@@ -10,38 +10,46 @@ using Microsoft.EntityFrameworkCore;
 using TCDev.APIGenerator.Interfaces;
 using TCDev.APIGenerator.Schema.Interfaces;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Hooks;
 
 namespace TCDev.APIGenerator.Data;
 
 public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntity, TEntityId>
    where TEntity : class, IObjectBase<TEntityId>
 {
-   private readonly ApplicationDataService data;
+    private readonly IApplicationDataService<GenericDbContext, AuthDbContext> data;
 
-   public GenericRespository(ApplicationDataService context)
-   {
-      this.data = context;
-   }
+    public GenericRespository(IApplicationDataService<GenericDbContext, AuthDbContext> data)
+    {
+        this.data = data;
+    }
 
-   public IQueryable<TEntity> Get()
-   {
-      return this.data.GenericData.Set<TEntity>();
-   }
+    public IQueryable<TEntity> Get()
+    {
+        return this.data.GenericData.Set<TEntity>();
+    }
 
-   public TEntity Get(TEntityId id)
-   {
-      return Get()
-         .SingleOrDefault(e => e.Id.ToString() == id.ToString());
-   }
+    public TEntity Get(TEntityId id)
+    {
+        return Get()
+           .SingleOrDefault(e => e.Id.ToString() == id.ToString());
+    }
 
-    public async Task<TEntity> GetAsync(TEntityId id, ApplicationDataService data)
+    public async Task<TEntity> GetAsync(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data)
     {
         return await Get()
            .SingleOrDefaultAsync(e => e.Id.ToString() == id.ToString());
     }
 
-    public void Create(TEntity record, ApplicationDataService data)
+    public async void Create(TEntity record, IApplicationDataService<GenericDbContext, AuthDbContext> data)
     {
+        // We have a before update handler
+        if (typeof(TEntity).IsAssignableTo(typeof(IBeforeCreate<TEntity>)))
+        {
+            var baseEntity = record as IBeforeCreate<TEntity>;
+            record = await baseEntity.BeforeCreate(record, data);
+        }
+
 
         this.data.GenericData.Add(record);
 
@@ -49,9 +57,17 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
             this.data.GenericData.Entry(record)
                 .Property<DateTime>("Created")
                 .CurrentValue = DateTime.UtcNow;
+
+
+
+        if (typeof(TEntity).IsAssignableTo(typeof(IAfterCreate<TEntity>)))
+        {
+            var baseEntity = record as IBeforeCreate<TEntity>;
+            await baseEntity.BeforeCreate(record, data);
+        }
     }
 
-    public async void Update(TEntity newRecord, TEntity oldRecord, ApplicationDataService data)
+    public async void Update(TEntity newRecord, TEntity oldRecord, IApplicationDataService<GenericDbContext, AuthDbContext> data)
     {
         // We have a before update handler
         if (typeof(TEntity).IsAssignableTo(typeof(IBeforeUpdate<TEntity>)))
@@ -83,7 +99,7 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
         }
     }
 
-    public void Delete(TEntityId id, ApplicationDataService data)
+    public void Delete(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data)
     {
         var record = Get(id);
 
@@ -109,48 +125,48 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
     }
 
 
-   public Task<int> SaveAsync()
-   {
-      return this.data.GenericData.SaveChangesAsync();
-   }
+    public Task<int> SaveAsync()
+    {
+        return this.data.GenericData.SaveChangesAsync();
+    }
 
 
-   public int Save()
-   {
-      return this.data.GenericData.SaveChanges();
-   }
+    public int Save()
+    {
+        return this.data.GenericData.SaveChanges();
+    }
 
-   public IQueryable<TEntity> GetQuery(Type entityType)
-   {
-      var pq =
-         from p in GetType()
-            .GetProperties()
-         where p.PropertyType.IsGenericType
-               && p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>)
-               && p.PropertyType.GenericTypeArguments[0] == entityType
-         select p;
-      var prop = pq.Single();
+    public IQueryable<TEntity> GetQuery(Type entityType)
+    {
+        var pq =
+           from p in GetType()
+              .GetProperties()
+           where p.PropertyType.IsGenericType
+                 && p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>)
+                 && p.PropertyType.GenericTypeArguments[0] == entityType
+           select p;
+        var prop = pq.Single();
 
-      return (IQueryable<TEntity>)prop.GetValue(this);
-   }
+        return (IQueryable<TEntity>)prop.GetValue(this);
+    }
 
-   #region Dispose
+    #region Dispose
 
-   public void Dispose()
-   {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-   }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-   protected virtual void Dispose(bool disposing)
-   {
-      if (disposing)
-         if (this.data.GenericData != null)
-         {
-             this.data.GenericData.Dispose();
-             this.data.GenericData = null;
-         }
-   }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+            if (this.data.GenericData != null)
+            {
+                this.data.GenericData.Dispose();
+                this.data.GenericData = null;
+            }
+    }
 
     #endregion
 

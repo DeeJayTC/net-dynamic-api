@@ -7,6 +7,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Hooks;
+using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace TCDev.APIGenerator.Data
 {
@@ -16,13 +18,13 @@ namespace TCDev.APIGenerator.Data
 
       T Get(TEntityId id);
 
-      Task<T> GetAsync(TEntityId id, ApplicationDataService data);
+      Task<T> GetAsync(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data);
 
-      void Create(T record, ApplicationDataService data);
+      void Create(T record, IApplicationDataService<GenericDbContext, AuthDbContext> data);
 
-      void Update(T record, T oldRecord, ApplicationDataService data);
+      void Update(T record, T oldRecord, IApplicationDataService<GenericDbContext, AuthDbContext> data);
 
-      void Delete(TEntityId id, ApplicationDataService data);
+      void Delete(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data);
 
       int Save();
 

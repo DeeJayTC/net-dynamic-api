@@ -59,6 +59,7 @@
 
   <ItemGroup>
     <Folder Include="Extension\Tools\" />
+    <Folder Include="Model\" />
   </ItemGroup>
 
 
