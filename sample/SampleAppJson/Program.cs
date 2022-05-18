@@ -1,7 +1,7 @@
 using System.Configuration;
 using System.Reflection;
 using Newtonsoft.Json;
-using TCDev.ApiGenerator.Extension;
+using TCDev.APIGenerator.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 

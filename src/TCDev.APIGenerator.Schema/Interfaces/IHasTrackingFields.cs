@@ -4,7 +4,7 @@
 
 using System;
 
-namespace TCDev.ApiGenerator.Interfaces
+namespace TCDev.APIGenerator.Interfaces
 {
    public interface IHasTrackingFields
    {

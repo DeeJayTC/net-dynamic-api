@@ -1,17 +1,18 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using TCDev.ApiGenerator.Extension;
+using TCDev.APIGenerator;
+using TCDev.APIGenerator.Extension;
 using TCDev.APIGenerator.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
-await builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
+
+builder.Services.AddApiGeneratorServices()
+                .AddDataContextSQL()
+                .AddOData();
+
 
 var app = builder.Build();
 
@@ -28,8 +29,8 @@ app.UseApiGeneratorAuthentication();
 
 app.UseEndpoints(endpoints =>
 {
-   endpoints.UseApiGeneratorEndpoints();
-   endpoints.MapControllers();
+    endpoints.UseApiGeneratorEndpoints();
+    endpoints.MapControllers();
 });
 
 app.Run();

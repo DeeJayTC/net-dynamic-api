@@ -5,7 +5,7 @@
 using System;
 using EntityFramework.Triggers;
 
-namespace TCDev.ApiGenerator.Schemes.Interface
+namespace TCDev.APIGenerator.Schemes.Interface
 {
     public abstract class SoftDeletable : Trackable
     {

@@ -1,13 +1,13 @@
 using System.Configuration;
 using System.Reflection;
-using TCDev.ApiGenerator.Extension;
+using TCDev.APIGenerator.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
+//builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
@@ -16,7 +16,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-app.UseApiGenerator();
+//app.UseApiGenerator();
 app.MapControllers();
 
 app.Run();

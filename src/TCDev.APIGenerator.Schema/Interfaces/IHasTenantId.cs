@@ -2,10 +2,12 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
-namespace TCDev.ApiGenerator.Interfaces
+using System;
+
+namespace TCDev.APIGenerator.Interfaces
 {
-   public interface IHasTenantId
-   {
-      public string TenantId { get; set; }
-   }
+    public interface IHasTenantId
+    {
+        public Guid TenantId { get; set; }
+    }
 }

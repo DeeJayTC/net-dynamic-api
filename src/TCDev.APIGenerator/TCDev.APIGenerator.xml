@@ -4,7 +4,7 @@
         <name>TCDev.APIGenerator</name>
     </assembly>
     <members>
-        <member name="M:TCDev.ApiGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.ApiGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
+        <member name="M:TCDev.APIGenerator.Attributes.ApiAttribute.#ctor(System.String,TCDev.APIGenerator.Attributes.ApiMethodsToGenerate,System.String[],System.String[],System.Boolean,System.Boolean,System.Boolean,System.Int32)">
             <summary>
                Attribute defining auto generated controller for the class
             </summary>
@@ -17,48 +17,48 @@
             <param name="cacheDuration"></param>
             <param name="methods">The methods to generate for this endpoint</param>
         </member>
-        <member name="T:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions">
+        <member name="T:TCDev.APIGenerator.Attributes.ApiAttributeAttributeOptions">
             <summary>
                Configuration settings for generated controller behaviour
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredReadScopes">
+        <member name="P:TCDev.APIGenerator.Attributes.ApiAttributeAttributeOptions.RequiredReadScopes">
             <summary>
                Claims required for read access
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.RequiredWriteScopes">
+        <member name="P:TCDev.APIGenerator.Attributes.ApiAttributeAttributeOptions.RequiredWriteScopes">
             <summary>
                Claims required for write access
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.Authorize">
+        <member name="P:TCDev.APIGenerator.Attributes.ApiAttributeAttributeOptions.Authorize">
             <summary>
                Wether authorized access is required or not
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.Cache">
+        <member name="P:TCDev.APIGenerator.Attributes.ApiAttributeAttributeOptions.Cache">
             <summary>
                Cache responses
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.FireEvents">
+        <member name="P:TCDev.APIGenerator.Attributes.ApiAttributeAttributeOptions.FireEvents">
             <summary>
                Read/Write calls will fire RMQ Events
             </summary>
         </member>
-        <member name="P:TCDev.ApiGenerator.Attributes.ApiAttributeAttributeOptions.CacheDuration">
+        <member name="P:TCDev.APIGenerator.Attributes.ApiAttributeAttributeOptions.CacheDuration">
             <summary>
                Default cache duration
             </summary>
         </member>
-        <member name="M:TCDev.ApiGenerator.GenericController`2.Query(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
+        <member name="M:TCDev.APIGenerator.GenericController`2.Query(Microsoft.AspNetCore.OData.Query.ODataQueryOptions{`0})">
             <summary>
                 Returns a list of <see cref="!:T" /> entries
             </summary>
             <returns cref="T:System.Collections.Generic.List`1"></returns>
         </member>
-        <member name="P:TCDev.ApiGenerator.SwaggerOptions.EnableProduction">
+        <member name="F:TCDev.APIGenerator.SwaggerOptions.EnableProduction">
             <summary>
                Enable Swagger in Production
             </summary>

@@ -5,7 +5,7 @@
 using System;
 using EntityFramework.Triggers;
 
-namespace TCDev.ApiGenerator.Schemes
+namespace TCDev.APIGenerator.Schemes
 {
     public abstract class Trackable
     {

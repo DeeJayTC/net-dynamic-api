@@ -2,7 +2,7 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
-namespace TCDev.ApiGenerator.Extension
+namespace TCDev.APIGenerator.Extension
 {
    public static class AttributeUtils
    {

@@ -5,9 +5,9 @@
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TCDev.ApiGenerator.Attributes;
+using TCDev.APIGenerator.Attributes;
 
-namespace TCDev.ApiGenerator.Interfaces
+namespace TCDev.APIGenerator.Interfaces
 {
    public interface IObjectBase<TId>
    {

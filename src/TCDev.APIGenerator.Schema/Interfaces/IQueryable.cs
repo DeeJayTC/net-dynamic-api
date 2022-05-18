@@ -2,7 +2,7 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
-namespace TCDev.ApiGenerator.Interfaces
+namespace TCDev.APIGenerator.Interfaces
 {
    public interface IHasQueryFields
    {

@@ -1,20 +1,20 @@
-using TCDev.ApiGenerator.Attributes;
-using TCDev.ApiGenerator.Interfaces;
+//using TCDev.APIGenerator.Attributes;
+//using TCDev.APIGenerator.Interfaces;
 
-namespace SampleAppNuget
-{
+//namespace SampleAppNuget
+//{
 
-   [Api("/weather")]
-   public class WeatherForecast : IObjectBase<int>
-   {
-      public DateTime Date { get; set; }
+//   [Api("/weather")]
+//   public class WeatherForecast : IObjectBase<int>
+//   {
+//      public DateTime Date { get; set; }
 
-      public int TemperatureC { get; set; }
+//      public int TemperatureC { get; set; }
 
-      public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+//      public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 
-      public string? Summary { get; set; }
-      public int Id { get; set; }
+//      public string? Summary { get; set; }
+//      public int Id { get; set; }
 
-   }
-}
+//   }
+//}

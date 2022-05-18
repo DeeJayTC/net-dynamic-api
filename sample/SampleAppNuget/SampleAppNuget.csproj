@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.OData.Edm" Version="7.10.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="TCDev.ApiGenerator" Version="0.1.0-alpha" />
+    <PackageReference Include="TCDev.APIGenerator" Version="0.1.0-alpha" />
   </ItemGroup>
 
 </Project>

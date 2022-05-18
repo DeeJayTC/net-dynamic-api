@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using TCDev.ApiGenerator.Attributes;
+using TCDev.APIGenerator.Attributes;
 
 namespace TCDev.Controllers
 {

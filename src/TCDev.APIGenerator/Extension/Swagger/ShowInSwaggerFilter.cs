@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TCDev.ApiGenerator.Attributes;
+using TCDev.APIGenerator.Attributes;
 
 namespace TCDev.APIGenerator.Extension
 {
@@ -18,7 +18,7 @@ namespace TCDev.APIGenerator.Extension
          {
             var actionDescriptor = (ControllerActionDescriptor)contextApiDescription.ActionDescriptor;
 
-            if (actionDescriptor.ControllerTypeInfo.FullName.Contains("TCDev.ApiGenerator.GenericController"))
+            if (actionDescriptor.ControllerTypeInfo.FullName.Contains("TCDev.APIGenerator.GenericController"))
             {
 
                var allowedMethods = actionDescriptor.ControllerTypeInfo.GetDeclaredProperty("methodsToGenerate");
@@ -26,7 +26,7 @@ namespace TCDev.APIGenerator.Extension
                if (customType != null)
                {
                   var attribute = customType.GetCustomAttributes(typeof(ApiAttribute), false);
-                  var options = ((TCDev.ApiGenerator.Attributes.ApiAttribute)((TCDev.ApiGenerator.Attributes.ApiAttribute[])attribute)[0]).Options;
+                  var options = ((TCDev.APIGenerator.Attributes.ApiAttribute)((TCDev.APIGenerator.Attributes.ApiAttribute[])attribute)[0]).Options;
                   if (options != null)
                   {
                      if (options.Methods == ApiMethodsToGenerate.All) continue;

@@ -2,8 +2,8 @@
 //// ApiGeneratorSampleApI.MinimalSample.cs
 //// https://github.com/DeeJayTC/net-dynamic-api
 
-//using TCDev.ApiGenerator.Attributes;
-//using TCDev.ApiGenerator.Interfaces;
+//using TCDev.APIGenerator.Attributes;
+//using TCDev.APIGenerator.Interfaces;
 
 //namespace ApiGeneratorSampleApI.Model
 //{
