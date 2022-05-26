@@ -30,13 +30,9 @@ namespace TCDev.APIGenerator.Extension.Swagger
 
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (context.ApiDescription.ActionDescriptor.EndpointMetadata.Any(em => em is Microsoft.AspNetCore.OData.Query.EnableQueryAttribute))
-            {
-
-                operation.Parameters ??= new List<OpenApiParameter>();
-                foreach (var item in s_Parameters)
-                    operation.Parameters.Add(item);
-            }
+            operation.Parameters ??= new List<OpenApiParameter>();
+            foreach (var item in s_Parameters)
+                operation.Parameters.Add(item);
         }
     }
 }

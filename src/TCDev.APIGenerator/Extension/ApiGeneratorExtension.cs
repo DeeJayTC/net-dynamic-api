@@ -26,6 +26,7 @@ using TCDev.APIGenerator.Schema;
 using TCDev.APIGenerator.Services;
 using TCDev.Controllers;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Attributes;
 
 namespace TCDev.APIGenerator.Extension
 {
@@ -65,70 +66,40 @@ namespace TCDev.APIGenerator.Extension
 
             //.AddScoped(typeof(ODataScopeService<,>))
 
-
             return builder;
         }
 
 
-        //private static void AddDataContext(IServiceCollection services, IConfiguration config, Assembly assembly)
-        //{
-        //    switch (ApiGeneratorConfig.DatabaseOptions.DatabaseType)
-        //    {
-        //        case DbType.InMemory:
 
-        //            if (ApiGeneratorConfig.IdentityOptions.EnableIdentity)
-        //            {
-        //                services.AddDbContext<AuthDbContext>(options =>
-        //                    options.UseInMemoryDatabase("ApiGeneratorAuth"));
-        //            }
-        //            else
-        //            {
-        //                services.AddDbContext<AuthDbContext>();
-        //            }
+        public static ApiGeneratorServiceBuilder AddAssembly(this ApiGeneratorServiceBuilder builder, Assembly assembly)
+        {
 
-        //            services.AddDbContext<GenericDbContext>(options =>
-        //                options.UseInMemoryDatabase("ApiGeneratorDatabase"));
-        //            break;
-        //        case DbType.Sql:
-        //            if (ApiGeneratorConfig.IdentityOptions.EnableIdentity)
-        //            {
-        //                services.AddDbContext<AuthDbContext>(options =>
-        //                options.UseSqlServer(config.GetConnectionString("ApiGeneratorAuth"),
-        //                    b => b.MigrationsAssembly(assembly.FullName)));
-        //            }
-        //            else
-        //            {
-        //                services.AddDbContext<AuthDbContext>();
-        //            }
+            if (builder.AssemblyService != null)
+            {
+                builder.AssemblyService = new AssemblyService();
+                builder.Services.AddSingleton(builder.AssemblyService);
+            }
 
-        //            services.AddDbContext<GenericDbContext>(options =>
-        //                options.UseSqlServer(config.GetConnectionString("ApiGeneratorDatabase"),
-        //                    b => b.MigrationsAssembly(assembly.FullName)));
-        //            break;
+            builder.AssemblyService.Assemblies.Add(assembly);
+
+            builder.AssemblyService.Types
+                    .AddRange(assembly.GetExportedTypes()
+                    .Where(x => x.GetCustomAttributes<ApiAttribute>()
+                    .Any()));
+
+            builder.Services.AddMvc(options =>
+                options.Conventions.Add(new GenericControllerRouteConvention()))
+                        .ConfigureApplicationPartManager(manager => 
+                            manager.FeatureProviders.Add(
+                                new GenericTypeControllerFeatureProvider(builder.AssemblyService.Types, typeof(GenericController<,>)
+                                )
+                            )
+            );
 
 
-        //        case DbType.SqLite:
+            return builder;
+        }
 
-        //            if (ApiGeneratorConfig.IdentityOptions.EnableIdentity)
-        //            {
-        //                services.AddDbContext<AuthDbContext>(options =>
-        //                options.UseSqlite(config.GetConnectionString("ApiGeneratorAuth"),
-        //                    b => b.MigrationsAssembly(assembly.FullName)));
-        //            }
-        //            else
-        //            {
-        //                services.AddDbContext<AuthDbContext>();
-        //            }
-
-
-        //            services.AddDbContext<GenericDbContext>(options =>
-        //                options.UseSqlite(config.GetConnectionString("ApiGeneratorDatabase"),
-        //                    b => b.MigrationsAssembly(assembly.FullName)));
-        //            break;
-        //        default:
-        //            throw new Exception("Database Type Unkown");
-        //    }
-        //}
 
         //private static void AddSwagger(IServiceCollection services)
         //{
@@ -239,27 +210,27 @@ namespace TCDev.APIGenerator.Extension
         //    return app;
         //}
 
-        //public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app)
-        //{
-        //    app.UseSwagger();
-        //    app.UseSwaggerUI(c =>
-        //    {
-        //        //c.InjectStylesheet("/SwaggerDarkTheme.css");
-        //        c.OAuthConfigObject = new OAuthConfigObject()
-        //        {
-        //            AppName = "APIGenerator",
-        //            ClientId = string.Empty,
-        //            ClientSecret = string.Empty,
+        public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app, )
+        {
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c =>
+            //{
+            //    //c.InjectStylesheet("/SwaggerDarkTheme.css");
+            //    c.OAuthConfigObject = new OAuthConfigObject()
+            //    {
+            //        AppName = "APIGenerator",
+            //        ClientId = string.Empty,
+            //        ClientSecret = string.Empty,
 
-        //        };
-        //        c.SwaggerEndpoint(
-        //            "/swagger/v1/swagger.json",
-        //            $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"
-        //        );
-        //    });
+            //    };
+            //    c.SwaggerEndpoint(
+            //        "/swagger/v1/swagger.json",
+            //        $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"
+            //    );
+            //});
 
-        //    return app;
-        //}
+            return app;
+        }
 
         public static IEndpointRouteBuilder UseApiGeneratorEndpoints(this IEndpointRouteBuilder builder)
         {

@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\src\TCDev.APIGenerator.Data.Postgres\TCDev.APIGenerator.Data.Postgres.csproj" />
     <ProjectReference Include="..\..\src\TCDev.APIGenerator.Data.SQLite\TCDev.APIGenerator.Data.SQLite.csproj" />
     <ProjectReference Include="..\..\src\TCDev.APIGenerator.Data.SQL\TCDev.APIGenerator.Data.SQL.csproj" />
+    <ProjectReference Include="..\..\src\TCDev.APIGenerator.Data\TCDev.APIGenerator.Data.csproj" />
     <ProjectReference Include="..\..\src\TCDev.APIGenerator.DbFirst\TCDev.APIGenerator.Json.csproj" />
     <ProjectReference Include="..\..\src\TCDev.APIGenerator.OData\TCDev.APIGenerator.OData.csproj" />
     <ProjectReference Include="..\..\src\TCDev.APIGenerator\TCDev.APIGenerator.csproj" />

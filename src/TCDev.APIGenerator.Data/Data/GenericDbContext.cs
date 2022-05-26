@@ -22,10 +22,10 @@ namespace TCDev.APIGenerator.Data
 {
     public class GenericDbContext : DbContext
     {
-        //public static IModel StaticModel { get; } = BuildStaticModel();
         private readonly AssemblyService assemblyService;
         private readonly IHttpContextAccessor context;
         private readonly IDatabaseProviderConfiguration dbConfigProvider;
+        private readonly IConfiguration config;
 
         public GenericDbContext(
             DbContextOptions<GenericDbContext> options,
@@ -36,6 +36,8 @@ namespace TCDev.APIGenerator.Data
         {
             this.assemblyService = assemblyService;
             this.context = accessor;
+            this.dbConfigProvider = databaseProviderConfiguration;
+            this.config = config;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

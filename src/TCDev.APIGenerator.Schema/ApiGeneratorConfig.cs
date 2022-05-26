@@ -46,6 +46,10 @@ public class ApiOptions
 
    public string JsonMode = "local";
    public string JsonUri = "./ ApiDefinition.json";
+
+
+    public bool UseHealthCheck = true;
+    public bool UseHealthCheckUI = true;
 }
 
 public class CacheOptions

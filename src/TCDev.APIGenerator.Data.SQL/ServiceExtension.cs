@@ -1,16 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Reflection;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Model.Interfaces;
 
 namespace TCDev.APIGenerator.Extension
 {
-    public static class ServiceExtension
+    public static partial class ServiceExtension
     {
 
-        private static ApiGeneratorServiceBuilder AddDataContextSQL(
-            this ApiGeneratorServiceBuilder builder)
+        public static ApiGeneratorServiceBuilder AddDataContextSQL(
+            this ApiGeneratorServiceBuilder builder,
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptions = null)
         {
             if(builder.ApiGeneratorConfig.DatabaseOptions.Connection == null)
             {
@@ -19,16 +22,26 @@ namespace TCDev.APIGenerator.Extension
 
             builder.Services.AddDbContext<GenericDbContext>(options =>
             {
-                options.UseSqlServer(connectionString: builder.ApiGeneratorConfig.DatabaseOptions.Connection, b =>
+                if(sqlOptions != null)
                 {
-                    if (builder.ApiGeneratorConfig.DatabaseOptions.EnableAutomaticMigration)
+                    options.UseSqlServer(sqlOptions);
+                } 
+                else
+                {
+                    options.UseSqlServer(connectionString: builder.ApiGeneratorConfig.DatabaseOptions.Connection, b =>
                     {
-                        b.MigrationsAssembly(builder.ApiGeneratorConfig.DatabaseOptions.MigrationAssembly);
-                    }
-                });
+                        if (builder.ApiGeneratorConfig.DatabaseOptions.EnableAutomaticMigration)
+                        {
+                            b.MigrationsAssembly(builder.ApiGeneratorConfig.DatabaseOptions.MigrationAssembly);
+                        }
+                    });
+                }
+
 
             });
-           return builder;
+
+            builder.Services.AddSingleton<IDatabaseProviderConfiguration, ProviderConfig>();
+            return builder;
         }
     }
 }

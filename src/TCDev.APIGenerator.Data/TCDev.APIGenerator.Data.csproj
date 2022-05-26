@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EntityFramework.Triggers" Version="6.2.3" />
+    <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.3" />
+    <PackageReference Include="Innofactor.EfCoreJsonValueConverter" Version="6.0.0" />
+    <PackageReference Include="Innofactor.EfCoreJsonValueConverter.Attributes" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TCDev.APIGenerator.Schema\TCDev.APIGenerator.Schema.csproj" />
   </ItemGroup>
 

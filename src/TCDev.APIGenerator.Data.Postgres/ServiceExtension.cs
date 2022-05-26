@@ -2,15 +2,32 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+using System;
 using System.Reflection;
 using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Extension;
+using TCDev.APIGenerator.Model.Interfaces;
 
 namespace TCDev.APIGenerator.SQL;
 
 public static class ServiceExtension
 {
 
+
+    public class ProviderConfig : IDatabaseProviderConfiguration
+    {
+        private IConfiguration configuration;
+        public ProviderConfig(IConfiguration config)
+        {
+            this.configuration = config;
+        }
+
+        public void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("ApiGeneratorDatabase"));
+        }
+    }
+    
     private static ApiGeneratorServiceBuilder AddDataContextSQL(
         this ApiGeneratorServiceBuilder builder, 
         Action<NpgsqlDbContextOptionsBuilder>? NpgsqlOptions = null)
@@ -43,6 +60,8 @@ public static class ServiceExtension
     
 
         });
+        
+        builder.Services.AddSingleton<IDatabaseProviderConfiguration, ProviderConfig>();
         return builder;
 
     }

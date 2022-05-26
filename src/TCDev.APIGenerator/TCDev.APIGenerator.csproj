@@ -5,7 +5,7 @@
 	<PackageId>TCDev.APIGenerator</PackageId>
 	<Version>0.1.5</Version>
 	<Authors>Tim Cadenbach</Authors>
-	<Company>TCDev</Company>
+	<Company>Rasepi</Company>
 	<Description>Creates fully working CRUD Apis from just models</Description>
 	<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
   </PropertyGroup>
@@ -28,10 +28,6 @@
 
   <ItemGroup>
     <PackageReference Include="EFCore6.0.AutomaticMigrations" Version="6.0.0.1" />
-    <PackageReference Include="EntityFramework.Triggers" Version="6.2.3" />
-    <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.3" />
-    <PackageReference Include="Innofactor.EfCoreJsonValueConverter" Version="6.0.0" />
-    <PackageReference Include="Innofactor.EfCoreJsonValueConverter.Attributes" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />

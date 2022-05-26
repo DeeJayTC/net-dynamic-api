@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Reflection;
 using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Extension;
@@ -42,6 +43,8 @@ namespace TCDev.APIGenerator.SQL
                 });
 
             });
+
+            builder.Services.AddSingleton<IDatabaseProviderConfiguration, ProviderConfig>();
             return builder;
 
         }

@@ -4,16 +4,38 @@
 
 using System;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TCDev.APIGenerator;
 using TCDev.APIGenerator.Model;
+using TCDev.APIGenerator.Model.Interfaces;
+using TCDev.APIGenerator.Services;
 
 namespace TCDev.APIGenerator.Data
 {
     public class AuthDbContext : DbContext
     {
         public DbSet<AppUser> Users { get; set; }
+
+        //public static IModel StaticModel { get; } = BuildStaticModel();
+        private readonly AssemblyService assemblyService;
+        private readonly IHttpContextAccessor context;
+        private readonly IDatabaseProviderConfiguration dbConfigProvider;
+        private readonly IConfiguration config;
+
+        public AuthDbContext(
+            DbContextOptions<AuthDbContext> options,
+            IConfiguration config,
+            AssemblyService assemblyService,
+            IHttpContextAccessor accessor,
+            IDatabaseProviderConfiguration databaseProviderConfiguration) : base(options)
+        {
+            this.assemblyService = assemblyService;
+            this.context = accessor;
+            this.dbConfigProvider = databaseProviderConfiguration;
+            this.config = config;
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -22,30 +44,8 @@ namespace TCDev.APIGenerator.Data
                 return;
             }
 
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile("secrets.json", true)
-                .Build();
-            var config = new ApiGeneratorConfig(configuration);
-            // Add Database Context
+            dbConfigProvider.OnConfiguring(optionsBuilder);
 
-            switch (config.DatabaseOptions.DatabaseType)
-            {
-                case DbType.InMemory:
-                    optionsBuilder.UseInMemoryDatabase("ApiGeneratorAuth");
-                    break;
-                case DbType.Sql:
-                    var connectionStringSql = configuration.GetConnectionString("ApiGeneratorAuth");
-                    optionsBuilder.UseSqlServer(connectionStringSql);
-                    break;
-                case DbType.SqLite:
-                    var connectionStringSqLite = configuration.GetConnectionString("ApiGeneratorAuth");
-                    optionsBuilder.UseSqlite(connectionStringSqLite);
-                    break;
-                default:
-                    throw new Exception("Database Type Unknown");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

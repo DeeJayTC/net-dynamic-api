@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
+                .AddAssembly(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData();
 
@@ -18,8 +19,8 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseApiGenerator();
-app.UseAutomaticApiMigrations(true);
+//app.UseApiGenerator();
+//app.UseAutomaticApiMigrations(true);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
