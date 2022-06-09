@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<PackageId>TCDev.APIGenerator</PackageId>
+		<Version>0.5</Version>
+		<Authors>Tim Cadenbach</Authors>
+		<Company>Rasepi</Company>
+		<Description>DataData package for TCDev.APIGenerator</Description>
+		<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
+		<PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
+		<PackageIcon>logo_small.png</PackageIcon>
+		<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
+		<PackageTags>.NET, API</PackageTags>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+    <None Include="..\..\..\..\RasepiHQ\media\Logo\logo_small.png" Link="logo_small.png">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework.Triggers" Version="6.2.3" />
+    <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.3" />
+    <PackageReference Include="Innofactor.EfCoreJsonValueConverter" Version="6.0.0" />
+    <PackageReference Include="Innofactor.EfCoreJsonValueConverter.Attributes" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TCDev.APIGenerator.Schema\TCDev.APIGenerator.Schema.csproj" />
+  </ItemGroup>
+
+</Project>

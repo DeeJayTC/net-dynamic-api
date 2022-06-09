@@ -18,7 +18,23 @@ public class ApiGeneratorConfig
    public IdentityOptions IdentityOptions = new();
    private readonly IConfiguration configuration;
 
-   public ApiGeneratorConfig(IConfiguration config)
+    public ApiGeneratorConfig() { }
+
+    public ApiGeneratorConfig(string configFile) {
+        this.configuration =  new ConfigurationBuilder()
+                            .AddJsonFile(configFile)
+                            .Build();
+
+        //Load Options
+        this.configuration.Bind("Api:Basic", this.ApiOptions);
+        this.configuration.Bind("Api:Cache", this.CacheOptions);
+        this.configuration.Bind("Api:Swagger", this.SwaggerOptions);
+        this.configuration.Bind("Api:Database", this.DatabaseOptions);
+        this.configuration.Bind("Api:Odata", this.ODataOptions);
+        this.configuration.Bind("Api:Identity", this.IdentityOptions);
+
+    }
+    public ApiGeneratorConfig(IConfiguration config)
    {
       this.configuration = config
                            ?? new ConfigurationBuilder()
@@ -93,7 +109,7 @@ public class SwaggerOptions
    /// <summary>
    ///    Enable Swagger in Production
    /// </summary>
-   public bool EnableProduction = true;
+   public bool Enabled = true;
 
    public string Description = "Sample for TCDev API Generator";
    public string Version = "v1";

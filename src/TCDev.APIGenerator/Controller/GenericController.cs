@@ -22,7 +22,7 @@ namespace TCDev.APIGenerator
     public class GenericController<T, TEntityId> : Controller
         where T : IObjectBase<TEntityId>
     {
-        private readonly ApplicationDataService appDataService;
+        private readonly ApplicationDataService<GenericDbContext, AuthDbContext> appDataService;
         private readonly IAuthorizationService authorizationService;
         private readonly IGenericRespository<T, TEntityId> repository;
         private ApiAttributeAttributeOptions options;
@@ -166,7 +166,7 @@ namespace TCDev.APIGenerator
         public GenericController(
             IAuthorizationService authorizationService,
             IGenericRespository<T, TEntityId> repository,
-            ApplicationDataService dataService)
+            ApplicationDataService<GenericDbContext, AuthDbContext> dataService)
         {
             this.repository = repository;
             this.authorizationService = authorizationService;
@@ -177,7 +177,7 @@ namespace TCDev.APIGenerator
 
 
 
-        public IActionResult ValidateCall(ApiMethodsToGenerate method, bool isWritingCall = false)
+        private IActionResult ValidateCall(ApiMethodsToGenerate method, bool isWritingCall = false)
         {
             if (!this.options.Methods.HasFlag(method))
             {

@@ -19,26 +19,55 @@ namespace TCDev.APIGenerator.Extension
             {
                 throw new ArgumentException("Provide a connection string in configuration before initiating Database");
             }
-
-            builder.Services.AddDbContext<GenericDbContext>(options =>
+            try
             {
-                if(sqlOptions != null)
+                builder.Services.AddDbContext<GenericDbContext>(options =>
                 {
-                    options.UseSqlServer(sqlOptions);
-                } 
-                else
-                {
-                    options.UseSqlServer(connectionString: builder.ApiGeneratorConfig.DatabaseOptions.Connection, b =>
+                    if (sqlOptions != null)
                     {
-                        if (builder.ApiGeneratorConfig.DatabaseOptions.EnableAutomaticMigration)
+                        options.UseSqlServer(sqlOptions);
+                    }
+                    else
+                    {
+                        options.UseSqlServer(connectionString: builder.ApiGeneratorConfig.DatabaseOptions.Connection, b =>
                         {
-                            b.MigrationsAssembly(builder.ApiGeneratorConfig.DatabaseOptions.MigrationAssembly);
-                        }
-                    });
-                }
+                            if (builder.ApiGeneratorConfig.DatabaseOptions.EnableAutomaticMigration)
+                            {
+                                b.MigrationsAssembly(builder.ApiGeneratorConfig.DatabaseOptions.MigrationAssembly);
+                            }
+                        });
+                    }
 
 
-            });
+                });
+
+
+
+                builder.Services.AddDbContext<AuthDbContext>(options =>
+                {
+                    if (sqlOptions != null)
+                    {
+                        options.UseSqlServer(sqlOptions);
+                    }
+                    else
+                    {
+                        options.UseSqlServer(connectionString: builder.ApiGeneratorConfig.DatabaseOptions.Connection, b =>
+                        {
+                            if (builder.ApiGeneratorConfig.DatabaseOptions.EnableAutomaticMigration)
+                            {
+                                b.MigrationsAssembly(builder.ApiGeneratorConfig.DatabaseOptions.MigrationAssembly);
+                            }
+                        });
+                    }
+
+
+                });
+            }
+            catch(Exception ex)
+            {
+                throw new ArgumentException("Could not add the Database connection, make sure your connection string is correct.");
+            }
+
 
             builder.Services.AddSingleton<IDatabaseProviderConfiguration, ProviderConfig>();
             return builder;

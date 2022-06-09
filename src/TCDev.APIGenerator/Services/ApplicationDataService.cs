@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace TCDev.APIGenerator.Data
 {
-    public class ApplicationDataService : IApplicationDataService<GenericDbContext, AuthDbContext>
+    public class ApplicationDataService<GenericDbContext, AuthDbContext> : IApplicationDataService<GenericDbContext, AuthDbContext> where GenericDbContext : DbContext
     {
         public GenericDbContext GenericData {get;set;}
         public AuthDbContext AuthData { get; set; }

@@ -23,7 +23,7 @@ namespace TCDev.APIGenerator.Odata
     public class GenericODataController<T, TEntityId> : ODataController
         where T : IObjectBase<TEntityId>
     {
-        private readonly ApplicationDataService appDataService;
+        private readonly ApplicationDataService<GenericDbContext, AuthDbContext> appDataService;
         private readonly IAuthorizationService authorizationService;
         private readonly IGenericRespository<T, TEntityId> repository;
         private readonly ODataScopeService<T, TEntityId> scopeLookup;
@@ -184,7 +184,7 @@ namespace TCDev.APIGenerator.Odata
             IAuthorizationService authorizationService,
             IGenericRespository<T, TEntityId> repository,
             ODataScopeService<T, TEntityId> scopeLookup,
-            ApplicationDataService dataService)
+            ApplicationDataService<GenericDbContext, AuthDbContext> dataService)
         {
             this.repository = repository;
             this.authorizationService = authorizationService;
@@ -196,7 +196,7 @@ namespace TCDev.APIGenerator.Odata
 
 
 
-        public IActionResult ValidateCall(ApiMethodsToGenerate method, bool isWritingCall = false)
+        private IActionResult ValidateCall(ApiMethodsToGenerate method, bool isWritingCall = false)
         {
             if (!this.options.Methods.HasFlag(method))
             {

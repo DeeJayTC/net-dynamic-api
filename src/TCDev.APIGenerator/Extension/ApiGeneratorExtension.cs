@@ -27,6 +27,8 @@ using TCDev.APIGenerator.Services;
 using TCDev.Controllers;
 using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Attributes;
+using TCDev.APIGenerator.Json;
+using TCDev.APIGenerator.Hooks;
 
 namespace TCDev.APIGenerator.Extension
 {
@@ -38,22 +40,26 @@ namespace TCDev.APIGenerator.Extension
         public AssemblyService AssemblyService { get; set; }
 
     }
-    
+
 
     public static class ApiGeneratorExtension
     {
 
 
-        public static ApiGeneratorServiceBuilder AddApiGeneratorServices( this IServiceCollection services )
+        public static ApiGeneratorServiceBuilder AddApiGeneratorServices(this IServiceCollection services)
         {
-            var builder = new ApiGeneratorServiceBuilder() {  Services = services };
+            var builder = new ApiGeneratorServiceBuilder();
+            services.AddSingleton<ApiGeneratorServiceBuilder>(builder);
+
+            builder.Services = services;
 
             builder.Services
                 .AddHttpContextAccessor()
                 .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
-                .AddSingleton(typeof(ITriggers<>),  typeof(Triggers<>))
-                .AddSingleton(typeof(ITriggers),    typeof(Triggers))
-                .AddScoped(typeof(ApplicationDataService))
+                .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
+                .AddSingleton(typeof(ITriggers), typeof(Triggers))
+                .AddScoped(typeof(IApplicationDataService<,>),typeof(ApplicationDataService<,>))
+                .AddScoped(typeof(ApplicationDataService<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
 
@@ -69,12 +75,22 @@ namespace TCDev.APIGenerator.Extension
             return builder;
         }
 
+        public static ApiGeneratorServiceBuilder AddConfig(this ApiGeneratorServiceBuilder builder, string configSource)
+        {
+            builder.ApiGeneratorConfig = new ApiGeneratorConfig(configSource);
+            return builder;
+        }
 
+        public static ApiGeneratorServiceBuilder AddConfig(this ApiGeneratorServiceBuilder builder, ApiGeneratorConfig config)
+        {
+            builder.ApiGeneratorConfig = config;
+            return builder;
+        }
 
         public static ApiGeneratorServiceBuilder AddAssembly(this ApiGeneratorServiceBuilder builder, Assembly assembly)
         {
 
-            if (builder.AssemblyService != null)
+            if (builder.AssemblyService == null)
             {
                 builder.AssemblyService = new AssemblyService();
                 builder.Services.AddSingleton(builder.AssemblyService);
@@ -89,7 +105,7 @@ namespace TCDev.APIGenerator.Extension
 
             builder.Services.AddMvc(options =>
                 options.Conventions.Add(new GenericControllerRouteConvention()))
-                        .ConfigureApplicationPartManager(manager => 
+                        .ConfigureApplicationPartManager(manager =>
                             manager.FeatureProviders.Add(
                                 new GenericTypeControllerFeatureProvider(builder.AssemblyService.Types, typeof(GenericController<,>)
                                 )
@@ -101,133 +117,165 @@ namespace TCDev.APIGenerator.Extension
         }
 
 
-        //private static void AddSwagger(IServiceCollection services)
-        //{
-        //    services.AddSwaggerGen(c =>
-        //    {
-        //        c.SwaggerDoc(ApiGeneratorConfig.SwaggerOptions.Version,
-        //            new OpenApiInfo
-        //            {
-        //                Title = ApiGeneratorConfig.SwaggerOptions.Title,
-        //                Version = ApiGeneratorConfig.SwaggerOptions.Version,
-        //                Description = ApiGeneratorConfig.SwaggerOptions.Description,
-        //                Contact = new OpenApiContact
-        //                {
-        //                    Email = ApiGeneratorConfig.SwaggerOptions.ContactMail,
-        //                    Url = new Uri(ApiGeneratorConfig.SwaggerOptions.ContactUri)
-        //                }
-        //            });
-        //        c.DocumentFilter<ShowInSwaggerFilter>();
-        //        c.SchemaFilter<SwaggerSchemaFilter>();
-        //        c.OperationFilter<IgnoreODataQueryOptionOperationFilter>();
-
-        //        if (ApiGeneratorConfig.ODataOptions.Enabled)
-        //        {
-        //            c.OperationFilter<EnableQueryFiler>();
-        //        }
-
-        //        if (ApiGeneratorConfig.ApiOptions.UseXmlComments)
-        //        {
-        //            if (!string.IsNullOrEmpty(ApiGeneratorConfig.ApiOptions.XmlCommentsFile))
-        //            {
-        //                throw new Exception("You need to set XMLCommentsFile option when using XMl Comments");
-        //            }
-
-        //            c.IncludeXmlComments(ApiGeneratorConfig.ApiOptions.XmlCommentsFile, true);
-        //        }
-        //    });
-        //}
-
-        //private static ApiGeneratorServiceBuilder AddAssembly(ApiGeneratorServiceBuilder builder, Assembly assembly)
-        //{
-        //    var assemblyService = new AssemblyService();
-        //    services.AddSingleton(assemblyService);
-
-        //    switch (ApiGeneratorConfig.ApiOptions.JsonMode)
-        //    {
-        //        case "local":
-
-        //            try
-        //            {
-        //                if(File.Exists(ApiGeneratorConfig.ApiOptions.JsonUri)) {
-        //                var jsonDefsLocal = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(
-        //                    File.ReadAllText(ApiGeneratorConfig.ApiOptions.JsonUri));
-        //                assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefsLocal));
-        //                }
-        //            }
-        //            catch (FileNotFoundException ex)
-        //            {
-        //                throw new Exception($"Json Definition File not found, make sure its stored in {ApiGeneratorConfig.ApiOptions.JsonUri}", ex);
-        //            }
-        //            break;
-        //        case "remote":
-
-        //            using (var client = new HttpClient())
-        //            {
-        //                // This is a blocking call, yes, on purpose!
-        //                var jsonDefRaw = client.GetStringAsync(ApiGeneratorConfig.ApiOptions.JsonUri).Result;
-        //                var jsonDefRemote = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(jsonDefRaw);
-        //                assemblyService.Types.AddRange(JsonClassBuilder.CreateTypes(jsonDefRemote));
-        //            }
-
-        //            break;
-        //        default:
-        //            throw new Exception("JsonMode not supported, has to be local or remote");
-        //    }
-
-
-
-        //    assemblyService.Types.AddRange(assembly.GetExportedTypes()
-        //        .Where(x => x.GetCustomAttributes<ApiAttribute>()
-        //            .Any()));
-
-
-
-
-        //    // Put everything together
-        //    services.AddMvc(options =>
-        //options.Conventions.Add(new GenericControllerRouteConvention()))
-        //        .ConfigureApplicationPartManager(manager =>  manager.FeatureProviders.Add(new GenericTypeControllerFeatureProvider(assemblyService.Types))
-        //        );
-
-
-        //    AddOdataServices(services, assemblyService);
-        //}
-
-        //public static IApplicationBuilder UseAutomaticApiMigrations(this IApplicationBuilder app, bool allowDataLoss = false)
-        //{
-        //    using var serviceScope = app.ApplicationServices.CreateScope();
-        //    var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
-        //    if (ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
-        //    {
-        //        dbContext.MigrateToLatestVersion(new DbMigrationsOptions
-        //        {
-        //            AutomaticMigrationsEnabled = true, 
-        //            AutomaticMigrationDataLossAllowed = allowDataLoss
-        //        });
-        //    }
-
-        //    return app;
-        //}
-
-        public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app, )
+        public static ApiGeneratorServiceBuilder AddAssembly(this ApiGeneratorServiceBuilder builder, Uri uri, string apiKey)
         {
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c =>
-            //{
-            //    //c.InjectStylesheet("/SwaggerDarkTheme.css");
-            //    c.OAuthConfigObject = new OAuthConfigObject()
-            //    {
-            //        AppName = "APIGenerator",
-            //        ClientId = string.Empty,
-            //        ClientSecret = string.Empty,
 
-            //    };
-            //    c.SwaggerEndpoint(
-            //        "/swagger/v1/swagger.json",
-            //        $"{ApiGeneratorConfig.SwaggerOptions.Title} {ApiGeneratorConfig.SwaggerOptions.Version}"
-            //    );
-            //});
+            if (builder.AssemblyService != null)
+            {
+                builder.AssemblyService = new AssemblyService();
+                builder.Services.AddSingleton(builder.AssemblyService);
+            }
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("rasepi-api-key", apiKey);
+                    //This is a blocking call, yes, on purpose!
+                    var jsonDefRaw = client.GetStringAsync(uri).Result;
+                    var jsonDefRemote = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(jsonDefRaw);
+                    builder.AssemblyService.Types.AddRange(JsonClassService.CreateTypes(jsonDefRemote));
+                }
+
+                builder.Services.AddMvc(options =>
+                    options.Conventions.Add(new GenericControllerRouteConvention()))
+                            .ConfigureApplicationPartManager(manager =>
+                                manager.FeatureProviders.Add(
+                                    new GenericTypeControllerFeatureProvider(builder.AssemblyService.Types, typeof(GenericController<,>)
+                                    )
+                                )
+                );
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Json Definition not found, make sure its stored in {uri}", ex);
+            }
+
+            return builder;
+        }
+
+
+        public static ApiGeneratorServiceBuilder AddAssembly(this ApiGeneratorServiceBuilder builder, string apiDefinitionFile)
+        {
+
+            if (builder.AssemblyService != null)
+            {
+                builder.AssemblyService = new AssemblyService();
+                builder.Services.AddSingleton(builder.AssemblyService);
+            }
+
+            try
+            {
+                if (File.Exists(apiDefinitionFile))
+                {
+                    var jsonDefsLocal = JsonConvert.DeserializeObject<List<JsonClassDefinition>>(File.ReadAllText(apiDefinitionFile));
+                    builder.AssemblyService.Types.AddRange(JsonClassService.CreateTypes(jsonDefsLocal));
+                }
+
+                builder.Services.AddMvc(options =>
+                    options.Conventions.Add(new GenericControllerRouteConvention()))
+                            .ConfigureApplicationPartManager(manager =>
+                                manager.FeatureProviders.Add(
+                                    new GenericTypeControllerFeatureProvider(builder.AssemblyService.Types, typeof(GenericController<,>)
+                                    )
+                                )
+                );
+
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new Exception($"Json Definition File not found, make sure its stored in {apiDefinitionFile}", ex);
+            }
+
+            return builder;
+        }
+
+
+        public static ApiGeneratorServiceBuilder AddSwagger(this ApiGeneratorServiceBuilder builder)
+        {
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(builder.ApiGeneratorConfig.SwaggerOptions.Version,
+                    new OpenApiInfo
+                    {
+                        Title = builder.ApiGeneratorConfig.SwaggerOptions.Title,
+                        Version = builder.ApiGeneratorConfig.SwaggerOptions.Version,
+                        Description = builder.ApiGeneratorConfig.SwaggerOptions.Description,
+                        Contact = new OpenApiContact
+                        {
+                            Email = builder.ApiGeneratorConfig.SwaggerOptions.ContactMail,
+                            Url = new Uri(builder.ApiGeneratorConfig.SwaggerOptions.ContactUri)
+                        }
+                    });
+                c.DocumentFilter<ShowInSwaggerFilter>();
+                c.SchemaFilter<SwaggerSchemaFilter>();
+                c.OperationFilter<IgnoreODataQueryOptionOperationFilter>();
+                c.OperationFilter<EnableQueryFiler>();
+
+                if (builder.ApiGeneratorConfig.ApiOptions.UseXmlComments)
+                {
+                    if (!string.IsNullOrEmpty(builder.ApiGeneratorConfig.ApiOptions.XmlCommentsFile))
+                    {
+                        throw new Exception("You need to set XMLCommentsFile option when using XMl Comments");
+                    }
+
+                    c.IncludeXmlComments(builder.ApiGeneratorConfig.ApiOptions.XmlCommentsFile, true);
+                }
+
+            });
+
+
+
+
+            return builder;
+        }
+
+
+        public static IApplicationBuilder UseAutomaticApiMigrations(
+            this IApplicationBuilder app,
+            bool allowDataLoss = false)
+        {
+            using var serviceScope = app.ApplicationServices.CreateScope();
+            var builder = serviceScope.ServiceProvider.GetRequiredService<ApiGeneratorServiceBuilder>();
+
+            var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
+            if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
+            {
+                dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+                {
+                    AutomaticMigrationsEnabled = true,
+                    AutomaticMigrationDataLossAllowed = allowDataLoss
+                });
+            }
+
+            return app;
+        }
+
+        public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app)
+        {
+            var builder = app.ApplicationServices.GetRequiredService<ApiGeneratorServiceBuilder>();
+
+            if (builder.ApiGeneratorConfig.SwaggerOptions.Enabled)
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    //c.InjectStylesheet("/SwaggerDarkTheme.css");
+                    c.OAuthConfigObject = new OAuthConfigObject()
+                    {
+                        AppName = "APIGenerator",
+                        ClientId = string.Empty,
+                        ClientSecret = string.Empty,
+
+                    };
+                    c.SwaggerEndpoint(
+                        "/swagger/v1/swagger.json",
+                        $"{builder.ApiGeneratorConfig.SwaggerOptions.Title} {builder.ApiGeneratorConfig.SwaggerOptions.Version}"
+                    );
+                });
+            }
 
             return app;
         }
