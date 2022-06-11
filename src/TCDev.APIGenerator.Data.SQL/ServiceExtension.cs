@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EFCore.AutomaticMigrations;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,9 +13,45 @@ namespace TCDev.APIGenerator.Extension
     public static partial class ServiceExtension
     {
 
+        public static IApplicationBuilder UseAutomaticApiMigrations(
+            this IApplicationBuilder app,
+            bool allowDataLoss = false)
+        {
+            using var serviceScope = app.ApplicationServices.CreateScope();
+            var builder = serviceScope.ServiceProvider.GetRequiredService<ApiGeneratorServiceBuilder>();
+
+            var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
+            if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
+            {
+                dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+                {
+                    AutomaticMigrationsEnabled = true,
+                    AutomaticMigrationDataLossAllowed = allowDataLoss
+                });
+
+                dbContext.MigrateToLatestVersion();
+            }
+
+
+            //var dbContextAuth = serviceScope.ServiceProvider.GetService<AuthDbContext>();
+            //if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
+            //{
+            //    dbContextAuth.MigrateToLatestVersion(new DbMigrationsOptions
+            //    {
+            //        AutomaticMigrationsEnabled = true,
+            //        AutomaticMigrationDataLossAllowed = allowDataLoss,
+                 
+            //    });
+            //}
+
+            return app;
+        }
+
+
+
         public static ApiGeneratorServiceBuilder AddDataContextSQL(
             this ApiGeneratorServiceBuilder builder,
-        Action<SqlServerDbContextOptionsBuilder>? sqlOptions = null)
+            Action<SqlServerDbContextOptionsBuilder>? sqlOptions = null)
         {
             if(builder.ApiGeneratorConfig.DatabaseOptions.Connection == null)
             {

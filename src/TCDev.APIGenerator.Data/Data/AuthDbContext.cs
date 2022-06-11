@@ -51,6 +51,9 @@ namespace TCDev.APIGenerator.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            //builder.Entity<Tenant>().HasOne(p => p.Owner).WithOne(p => p.Tenant);
+            builder.Entity<AppUser>().HasOne(p => p.Tenant);
         }
     }
 }

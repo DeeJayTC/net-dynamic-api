@@ -13,7 +13,6 @@ namespace TCDev.APIGenerator.Model
         public string TenantName { get; set; } = string.Empty;
         public string TenantDomain { get; set; } = string.Empty;
 
-        public AppUser Owner { get; set; }
         public Guid OwnerId { get; set; }
 
         public virtual IEnumerable<AppUser> Users { get; set; }

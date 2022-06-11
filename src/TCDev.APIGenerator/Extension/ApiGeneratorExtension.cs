@@ -8,9 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using EFCore.AutomaticMigrations;
 using EntityFramework.Triggers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -62,15 +59,6 @@ namespace TCDev.APIGenerator.Extension
                 .AddScoped(typeof(ApplicationDataService<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));
 
-
-            //ApiGeneratorConfig = new ApiGeneratorConfig(config);
-
-            // APIGen Services
-            //AddDataContext(services, config, assembly);
-            //AddAssemblyHandling(services, assembly);
-            //AddSwagger(services);
-
-            //.AddScoped(typeof(ODataScopeService<,>))
 
             return builder;
         }
@@ -212,7 +200,7 @@ namespace TCDev.APIGenerator.Extension
                 c.DocumentFilter<ShowInSwaggerFilter>();
                 c.SchemaFilter<SwaggerSchemaFilter>();
                 c.OperationFilter<IgnoreODataQueryOptionOperationFilter>();
-                c.OperationFilter<EnableQueryFiler>();
+                //c.OperationFilter<EnableQueryFiler>();
 
                 if (builder.ApiGeneratorConfig.ApiOptions.UseXmlComments)
                 {
@@ -232,26 +220,6 @@ namespace TCDev.APIGenerator.Extension
             return builder;
         }
 
-
-        public static IApplicationBuilder UseAutomaticApiMigrations(
-            this IApplicationBuilder app,
-            bool allowDataLoss = false)
-        {
-            using var serviceScope = app.ApplicationServices.CreateScope();
-            var builder = serviceScope.ServiceProvider.GetRequiredService<ApiGeneratorServiceBuilder>();
-
-            var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
-            if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
-            {
-                dbContext.MigrateToLatestVersion(new DbMigrationsOptions
-                {
-                    AutomaticMigrationsEnabled = true,
-                    AutomaticMigrationDataLossAllowed = allowDataLoss
-                });
-            }
-
-            return app;
-        }
 
         public static IApplicationBuilder UseApiGenerator(this IApplicationBuilder app)
         {

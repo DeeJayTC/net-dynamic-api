@@ -9,8 +9,6 @@ namespace ApiGeneratorSampleApI.Model
 {
 
     [Api("/car")]
-
-    [Table("Carlala")]
     public class Car : IObjectBase<Guid>
     {
         [Key]

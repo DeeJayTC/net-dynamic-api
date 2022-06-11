@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using EFCore.AutomaticMigrations;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using System;
@@ -10,22 +11,38 @@ using TCDev.APIGenerator.Model.Interfaces;
 
 namespace TCDev.APIGenerator.SQL;
 
-public static class ServiceExtension
+public static partial class ServiceExtension
 {
 
-
-    public class ProviderConfig : IDatabaseProviderConfiguration
+    public static IApplicationBuilder UseAutomaticApiMigrations(
+    this IApplicationBuilder app,
+    bool allowDataLoss = false)
     {
-        private IConfiguration configuration;
-        public ProviderConfig(IConfiguration config)
+        using var serviceScope = app.ApplicationServices.CreateScope();
+        var builder = serviceScope.ServiceProvider.GetRequiredService<ApiGeneratorServiceBuilder>();
+
+        var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
+        if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
         {
-            this.configuration = config;
+            dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+            {
+                AutomaticMigrationsEnabled = true,
+                AutomaticMigrationDataLossAllowed = allowDataLoss
+            });
         }
 
-        public void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
+        var dbContextAuth = serviceScope.ServiceProvider.GetService<AuthDbContext>();
+        if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
         {
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("ApiGeneratorDatabase"));
+            dbContextAuth.MigrateToLatestVersion(new DbMigrationsOptions
+            {
+                AutomaticMigrationsEnabled = true,
+                AutomaticMigrationDataLossAllowed = allowDataLoss
+            });
         }
+
+        return app;
     }
     
     private static ApiGeneratorServiceBuilder AddDataContextSQL(

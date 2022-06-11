@@ -16,7 +16,7 @@ builder.Services.AddApiGeneratorServices()
                         UseHealthCheck = true
                     },
                     DatabaseOptions = new DatabaseOptions() {
-                        Connection = "Server=localhost;database=wdcc;user=sa;password=Password!23;",
+                        Connection = "Server=localhost;database=wdcc2;user=sa;password=Password!23;",
                         DatabaseType = DbType.Sql,
                         EnableAutomaticMigration = true }
                 })

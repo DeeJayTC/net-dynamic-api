@@ -3,11 +3,18 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 	<PackageId>TCDev.APIGenerator</PackageId>
-	<Version>0.1.5</Version>
+	  <Version>0.5.0-WDWC-DEMO</Version>
 	<Authors>Tim Cadenbach</Authors>
 	<Company>Rasepi</Company>
 	<Description>Creates fully working CRUD Apis from just models</Description>
 	<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
+	<PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
+	<PackageIcon>logo_small.png</PackageIcon>
+	<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,18 +30,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\..\..\RasepiHQ\media\Logo\logo_small.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EFCore6.0.AutomaticMigrations" Version="6.0.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -43,8 +60,6 @@
     <PackageReference Include="Microsoft.Identity.Web" Version="1.23.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 

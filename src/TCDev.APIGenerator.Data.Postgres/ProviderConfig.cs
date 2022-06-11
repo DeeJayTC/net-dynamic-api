@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using TCDev.APIGenerator.Extension;
 using TCDev.APIGenerator.Model.Interfaces;
 
-namespace TCDev.APIGenerator.Extension
+namespace TCDev.APIGenerator.SQL;
+
+public static partial class ServiceExtension
 {
     public class ProviderConfig : IDatabaseProviderConfiguration
     {
@@ -16,7 +19,8 @@ namespace TCDev.APIGenerator.Extension
 
         public void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(builder.ApiGeneratorConfig.DatabaseOptions.Connection);
+            optionsBuilder.UseNpgsql(builder.ApiGeneratorConfig.DatabaseOptions.Connection);
         }
     }
+
 }

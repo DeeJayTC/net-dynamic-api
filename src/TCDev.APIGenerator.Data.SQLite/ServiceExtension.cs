@@ -21,7 +21,7 @@ namespace TCDev.APIGenerator.SQL
             
             public void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             {
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("ApiGeneratorDatabase"));
+                optionsBuilder.UseSqlite(configuration.GetConnectionString("ApiGeneratorDatabase"));
             }
         }
 

@@ -1,13 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
+    <PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
+    <PackageIcon>logo_small.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/DeeJayTC/net-dynamic-api</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <Version>0.5.0-WDWC-DEMO</Version>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\..\..\RasepiHQ\media\Logo\logo_small.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EntityFramework.Triggers" Version="6.2.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
   </ItemGroup>

@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EntityFramework.Triggers" Version="6.2.3" />
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.8" />
-    <PackageReference Include="Microsoft.OData.Edm" Version="7.10.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="TCDev.APIGenerator" Version="0.1.0-alpha" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="TCDev.APIGenerator.Data.SQL" Version="0.5.0-WDWC" />
+    <PackageReference Include="TCDev.APIGenerator.OData" Version="0.5.0-WDWC" />
   </ItemGroup>
 
 </Project>
