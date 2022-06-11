@@ -19,7 +19,7 @@ builder.Services.AddApiGeneratorServices()
                     },
                     DatabaseOptions = new DatabaseOptions()
                     {
-                        Connection = "Server=localhost;database=wdcc;user=sa;password=Password!23;",
+                        Connection = "Server=localhost;database=wdcc_nuget;user=sa;password=Password!23;",
                         DatabaseType = DbType.Sql,
                         EnableAutomaticMigration = true
                     }
