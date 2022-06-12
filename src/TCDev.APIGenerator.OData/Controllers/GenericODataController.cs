@@ -122,7 +122,8 @@ namespace TCDev.APIGenerator.Odata
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var message = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return BadRequest(message);
             }
         }
 
@@ -212,7 +213,7 @@ namespace TCDev.APIGenerator.Odata
 
             if (!this.ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(this.ModelState);
             }
 
             return Ok();

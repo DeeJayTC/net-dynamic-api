@@ -75,6 +75,13 @@ namespace TCDev.APIGenerator.Extension
             return builder;
         }
 
+        public static ApiGeneratorServiceBuilder AddConfig(this ApiGeneratorServiceBuilder builder, IConfiguration config)
+        {
+            builder.ApiGeneratorConfig = new ApiGeneratorConfig(config);
+            return builder;
+        }
+
+
         public static ApiGeneratorServiceBuilder AddAssembly(this ApiGeneratorServiceBuilder builder, Assembly assembly)
         {
 

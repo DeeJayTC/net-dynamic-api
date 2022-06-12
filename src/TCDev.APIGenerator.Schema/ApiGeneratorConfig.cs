@@ -34,6 +34,9 @@ public class ApiGeneratorConfig
         this.configuration.Bind("Api:Identity", this.IdentityOptions);
 
     }
+
+
+
     public ApiGeneratorConfig(IConfiguration config)
    {
       this.configuration = config
