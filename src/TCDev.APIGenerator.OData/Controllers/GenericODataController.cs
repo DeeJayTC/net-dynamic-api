@@ -141,8 +141,10 @@ namespace TCDev.APIGenerator.Odata
                     return NotFound();
                 }
 
+              
+  
                 this.repository.Update(record, existingRecord, this.appDataService);
-                await this.repository.SaveAsync();
+   
 
                 return Ok(record);
             }

@@ -11,14 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
-                .AddConfig("")
                 .AddConfig(new ApiGeneratorConfig()
                 {
                     ApiOptions = new ApiOptions() {
                         UseHealthCheck = true
                     },
                     DatabaseOptions = new DatabaseOptions() {
-                        Connection = "Server=localhost;database=wdcc4;user=sa;password=Password!23;",
+                        Connection = "Server=localhost;database=123123123;user=sa;password=Password!23;",
                         DatabaseType = DbType.Sql,
                         EnableAutomaticMigration = true }
                 })
