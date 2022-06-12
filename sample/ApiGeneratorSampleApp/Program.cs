@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TCDev.APIGenerator;
 using TCDev.APIGenerator.Extension;
 using TCDev.APIGenerator.Identity;
+using TCDev.APIGenerator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +17,12 @@ builder.Services.AddApiGeneratorServices()
                         UseHealthCheck = true
                     },
                     DatabaseOptions = new DatabaseOptions() {
-                        Connection = "Server=localhost;database=wdcc2;user=sa;password=Password!23;",
+                        Connection = "Server=localhost;database=wdcc4;user=sa;password=Password!23;",
                         DatabaseType = DbType.Sql,
                         EnableAutomaticMigration = true }
                 })
-                .AddAssembly(Assembly.GetExecutingAssembly())
+                .AddAssemblyWithOdata(Assembly.GetExecutingAssembly())
+                //.AddAssembly(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()
                 .AddSwagger();

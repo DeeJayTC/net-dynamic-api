@@ -14,6 +14,8 @@ using TCDev.APIGenerator.Interfaces;
 
 namespace TCDev.APIGenerator.Services
 {
+
+
     public class ODataScopeService<T, TId> where T : IObjectBase<TId>
     {
         private readonly AssemblyService assemblyData;

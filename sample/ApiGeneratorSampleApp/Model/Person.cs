@@ -15,45 +15,32 @@ using TCDev.APIGenerator.Schema.Interfaces;
 namespace ApiGeneratorSampleApI.Model
 {
 
-    [Api("/students")]
-    public class Student : IObjectBase<int>
+    [Api("/people", ApiMethodsToGenerate.All)]
+    public class Person : IObjectBase<Guid>
     {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public Guid Id { get; set; }
 
-        public void BeforeDelete(Student student)
-        {
-            // Before Delete hook to make custom validations
-        }
+        public string Name { get; set; }
 
+        public string Email { get; set; }
+
+        public string Image { get; set; }
+
+        public Guid DepartmentId { get; set; }
+
+        public Department Department { get; set; }
     }
 
-    [Api("/teachers")]
-    public class Teacher : IObjectBase<int>
+
+    [Api("/departments", ApiMethodsToGenerate.All)]
+    public class Department : IObjectBase<Guid>
     {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public Guid Id { get; set; }
 
-        public void BeforeCreate(Teacher newTeacher)
-        {
-            // Before Create hook to make custom validations
-        }
+        public string Name { get; set; }
+
+        public List<Person> People { get; set; }
+
     }
-
-    [Api("/courses")]
-    public class Course : IObjectBase<int>
-    {
-        public int Id { get; set; }
-        public List<Student> Students { get; set; }
-        public Teacher Teacher { get; set; }
-
-        [JsonField]
-        public List<DateTime> Schedule { get; set; }
-    }
-
 
 }

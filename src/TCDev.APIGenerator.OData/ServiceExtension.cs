@@ -29,7 +29,9 @@ namespace TCDev.APIGenerator
             this ApiGeneratorServiceBuilder builder, 
             Action<Microsoft.AspNetCore.OData.ODataOptions>? options = null)
         {
-       
+
+            builder.Services.AddSingleton(typeof(ODataScopeService<,>));
+
             if(builder.ApiGeneratorConfig == null)  throw new APIGeneratorSetupException("Please use AddConfig() first!");
 
             if(options != null)

@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <Version>0.5.0-WDWC-DEMO</Version>
+	  <Version>0.5.0-WDWC-DEMO-ODATA</Version>
     <Description>Adds OData Support to the API Generator</Description>
     <PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.10" />
   </ItemGroup>
 
   <ItemGroup>
