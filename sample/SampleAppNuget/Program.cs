@@ -3,6 +3,7 @@ using System.Reflection;
 using TCDev.APIGenerator;
 using TCDev.APIGenerator.Extension;
 using TCDev.APIGenerator.Identity;
+using TCDev.APIGenerator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,8 @@ builder.Services.AddApiGeneratorServices()
                         EnableAutomaticMigration = true
                     }
                 })
-                .AddAssembly(Assembly.GetExecutingAssembly())
+              
+                .AddAssemblyWithOdata(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()
                 .AddSwagger();
@@ -32,8 +34,6 @@ builder.Services.AddApiGeneratorServices()
 
 var app = builder.Build();
 
-app.UseApiGenerator();
-app.UseAutomaticApiMigrations(true);
 
 // Configure the HTTP request pipeline.
 

@@ -11,11 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
-                .AddAssemblyWithOdata(Assembly.GetExecutingAssembly())
+                //.AddAssemblyWithOData(Assembly.GetExecutingAssembly())
+                .AddAssemblyWithODataFromUri("https://raw.githubusercontent.com/DeeJayTC/net-dynamic-api/main/sample/SampleAppJson/ApiDefinition.json","")
                 //.AddAssembly(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()
-                .AddSwagger();
+                .AddSwagger(true);
 
 
 var app = builder.Build();

@@ -113,10 +113,10 @@ namespace TCDev.APIGenerator.Extension
         }
 
 
-        public static ApiGeneratorServiceBuilder AddAssembly(this ApiGeneratorServiceBuilder builder, Uri uri, string apiKey)
+        public static ApiGeneratorServiceBuilder AddAssemblyRasepi(this ApiGeneratorServiceBuilder builder, Uri uri, string apiKey)
         {
 
-            if (builder.AssemblyService != null)
+            if (builder.AssemblyService == null)
             {
                 builder.AssemblyService = new AssemblyService();
                 builder.Services.AddSingleton(builder.AssemblyService);
@@ -156,7 +156,7 @@ namespace TCDev.APIGenerator.Extension
         public static ApiGeneratorServiceBuilder AddAssembly(this ApiGeneratorServiceBuilder builder, string apiDefinitionFile)
         {
 
-            if (builder.AssemblyService != null)
+            if (builder.AssemblyService == null)
             {
                 builder.AssemblyService = new AssemblyService();
                 builder.Services.AddSingleton(builder.AssemblyService);
@@ -189,7 +189,7 @@ namespace TCDev.APIGenerator.Extension
         }
 
 
-        public static ApiGeneratorServiceBuilder AddSwagger(this ApiGeneratorServiceBuilder builder)
+        public static ApiGeneratorServiceBuilder AddSwagger(this ApiGeneratorServiceBuilder builder, bool ShowODataQueryOptions = false)
         {
             builder.Services.AddSwaggerGen(c =>
             {
@@ -208,7 +208,7 @@ namespace TCDev.APIGenerator.Extension
                 c.DocumentFilter<ShowInSwaggerFilter>();
                 c.SchemaFilter<SwaggerSchemaFilter>();
                 c.OperationFilter<IgnoreODataQueryOptionOperationFilter>();
-                //c.OperationFilter<EnableQueryFiler>();
+                if(ShowODataQueryOptions) c.OperationFilter<EnableQueryFiler>();
 
                 if (builder.ApiGeneratorConfig.ApiOptions.UseXmlComments)
                 {
