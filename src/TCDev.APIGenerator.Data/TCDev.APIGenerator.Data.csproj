@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\..\RasepiHQ\media\Logo\logo_small.png">
+    <None Include="..\.nuget\logo_small.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

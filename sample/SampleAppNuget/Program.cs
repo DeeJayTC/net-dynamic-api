@@ -12,24 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
-                .AddConfig(new ApiGeneratorConfig()
-                {
-                    ApiOptions = new ApiOptions()
-                    {
-                        UseHealthCheck = true
-                    },
-                    DatabaseOptions = new DatabaseOptions()
-                    {
-                        Connection = "Server=localhost;database=wdcc_nuget;user=sa;password=Password!23;",
-                        DatabaseType = DbType.Sql,
-                        EnableAutomaticMigration = true
-                    }
-                })
-              
-                .AddAssemblyWithOdata(Assembly.GetExecutingAssembly())
+                .AddAssemblyWithOData(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()
-                .AddSwagger();
+                .AddSwagger(true);
 
 
 var app = builder.Build();
@@ -40,7 +26,9 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-//app.UseApiGenerator();
+app.UseApiGenerator();
+app.UseAutomaticApiMigrations(false);
+
 app.MapControllers();
 
 app.Run();
