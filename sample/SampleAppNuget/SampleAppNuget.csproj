@@ -12,8 +12,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TCDev.APIGenerator.Data.SQL" Version="0.6.0-RC1" />
-    <PackageReference Include="TCDev.APIGenerator.OData" Version="0.6.0-RC1" />
+    <PackageReference Include="TCDev.APIGenerator.Data.SQL" Version="0.6.0-RC2" />
+    <PackageReference Include="TCDev.APIGenerator.OData" Version="0.6.0-RC2" />
   </ItemGroup>
 
 </Project>
