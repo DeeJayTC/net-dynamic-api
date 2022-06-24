@@ -84,7 +84,13 @@ after the package is installed add this to your program.cs (or startup.cs)
 
 ```csharp
 // Add API Generator and load data
-builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
+builder.Services.AddApiGeneratorServices()
+                //From Assembly with OData .AddAssemblyWithOData(Assembly.GetExecutingAssembly())
+                //or as JSON from Uri .AddAssemblyWithODataFromUri("https://raw.githubusercontent.com/DeeJayTC/net-dynamic-api/main/sample/SampleAppJson/ApiDefinition.json","")
+                //Or without OData .AddAssembly(Assembly.GetExecutingAssembly())
+                .AddDataContextSQL() // or Postgres or SQLite
+                .AddOData()
+                .AddSwagger(true);
 ```
 
 ### Documentation -> [https://tcdev.gitbook.io/](https://tcdev.gitbook.io/)
