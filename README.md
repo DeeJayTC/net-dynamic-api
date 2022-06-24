@@ -1,8 +1,8 @@
 ![image](https://user-images.githubusercontent.com/4077759/162592498-d420906e-5eee-4d95-b0b2-c5c3c2b0c8d1.png)
-[Getting Started](https://www.tcdev.de/tcdev-api-generator-getting-started) | [Samples](https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample) | [Walkthrough Video](https://youtu.be/TI5CeNq3-o8)
+[Getting Started](https://www.tcdev.de/tcdev-api-generator-getting-started) | [Samples](https://github.com/DeeJayTC/api-generator-samples) | [Walkthrough Video](https://youtu.be/TI5CeNq3-o8)
 
 # Get fully working CRUD API's in an instant!
-<a href="https://tcdev.gitbook.io/"><img src="https://img.shields.io/badge/Docs-0.0.9-orange"></a>
+<a href="https://docs.rasepi.com"><img src="https://img.shields.io/badge/Docs-0.6.0-orange"></a>
 <a href="https://twitter.com/intent/follow?screen_name=timcadenbach"><img src="https://img.shields.io/badge/Twitter-follow-blue"></a>
 <a href="https://www.github.com/sponsors/deejaytc"><img src="https://img.shields.io/github/sponsors/deejaytc?label=Lovely%20Sponsors" /> </a>
 
@@ -93,7 +93,7 @@ builder.Services.AddApiGeneratorServices()
                 .AddSwagger(true);
 ```
 
-### Documentation -> [https://tcdev.gitbook.io/](https://tcdev.gitbook.io/)
+### Documentation -> [https://docs.rasepi.com/](https://docs.rasepi.com/)
 
 # Samples
 [https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample](https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample)
