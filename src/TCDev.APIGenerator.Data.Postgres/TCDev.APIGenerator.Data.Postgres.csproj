@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<PackageId>TCDev.APIGenerator.Data.Postgres</PackageId>
+		<Version>0.6.0</Version>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>Tim Cadenbach</Authors>
+		<Company>Rasepi</Company>
+		<Description>Adds necessary functionality to use Postgres databases with the API Generator. Rasepi greates fully working CRUD Apis from just models</Description>
+		<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
+		<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
+		<PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
+		<PackageIcon>logo_small.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\..\..\RasepiHQ\media\Logo\logo_small.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EFCore.AutomaticMigrations" Version="6.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TCDev.APIGenerator\TCDev.APIGenerator.csproj" />
+  </ItemGroup>
+
+</Project>

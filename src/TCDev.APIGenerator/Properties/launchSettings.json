@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "TCDev.ApiGenerator": {
+    "TCDev.APIGenerator": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

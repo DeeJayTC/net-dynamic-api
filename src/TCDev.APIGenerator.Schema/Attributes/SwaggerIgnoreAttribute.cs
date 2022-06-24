@@ -6,7 +6,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace TCDev.ApiGenerator.Attributes
+namespace TCDev.APIGenerator.Attributes
 {
    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Enum)]
    public class SwaggerIgnoreAttribute : Attribute

@@ -8,27 +8,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Controllers;
-using TCDev.ApiGenerator.Attributes;
-using TCDev.ApiGenerator.Data;
+using Microsoft.EntityFrameworkCore;
+using TCDev.APIGenerator.Attributes;
 using TCDev.APIGenerator.Data;
-using TCDev.ApiGenerator.Interfaces;
+using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Hooks;
+using TCDev.APIGenerator.Interfaces;
 using TCDev.APIGenerator.Services;
 
-namespace TCDev.ApiGenerator
+namespace TCDev.APIGenerator
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
     [ApiAuthAttribute]
-    public class GenericController<T, TEntityId> : ODataController
-        where T : class,
-        IObjectBase<TEntityId>
+    public class GenericController<T, TEntityId> : Controller
+        where T : class, IObjectBase<TEntityId>
     {
-        private readonly ApplicationDataService appDataService;
+        private readonly ApplicationDataService<GenericDbContext, AuthDbContext> appDataService;
         private readonly IAuthorizationService authorizationService;
         private readonly IGenericRespository<T, TEntityId> repository;
-        private readonly ODataScopeService<T, TEntityId> scopeLookup;
         private ApiAttributeAttributeOptions options;
 
         private void ConfigureController()
@@ -52,22 +50,12 @@ namespace TCDev.ApiGenerator
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(BadRequestResult))]
         [HttpGet]
-        [EnableQuery(
-            AllowedQueryOptions = AllowedQueryOptions.All,
-            AllowedFunctions = AllowedFunctions.All,
-            PageSize = 20)
-        ]
-        public IActionResult Query(ODataQueryOptions<T> ODataOpts)
+        public IActionResult Query()
         {
             // Check if post is enabled
             if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Get))
             {
                 return BadRequest($"GET is disabled for {typeof(T).Name}");
-            }
-
-            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.scopeLookup.GetRequestedScopes(ODataOpts), ""))
-            {
-                return Forbid();
             }
 
             if (!this.ModelState.IsValid)
@@ -79,17 +67,12 @@ namespace TCDev.ApiGenerator
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Find(ODataQueryOptions<T> ODataOpts, TEntityId id)
+        public async Task<IActionResult> Find(TEntityId id)
         {
             // Check if post is enabled
             if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Get))
             {
                 return BadRequest($"GET is disabled for {typeof(T).Name}");
-            }
-
-            if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.scopeLookup.GetRequestedScopes(ODataOpts), ""))
-            {
-                return Forbid();
             }
 
             if (!this.ModelState.IsValid)
@@ -109,22 +92,8 @@ namespace TCDev.ApiGenerator
         {
             try
             {
-                // Check if post is enabled
-                if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Insert))
-                {
-                    return BadRequest($"POST is disabled for {record.GetType().Name}");
-                }
-
-                if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredWriteScopes, ""))
-                {
-                    return Forbid();
-                }
-
-                // Check if payload is valid
-                if (!this.ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
+                IActionResult validator = ValidateCall(ApiMethodsToGenerate.Insert, true);
+                if (validator.GetType() != typeof(OkResult)) return validator;
 
                 // Create the new entry
                 this.repository.Create(record, this.appDataService);
@@ -147,31 +116,50 @@ namespace TCDev.ApiGenerator
         {
             try
             {
-                if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Update))
+                try
                 {
-                    return BadRequest($"PUT is disabled for {record.GetType().Name}");
-                }
+                    IActionResult validator = ValidateCall(ApiMethodsToGenerate.Update, true);
+                    if (validator.GetType() != typeof(OkResult)) return validator;
 
-                if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredWriteScopes, ""))
+                    var existingRecord = await this.repository.GetAsync(id, this.appDataService);
+                    if (existingRecord == null)
+                    {
+                        return NotFound();
+                    }
+
+
+                    if (typeof(T).IsAssignableTo(typeof(IBeforeUpdate<T>)))
+                    {
+                        var baseEntity = record as IBeforeUpdate<T>;
+                        record = await baseEntity.BeforeUpdate(record, existingRecord, this.appDataService);
+                    }
+
+                    if (typeof(T).IsAssignableFrom(typeof(IHasTrackingFields)))
+                    {
+                        this.appDataService.GenericData.Entry(record)
+                        .Property<DateTime>("LastModified")
+                        .CurrentValue = DateTime.UtcNow;
+                        this.appDataService.GenericData.Entry(record)
+                        .State = EntityState.Modified;
+                    }
+
+                    this.appDataService.GenericData.ChangeTracker.Clear();
+                    this.appDataService.GenericData.Update(record);
+                    await this.appDataService.GenericData.SaveChangesAsync();
+
+                    // We have a after update handler
+                    if (typeof(T).IsAssignableTo(typeof(IAfterUpdate<T>)))
+                    {
+                        var baseEntity = record as IAfterUpdate<T>;
+                        await baseEntity.AfterUpdate(record, existingRecord, this.appDataService);
+                    }
+
+                    return Ok(record);
+                }
+                catch (Exception ex)
                 {
-                    return Forbid();
+                    return BadRequest(ex.Message);
                 }
-
-                if (!this.ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
-
-                var existingRecord = await this.repository.GetAsync(id, this.appDataService);
-                if (existingRecord == null)
-                {
-                    return NotFound();
-                }
-
-                this.repository.Update(record, existingRecord, this.appDataService);
-                await this.repository.SaveAsync();
-
-                return Ok(record);
             }
             catch (Exception ex)
             {
@@ -184,20 +172,9 @@ namespace TCDev.ApiGenerator
         {
             try
             {
-                if (!this.options.Methods.HasFlag(ApiMethodsToGenerate.Delete))
-                {
-                    return BadRequest("DELETE is disabled");
-                }
+                IActionResult validator = ValidateCall(ApiMethodsToGenerate.Delete, true);
+                if (validator.GetType() != typeof(OkResult)) return validator;
 
-                if (this.options.Authorize && !this.HttpContext.ValidateScopes(this.options.RequiredWriteScopes, ""))
-                {
-                    return Forbid();
-                }
-
-                if (!this.ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
 
                 var existingRecord = await this.repository.GetAsync(id, this.appDataService);
                 if (existingRecord == null)
@@ -222,15 +199,37 @@ namespace TCDev.ApiGenerator
         public GenericController(
             IAuthorizationService authorizationService,
             IGenericRespository<T, TEntityId> repository,
-            ODataScopeService<T, TEntityId> scopeLookup,
-            ApplicationDataService dataService)
+            ApplicationDataService<GenericDbContext, AuthDbContext> dataService)
         {
             this.repository = repository;
             this.authorizationService = authorizationService;
-            this.scopeLookup = scopeLookup;
             this.appDataService = dataService;
 
             ConfigureController();
+        }
+
+
+
+        private IActionResult ValidateCall(ApiMethodsToGenerate method, bool isWritingCall = false)
+        {
+            if (!this.options.Methods.HasFlag(method))
+            {
+                return BadRequest($"{method} is disabled");
+            }
+
+            var requiredScopes = isWritingCall ? this.options.RequiredWriteScopes : this.options.RequiredReadScopes;
+
+            if (this.options.Authorize && !this.HttpContext.ValidateScopes(requiredScopes, ""))
+            {
+                return Forbid();
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
     }
 }

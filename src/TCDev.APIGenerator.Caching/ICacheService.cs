@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace TCDev.ApiGenerator.Caching
+namespace TCDev.APIGenerator.Caching
 {
    public interface ICacheService<T>
    {

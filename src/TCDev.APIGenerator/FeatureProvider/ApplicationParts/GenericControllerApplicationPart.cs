@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
-namespace TCDev.ApiGenerator.FeatureProvider.ApplicationParts
+namespace TCDev.APIGenerator.FeatureProvider.ApplicationParts
 {
    public class GenericControllerApplicationPart : ApplicationPart, IApplicationPartTypeProvider
    {

@@ -1,0 +1,233 @@
+{
+  "$schema": "https://www.github.com/deejaytc/net-dynamic-api/apidefinition-schema.json",
+  "$id": "https://www.github.com/deejaytc/net-dynamic-api/apidefinition-schema.json",
+  "type": "array",
+  "default": [],
+  "items": {
+      "type": "object",
+      "title": "API Definition for a single class",
+      "required": [
+          "name",
+          "route",
+          "idType",
+          "Fields"
+      ],
+      "properties": {
+          "name": {
+              "type": "string",
+              "title": "Name of the class",
+              "examples": [
+                  "Make",
+                  "Car"
+              ],
+              "pattern": "^[a-zA-Z]+$"
+          },
+          "route": {
+              "type": "string",
+              "title": "Api route ie /students for the class",
+              "examples": [
+                  "/make",
+                  "/cars"
+              ]
+          },
+          "idType": {
+              "type": "string",
+              "title": "Type of primary key, allows string, int and guid",
+              "examples": [
+                  "int"
+              ],
+              "oneOf": [
+                  {"enum": ["int", "string", "guid"]}
+              ]
+          },
+          "Fields": {
+              "type": "array",
+              "title": "The Fields Schema",
+              "items": {
+                  "type": "object",
+                  "title": "A Schema",
+                  "required": [
+                      "name",
+                      "type"
+                  ],
+                  "properties": {
+                      "name": {
+                          "type": "string",
+                          "title": "The name Schema",
+                          "examples": [
+                              "Name",
+                              "Description",
+                              "Year",
+                              "Make",
+                              "MakeId"
+                          ]
+                      },
+                      "type": {
+                          "type": "string",
+                          "title": "The type Schema",
+                          "description": "Any compilable type",
+                          "examples": [
+                              "String",
+                              "int",
+                              "virtual Make",
+                              "List<Make>"
+                          ]
+                      }
+                  },
+                  "examples": [{
+                      "name": "Name",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Description",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Year",
+                      "type": "int"
+                  },
+                  {
+                      "name": "Name",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Description",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Year",
+                      "type": "int"
+                  },
+                  {
+                      "name": "Make",
+                      "type": "virtual Make"
+                  },
+                  {
+                      "name": "MakeId",
+                      "type": "int"
+                  }]
+              },
+              "examples": [
+                  [{
+                      "name": "Name",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Description",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Year",
+                      "type": "int"
+                  }],
+                  [{
+                      "name": "Name",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Description",
+                      "type": "String"
+                  },
+                  {
+                      "name": "Year",
+                      "type": "int"
+                  },
+                  {
+                      "name": "Make",
+                      "type": "virtual Make"
+                  },
+                  {
+                      "name": "MakeId",
+                      "type": "int"
+                  }]
+              ]
+          }
+      },
+      "examples": [{
+          "name": "Make",
+          "route": "/make",
+          "idType": "int",
+          "Fields": [{
+              "name": "Name",
+              "type": "String"
+          },
+          {
+              "name": "Description",
+              "type": "String"
+          },
+          {
+              "name": "Year",
+              "type": "int"
+          }]
+      },
+      {
+          "name": "Car",
+          "route": "/cars",
+          "idType": "int",
+          "Fields": [{
+              "name": "Name",
+              "type": "String"
+          },
+          {
+              "name": "Description",
+              "type": "String"
+          },
+          {
+              "name": "Year",
+              "type": "int"
+          },
+          {
+              "name": "Make",
+              "type": "virtual Make"
+          },
+          {
+              "name": "MakeId",
+              "type": "int"
+          }]
+      }]
+  },
+  "examples": [
+      [{
+          "name": "Make",
+          "route": "/make",
+          "idType": "int",
+          "Fields": [{
+              "name": "Name",
+              "type": "String"
+          },
+          {
+              "name": "Description",
+              "type": "String"
+          },
+          {
+              "name": "Year",
+              "type": "int"
+          }]
+      },
+      {
+          "name": "Car",
+          "route": "/cars",
+          "idType": "int",
+          "Fields": [{
+              "name": "Name",
+              "type": "String"
+          },
+          {
+              "name": "Description",
+              "type": "String"
+          },
+          {
+              "name": "Year",
+              "type": "int"
+          },
+          {
+              "name": "Make",
+              "type": "virtual Make"
+          },
+          {
+              "name": "MakeId",
+              "type": "int"
+          }]
+      }]
+  ]
+}

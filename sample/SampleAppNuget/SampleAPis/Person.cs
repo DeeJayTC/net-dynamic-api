@@ -2,60 +2,58 @@
 // Apache 2.0 License
 // https://www.github.com/deejaytc/dotnet-utils
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Innofactor.EfCoreJsonValueConverter;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TCDev.ApiGenerator.Attributes;
-using TCDev.ApiGenerator.Interfaces;
-using TCDev.ApiGenerator.Schemes.Interfaces;
+using TCDev.APIGenerator.Attributes;
+using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Interfaces;
 using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace ApiGeneratorSampleApI.Model
 {
-   [Api("/people", ApiMethodsToGenerate.All)]
-   public class Person : Trackable,
-      IObjectBase<Guid>,
-      IBeforeUpdate<Person>, // Before Update Hook
-      IBeforeDelete<Person>, // BeforeDelete Hook
-      IEntityTypeConfiguration<Person> // Configure Table Options yourself
-   {
-      public string Name { get; set; }
-      public DateTime Date { get; set; }
-      public string Description { get; set; }
-      public int Age { get; set; }
-      public Guid Id { get; set; }
 
+    [Api("/students")]
+    public class Student : IObjectBase<int>
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
-      /// <summary>
-      /// Before Delete Hook
-      /// </summary>
-      /// <param name="item"></param>
-      /// <returns></returns>
-      public Task<bool> BeforeDelete(Person item)
-      {
-         // NOOOO Don't delete me!
-         return Task.FromResult(true);
-      }
+        public void BeforeDelete(Student student)
+        {
+            // Before Delete hook to make custom validations
+        }
 
-      /// <summary>
-      /// Before Update Hook
-      /// </summary>
-      /// <param name="newPerson"></param>
-      /// <param name="oldPerson"></param>
-      /// <returns></returns>
-      public Task<Person> BeforeUpdate(Person newPerson, Person oldPerson)
-      {
-         newPerson.Age = 333;
+    }
 
-         return Task.FromResult(newPerson);
-      }
+    [Api("/teachers")]
+    public class Teacher : IObjectBase<int>
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
-      public void Configure(EntityTypeBuilder<Person> builder)
-      {
-        
-      }
-   }
+        public void BeforeCreate(Teacher newTeacher)
+        {
+            // Before Create hook to make custom validations
+        }
+    }
+
+    [Api("/courses")]
+    public class Course : IObjectBase<int>
+    {
+        public int Id { get; set; }
+        public List<Student> Students { get; set; }
+        public Teacher Teacher { get; set; }
+
+        [JsonField]
+        public List<DateTime> Schedule { get; set; }
+    }
+
 
 }

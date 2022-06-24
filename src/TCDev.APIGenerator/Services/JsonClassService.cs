@@ -9,13 +9,13 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using TCDev.ApiGenerator.Interfaces;
+using TCDev.APIGenerator.Interfaces;
 using TCDev.APIGenerator.Schema;
 
-namespace TCDev.ApiGenerator.Json;
+namespace TCDev.APIGenerator.Json;
 
 
-public class JsonClassBuilder
+public class JsonClassService
 {
     public static List<Type> CreateTypes(List<JsonClassDefinition> definitions)
     {
@@ -31,7 +31,7 @@ public class JsonClassBuilder
                 .ToArray();
 
             var compilation = CSharpCompilation
-                .Create("TCDev.ApiGenerator")
+                .Create("TCDev.APIGenerator")
                 .AddSyntaxTrees(trees)
                 .AddReferences(assemblies)
                 .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -69,14 +69,14 @@ public class JsonClassBuilder
     {
         var classCode = $@" // Auto-generated code
          using System;
-         using Swashbuckle.AspNetCore.Annotations;
+         //using Swashbuckle.AspNetCore.Annotations;
          using System.ComponentModel.DataAnnotations;
          using System.ComponentModel.DataAnnotations.Schema;
          using System.Text.Json.Serialization;
-         using TCDev.ApiGenerator.Attributes;
-         using TCDev.ApiGenerator.Interfaces;
+         using TCDev.APIGenerator.Attributes;
+         using TCDev.APIGenerator.Interfaces;
 
-         namespace TCDev.ApiGenerator
+         namespace TCDev.APIGenerator
          {{
              [Api(""{definition.RouteTemplate}"" ";
 

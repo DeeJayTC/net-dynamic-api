@@ -1,17 +1,23 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using TCDev.ApiGenerator.Extension;
+using TCDev.APIGenerator;
+using TCDev.APIGenerator.Extension;
 using TCDev.APIGenerator.Identity;
+using TCDev.APIGenerator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
-await builder.Services.AddApiGeneratorServices(builder.Configuration, Assembly.GetExecutingAssembly());
+
+builder.Services.AddApiGeneratorServices()
+                //.AddAssemblyWithOData(Assembly.GetExecutingAssembly())
+                .AddAssemblyWithODataFromUri("https://raw.githubusercontent.com/DeeJayTC/net-dynamic-api/main/sample/SampleAppJson/ApiDefinition.json","")
+                //.AddAssembly(Assembly.GetExecutingAssembly())
+                .AddDataContextSQL()
+                .AddOData()
+                .AddSwagger(true);
+
 
 var app = builder.Build();
 
@@ -28,8 +34,8 @@ app.UseApiGeneratorAuthentication();
 
 app.UseEndpoints(endpoints =>
 {
-   endpoints.UseApiGeneratorEndpoints();
-   endpoints.MapControllers();
+    endpoints.UseApiGeneratorEndpoints();
+    endpoints.MapControllers();
 });
 
 app.Run();

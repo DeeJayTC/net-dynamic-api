@@ -4,7 +4,7 @@
 
 using System;
 
-namespace TCDev.ApiGenerator.Schemes
+namespace TCDev.APIGenerator.Schemes
 {
    public abstract class SoftDelete
    {

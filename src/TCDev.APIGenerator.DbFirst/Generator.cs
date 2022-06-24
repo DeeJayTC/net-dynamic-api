@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 using TCDev.APIGenerator.Schema;
 
 
-namespace TCDev.ApiGenerator.Json;
+namespace TCDev.APIGenerator.Json;
 
 public class JsonClassBuilder
 {
@@ -29,10 +29,10 @@ public class JsonClassBuilder
          using System.ComponentModel.DataAnnotations;
          using System.ComponentModel.DataAnnotations.Schema;
          using System.Text.Json.Serialization;
-         using TCDev.ApiGenerator.Attributes;
-         using TCDev.ApiGenerator.Interfaces;
+         using TCDev.APIGenerator.Attributes;
+         using TCDev.APIGenerator.Interfaces;
 
-         namespace TCDev.ApiGenerator
+         namespace TCDev.APIGenerator
          {{
              [Api(""{ definition.RouteTemplate }"")]
              public class { definition.Name } : IObjectBase<{definition.IdType}>
@@ -61,7 +61,7 @@ public class JsonClassBuilder
          var syntaxTree = CSharpSyntaxTree.ParseText(classCode);
 
          var compilation = CSharpCompilation
-            .Create("TCDev.ApiGenerator")
+            .Create("TCDev.APIGenerator")
             .AddSyntaxTrees(syntaxTree)
             .AddReferences(assemblies)
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -74,7 +74,7 @@ public class JsonClassBuilder
             ms.Seek(0, SeekOrigin.Begin);
             var assembly = Assembly.Load(ms.ToArray());
 
-            var newTypeFullName = $"TCDev.ApiGenerator.{definition.Name}";
+            var newTypeFullName = $"TCDev.APIGenerator.{definition.Name}";
 
             var type = assembly.GetType(newTypeFullName);
             return type;

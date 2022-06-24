@@ -1,77 +1,76 @@
-﻿// TCDev 2022/03/16
-// Apache 2.0 License
-// https://www.github.com/deejaytc/dotnet-utils
+﻿
 
-using Innofactor.EfCoreJsonValueConverter;
-using Microsoft.AspNetCore.Http;
+using DemoAPI;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TCDev.ApiGenerator.Attributes;
-using TCDev.ApiGenerator.Data;
-using TCDev.ApiGenerator.Interfaces;
-using TCDev.ApiGenerator.Schema.Interfaces;
+using TCDev.APIGenerator.Attributes;
+using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Hooks;
+using TCDev.APIGenerator.Interfaces;
 
-namespace ApiGeneratorSampleApI.Model
+namespace DemoAPI
 {
-    //[Api("/people")]
-    //public class Person : IObjectBase<Guid>, IBeforeCreate<Person>
-    //{
-    //  public string Name { get; set; }
-    //  public DateTime Date { get; set; }
-    //  public string Description { get; set; }
 
-    //  [Auth(AllowedRoles = new string[] { "admin" })]
-    //  public int Age { get; set; }
-
-
-    //  public Guid Id { get; set; }
-
-    //    public Task<Person> BeforeCreate(Person newItem, GenericDbContext db, HttpContext context)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-
-    [Api("/students")]
-    public class Student : IObjectBase<int>
+    [Api("/people", ApiMethodsToGenerate.All)]
+    public class Person : IObjectBase<Guid>, IAfterCreate<Person>, IBeforeCreate<Person>
     {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
-        public void BeforeDelete(Student student)
+        public string Name { get; set; }
+
+        public string Job { get; set; }
+
+        public string Email { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Image { get; set; }
+
+        public Guid CompanyId { get; set; }
+        public Company? Company { get; set; }
+
+        public Task<Person> AfterCreate(Person newItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
         {
-            // Before Delete hook to make custom validations
+
+            return Task.FromResult(newItem);
         }
 
-    }
-
-    [Api("/teachers")]
-    public class Teacher : IObjectBase<int>
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-
-        public void BeforeCreate(Teacher newTeacher)
+        public Task<Person> BeforeCreate(Person newItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
         {
-            // Before Create hook to make custom validations
+            newItem.Email = "hallo@hallo.de";
+
+            return Task.FromResult(newItem);
         }
     }
 
-    [Api("/courses")]
-    public class Course : IObjectBase<int>
+}
+
+[Api("/companies", ApiMethodsToGenerate.All)]
+public class Company : IObjectBase<Guid>, IBeforeUpdate<Company>, IAfterUpdate<Company>
+{
+    public Guid Id { get; set; } = new Guid();
+
+    public string Name { get; set; }
+
+    public string Email { get; set; }
+
+    public string Image { get; set; }
+
+    public List<Person>? People { get; set; }
+
+    public string Address { get; set; }
+    public string Country { get; set; }
+
+    public Task<Company> AfterUpdate(Company newItem, Company oldItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
     {
-        public int Id { get; set; }
-        public List<Student> Students { get; set; }
-        public Teacher Teacher { get; set; }
-        
-        [JsonField]
-        public List<DateTime> Schedule { get; set; }
+        return Task.FromResult(newItem);
     }
 
+    public Task<Company> BeforeUpdate(Company newItem, Company oldItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
+    {
+        newItem.Email = "hallo@hallo.de";
 
+        return Task.FromResult(newItem);
+    }
 }

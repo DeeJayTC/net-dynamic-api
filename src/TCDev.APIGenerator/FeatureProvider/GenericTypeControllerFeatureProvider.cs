@@ -8,76 +8,41 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using TCDev.ApiGenerator;
-using TCDev.ApiGenerator.Attributes;
+using TCDev.APIGenerator;
+using TCDev.APIGenerator.Attributes;
 
-namespace TCDev.Controllers
+namespace TCDev
 {
-   public class GenericAssemblyControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
-   {
-      /// <summary>
-      ///    Initiate the Controller generator
-      /// </summary>
-      /// <param name="assemblies">Names of assemblies to search for classes</param>
-      public GenericAssemblyControllerFeatureProvider(Assembly[] assemblies)
-      {
-         this.Assemblies = assemblies;
-      }
-
-      private Assembly[] Assemblies { get; }
-
-      public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
-      {
-         foreach (var assembly in Assemblies)
-         {
-            var customClasses = assembly.GetExportedTypes().Where(x => x.GetCustomAttributes<ApiAttribute>().Any());
-
-            foreach (var candidate in customClasses)
-            {
-               // Ignore BaseController itself
-               if (candidate.FullName != null && candidate.FullName.Contains("BaseController")) continue;
-
-               // Generate type info for our runtime controller, assign class as T
-               var propertyType = candidate.GetProperty("Id")?.PropertyType;
-               if (propertyType == null) continue;
-               var typeInfo = typeof(GenericController<,>).MakeGenericType(candidate, propertyType).GetTypeInfo();
-
-               // Finally add the new controller via FeatureProvider ->
-               feature.Controllers.Add(typeInfo);
-            }
-         }
-      }
-   }
-
-
    public class GenericTypeControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
    {
-      /// <summary>
-      ///    Initiate the Controller generator
-      /// </summary>
-      /// <param name="types">Names of assemblies to search for classes</param>
-      public GenericTypeControllerFeatureProvider(List<Type> types)
+        /// <summary>
+        ///    Initiate the Controller generator
+        /// </summary>
+        /// <param name="types">Names of assemblies to search for classes</param>
+        /// <param name="controllerType">Type of controller (normal / Odata) to use</param>
+      public GenericTypeControllerFeatureProvider(List<Type> types, Type controllerType)
       {
          this.Types = types;
+         this.controllerType = controllerType;
       }
 
       private List<Type> Types { get; }
+      private Type controllerType { get; }
 
       public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
       {
-         foreach (var type in this.Types)
-         {
+        foreach (var candidate in Types)
+        {
             // Ignore BaseController itself
-            if (type.FullName != null && type.FullName.Contains("BaseController")) continue;
+            if (candidate.FullName != null && candidate.FullName.Contains("BaseController")) continue;
 
             // Generate type info for our runtime controller, assign class as T
-            var propertyType = type.GetProperty("Id")?.PropertyType;
+            var propertyType = candidate.GetProperty("Id")?.PropertyType;
             if (propertyType == null) continue;
-            var typeInfo = typeof(GenericController<,>).MakeGenericType(type, propertyType).GetTypeInfo();
 
-            // Finally add the new controller via FeatureProvider ->
+            var typeInfo = controllerType.MakeGenericType(candidate, propertyType).GetTypeInfo();
             feature.Controllers.Add(typeInfo);
-         }
+        }
       }
    }
 }

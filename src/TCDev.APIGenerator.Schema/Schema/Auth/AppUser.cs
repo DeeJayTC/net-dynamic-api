@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-using TCDev.ApiGenerator.Attributes;
+using TCDev.APIGenerator.Attributes;
 
 namespace TCDev.APIGenerator.Model
 {

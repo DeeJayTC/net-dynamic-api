@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using TCDev.ApiGenerator;
+using TCDev.APIGenerator;
 
 namespace TCDev.APIGenerator.Identity
 {

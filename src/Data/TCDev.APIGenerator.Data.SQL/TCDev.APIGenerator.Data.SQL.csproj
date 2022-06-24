@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<PackageId>TCDev.APIGenerator.Data.SQL</PackageId>
+		<Version>0.2</Version>
+		<Authors>Tim Cadenbach</Authors>
+		<Company>TCDev</Company>
+		<Description>Adds necessary functionality to use MS SQL Server and Azure SQL Instances with the API Generator. Rasepi greates fully working CRUD Apis from just models</Description>
+		<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TCDev.APIGenerator\TCDev.APIGenerator.csproj" />
+    <ProjectReference Include="..\TCDev.APIGenerator.Data\TCDev.APIGenerator.Data.csproj" />
+  </ItemGroup>
+
+</Project>
