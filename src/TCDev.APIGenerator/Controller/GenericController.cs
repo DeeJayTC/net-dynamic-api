@@ -8,9 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TCDev.APIGenerator.Attributes;
 using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Interfaces;
 using TCDev.APIGenerator.Services;
 
@@ -20,7 +22,7 @@ namespace TCDev.APIGenerator
     [Produces("application/json")]
     [ApiAuthAttribute]
     public class GenericController<T, TEntityId> : Controller
-        where T : IObjectBase<TEntityId>
+        where T : class, IObjectBase<TEntityId>
     {
         private readonly ApplicationDataService<GenericDbContext, AuthDbContext> appDataService;
         private readonly IAuthorizationService authorizationService;
@@ -114,19 +116,50 @@ namespace TCDev.APIGenerator
         {
             try
             {
-                IActionResult validator = ValidateCall(ApiMethodsToGenerate.Update, true);
-                if (validator.GetType() != typeof(OkResult)) return validator;
-
-                var existingRecord = await this.repository.GetAsync(id, this.appDataService);
-                if (existingRecord == null)
+                try
                 {
-                    return NotFound();
+                    IActionResult validator = ValidateCall(ApiMethodsToGenerate.Update, true);
+                    if (validator.GetType() != typeof(OkResult)) return validator;
+
+                    var existingRecord = await this.repository.GetAsync(id, this.appDataService);
+                    if (existingRecord == null)
+                    {
+                        return NotFound();
+                    }
+
+
+                    if (typeof(T).IsAssignableTo(typeof(IBeforeUpdate<T>)))
+                    {
+                        var baseEntity = record as IBeforeUpdate<T>;
+                        record = await baseEntity.BeforeUpdate(record, existingRecord, this.appDataService);
+                    }
+
+                    if (typeof(T).IsAssignableFrom(typeof(IHasTrackingFields)))
+                    {
+                        this.appDataService.GenericData.Entry(record)
+                        .Property<DateTime>("LastModified")
+                        .CurrentValue = DateTime.UtcNow;
+                        this.appDataService.GenericData.Entry(record)
+                        .State = EntityState.Modified;
+                    }
+
+                    this.appDataService.GenericData.ChangeTracker.Clear();
+                    this.appDataService.GenericData.Update(record);
+                    await this.appDataService.GenericData.SaveChangesAsync();
+
+                    // We have a after update handler
+                    if (typeof(T).IsAssignableTo(typeof(IAfterUpdate<T>)))
+                    {
+                        var baseEntity = record as IAfterUpdate<T>;
+                        await baseEntity.AfterUpdate(record, existingRecord, this.appDataService);
+                    }
+
+                    return Ok(record);
                 }
-
-                this.repository.Update(record, existingRecord, this.appDataService);
-                await this.repository.SaveAsync();
-
-                return Ok(record);
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
             catch (Exception ex)
             {

@@ -12,14 +12,14 @@ using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace TCDev.APIGenerator.Data
 {
-   public interface IGenericRespository<T, TEntityId> : IDisposable
+   public interface IGenericRespository<T, TEntityId>
    {
       IQueryable<T> Get();
 
       T Get(TEntityId id);
 
       Task<T> GetAsync(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data);
-
+      Task<T> GetUntrackedAsync(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data);
       void Create(T record, IApplicationDataService<GenericDbContext, AuthDbContext> data);
 
       void Update(T record, T oldRecord, IApplicationDataService<GenericDbContext, AuthDbContext> data);

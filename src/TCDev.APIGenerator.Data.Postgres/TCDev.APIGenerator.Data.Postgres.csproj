@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<PackageId>TCDev.APIGenerator.Data.Postgres</PackageId>
-		<Version>0.5.0-WDWC-DEMO</Version>
+		<Version>0.6.0-44ffa</Version>
 		<Authors>Tim Cadenbach</Authors>
 		<Company>Rasepi</Company>
 		<Description>Adds necessary functionality to use Postgres databases with the API Generator. Rasepi greates fully working CRUD Apis from just models</Description>

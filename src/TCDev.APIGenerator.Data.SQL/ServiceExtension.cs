@@ -23,13 +23,19 @@ namespace TCDev.APIGenerator.Extension
             var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
             if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
             {
-                dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+                try
                 {
-                    AutomaticMigrationsEnabled = true,
-                    AutomaticMigrationDataLossAllowed = allowDataLoss
-                });
+                    dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+                    {
+                        AutomaticMigrationsEnabled = true,
+                        AutomaticMigrationDataLossAllowed = allowDataLoss
+                    });
 
-                dbContext.MigrateToLatestVersion();
+                    dbContext.MigrateToLatestVersion();
+                } catch(MigrateDatabaseException ex)
+                {
+                    Console.WriteLine("ERROR -> Could not migrate database -> " + ex.Message,ex);
+                }
             }
 
 

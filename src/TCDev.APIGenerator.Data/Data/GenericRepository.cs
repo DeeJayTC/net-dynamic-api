@@ -32,12 +32,20 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
     public TEntity Get(TEntityId id)
     {
         return Get()
-           .SingleOrDefault(e => e.Id.ToString() == id.ToString());
+                .AsNoTracking()
+                .SingleOrDefault(e => e.Id.ToString() == id.ToString());
     }
 
     public async Task<TEntity> GetAsync(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data)
     {
         return await Get()
+           .SingleOrDefaultAsync(e => e.Id.ToString() == id.ToString());
+    }
+
+    public async Task<TEntity> GetUntrackedAsync(TEntityId id, IApplicationDataService<GenericDbContext, AuthDbContext> data)
+    {
+        return await Get()
+           .AsNoTracking()
            .SingleOrDefaultAsync(e => e.Id.ToString() == id.ToString());
     }
 
@@ -76,8 +84,6 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
             newRecord = await baseEntity.BeforeUpdate(newRecord, oldRecord, data);
         }
 
-        this.data.GenericData.Remove(oldRecord);
-
         if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
         {
             this.data.GenericData.Entry(newRecord)
@@ -85,15 +91,10 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
             .CurrentValue = DateTime.UtcNow;
             this.data.GenericData.Entry(newRecord)
             .State = EntityState.Modified;
-
-
         }
 
-
-        this.data.GenericData.Add(newRecord);
-
-        //oldRecord = newRecord;
-        //this.data.GenericData.Update(oldRecord);
+        this.data.GenericData.ChangeTracker.Clear();
+        this.data.GenericData.Update(newRecord);
         await this.data.GenericData.SaveChangesAsync();
 
         // We have a after update handler
@@ -155,24 +156,24 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
         return (IQueryable<TEntity>)prop.GetValue(this);
     }
 
-    #region Dispose
+    //#region Dispose
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    //public void Dispose()
+    //{
+    //    Dispose(true);
+    //    GC.SuppressFinalize(this);
+    //}
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-            if (this.data.GenericData != null)
-            {
-                this.data.GenericData.Dispose();
-                this.data.GenericData = null;
-            }
-    }
+    //protected virtual void Dispose(bool disposing)
+    //{
+    //    if (disposing)
+    //        if (this.data.GenericData != null)
+    //        {
+    //            this.data.GenericData.Dispose();
+    //            this.data.GenericData = null;
+    //        }
+    //}
 
-    #endregion
+    //#endregion
 
 }

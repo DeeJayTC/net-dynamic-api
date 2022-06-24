@@ -47,7 +47,7 @@ namespace DemoAPI
 }
 
 [Api("/companies", ApiMethodsToGenerate.All)]
-public class Company : IObjectBase<Guid>
+public class Company : IObjectBase<Guid>, IBeforeUpdate<Company>, IAfterUpdate<Company>
 {
     public Guid Id { get; set; } = new Guid();
 
@@ -61,4 +61,16 @@ public class Company : IObjectBase<Guid>
 
     public string Address { get; set; }
     public string Country { get; set; }
+
+    public Task<Company> AfterUpdate(Company newItem, Company oldItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
+    {
+        return Task.FromResult(newItem);
+    }
+
+    public Task<Company> BeforeUpdate(Company newItem, Company oldItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
+    {
+        newItem.Email = "hallo@hallo.de";
+
+        return Task.FromResult(newItem);
+    }
 }

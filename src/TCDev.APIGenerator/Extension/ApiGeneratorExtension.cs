@@ -46,6 +46,7 @@ namespace TCDev.APIGenerator.Extension
         public static ApiGeneratorServiceBuilder AddApiGeneratorServices(this IServiceCollection services)
         {
             var builder = new ApiGeneratorServiceBuilder();
+            builder.ApiGeneratorConfig = new ApiGeneratorConfig();
             services.AddSingleton<ApiGeneratorServiceBuilder>(builder);
 
             builder.Services = services;

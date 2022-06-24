@@ -100,26 +100,26 @@ namespace TCDev.APIGenerator.Data
 
         #region If you're targeting EF Core
 
-        public override int SaveChanges()
-        {
-            return this.SaveChangesWithTriggers(base.SaveChanges);
-        }
+        //public override int SaveChanges()
+        //{
+        //    return this.SaveChangesWithTriggers(base.SaveChanges);
+        //}
 
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            return this.SaveChangesWithTriggers(base.SaveChanges, acceptAllChangesOnSuccess);
-        }
+        //public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        //{
+        //    return this.SaveChangesWithTriggers(base.SaveChanges, acceptAllChangesOnSuccess);
+        //}
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, true, cancellationToken);
-        }
+        //public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        //{
+        //    return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, true, cancellationToken);
+        //}
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default)
-        {
-            return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, acceptAllChangesOnSuccess, cancellationToken);
-        }
+        //public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        //    CancellationToken cancellationToken = default)
+        //{
+        //    return this.SaveChangesWithTriggersAsync(base.SaveChangesAsync, acceptAllChangesOnSuccess, cancellationToken);
+        //}
 
         #endregion
     }
