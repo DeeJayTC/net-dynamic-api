@@ -76,6 +76,8 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
             newRecord = await baseEntity.BeforeUpdate(newRecord, oldRecord, data);
         }
 
+        this.data.GenericData.Remove(oldRecord);
+
         if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
         {
             this.data.GenericData.Entry(newRecord)
@@ -83,10 +85,15 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
             .CurrentValue = DateTime.UtcNow;
             this.data.GenericData.Entry(newRecord)
             .State = EntityState.Modified;
+
+
         }
 
-        oldRecord = newRecord;
-        this.data.GenericData.Attach(oldRecord);
+
+        this.data.GenericData.Add(newRecord);
+
+        //oldRecord = newRecord;
+        //this.data.GenericData.Update(oldRecord);
         await this.data.GenericData.SaveChangesAsync();
 
         // We have a after update handler

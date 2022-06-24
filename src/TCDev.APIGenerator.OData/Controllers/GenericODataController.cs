@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using TCDev.APIGenerator.Attributes;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Interfaces;
 using TCDev.APIGenerator.Services;
 
@@ -141,10 +142,16 @@ namespace TCDev.APIGenerator.Odata
                     return NotFound();
                 }
 
-              
-  
-                this.repository.Update(record, existingRecord, this.appDataService);
-   
+
+                this.repository.Remove(existingRecord, this.appDataService);
+                this.repository.Create(record, this.appDataService);
+
+                //oldRecord = newRecord;
+                //this.data.GenericData.Update(oldRecord);
+                await this.repository.SaveAsync();
+
+                //this.repository.Update(record, existingRecord, this.appDataService);
+
 
                 return Ok(record);
             }
