@@ -96,6 +96,8 @@ builder.Services.AddApiGeneratorServices()
 ### Documentation -> [https://docs.rasepi.com/](https://docs.rasepi.com/)
 
 # Samples
-[https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample](https://github.com/DeeJayTC/net-dynamic-api/tree/main/sample)
+You can find samples for using the library in the samples repository, constantly updated to match latest version and features:
+
+[https://github.com/DeeJayTC/api-generator-samples](https://github.com/DeeJayTC/api-generator-samples)
 
 
