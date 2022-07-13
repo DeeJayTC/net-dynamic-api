@@ -93,7 +93,8 @@ builder.Services.AddApiGeneratorServices()
                 .AddSwagger(true);
 ```
 
-### Documentation -> [https://docs.rasepi.com/](https://docs.rasepi.com/)
+### Documentation 
+[https://docs.rasepi.com/](https://docs.rasepi.com/)
 
 # Samples
 You can find samples for using the library in the samples repository, constantly updated to match latest version and features:
