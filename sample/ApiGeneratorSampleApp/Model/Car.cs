@@ -2,11 +2,30 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Threading.Tasks;
 using TCDev.APIGenerator.Attributes;
+using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Events;
+using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Interfaces;
+using TCDev.APIGenerator.Schemes;
 
 namespace ApiGeneratorSampleApI.Model
 {
+
+    [Api("/people", 
+        authorize:true, 
+        requiredReadScopes: new string[] { "people.read" },
+        requiredWriteScopes: new string[] { "people.write"})]
+    [Event(Events.Created | Events.Updated)]
+    public class Person : Trackable
+    {
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime DateOfBirth { get; set; }
+    }
+
 
     [Api("/car")]
 

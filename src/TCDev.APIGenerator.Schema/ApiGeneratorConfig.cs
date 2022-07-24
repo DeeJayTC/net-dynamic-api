@@ -16,6 +16,7 @@ public class ApiGeneratorConfig
    public SwaggerOptions SwaggerOptions = new();
    public DatabaseOptions DatabaseOptions = new();
    public ODataOptions ODataOptions = new();
+   public AMQPOptions AMQPOptions = new();
    public IdentityOptions IdentityOptions = new();
    private readonly IConfiguration configuration;
 
@@ -29,6 +30,13 @@ public class ApiGeneratorConfig
         this.configuration.Bind("Api:Database", this.DatabaseOptions);
         this.configuration.Bind("Api:Odata", this.ODataOptions);
         this.configuration.Bind("Api:Identity", this.IdentityOptions);
+
+
+        // Verify DB Settings
+        if(string.IsNullOrEmpty(this.DatabaseOptions.Connection) && !string.IsNullOrEmpty(this.DatabaseOptions.ConnectionStringName))
+        {
+            this.DatabaseOptions.Connection = configuration.GetConnectionString(this.DatabaseOptions.ConnectionStringName);
+        }
     }
 
     public ApiGeneratorConfig() {
@@ -46,6 +54,7 @@ public class ApiGeneratorConfig
     public ApiGeneratorConfig(string configFile) {
         this.configuration =  new ConfigurationBuilder()
                             .AddJsonFile(configFile)
+                            .AddEnvironmentVariables()
                             .Build();
 
         BindConfig();
@@ -70,7 +79,14 @@ public class ApiGeneratorConfig
         this.configuration.Bind("Api:Swagger", this.SwaggerOptions);
         this.configuration.Bind("Api:Database", this.DatabaseOptions);
         this.configuration.Bind("Api:Odata", this.ODataOptions);
-        this.configuration.Bind("Api:Identity", this.IdentityOptions);
+        this.configuration.Bind("Api:AMQP", this.AMQPOptions);
+
+
+        // Verify DB Settings
+        if (string.IsNullOrEmpty(this.DatabaseOptions.Connection) && !string.IsNullOrEmpty(this.DatabaseOptions.ConnectionStringName))
+        {
+            this.DatabaseOptions.Connection = configuration.GetConnectionString(this.DatabaseOptions.ConnectionStringName);
+        }
     }
 }
 
@@ -106,6 +122,8 @@ public class DatabaseOptions
 {
    public DbType DatabaseType { get; set; } = DbType.InMemory;
    public string? Connection { get; set; } = string.Empty;
+   public string? ConnectionStringName { get; set; } = string.Empty;
+    
    public bool EnableAutomaticMigration { get; set; } = true;
 
     public string MigrationAssembly { get; set; } = Assembly.GetExecutingAssembly().FullName;
@@ -136,6 +154,12 @@ public class SwaggerOptions
    public string ContactMail { get; set; } = "test@test.de";
    public string ContactUri { get; set; } = "https://www.test.de";
    public string Route { get; set; } = "/swagger/v1/swagger.json";
+}
+
+public class AMQPOptions
+{
+    public string Host { get; set; }
+    public string Exchange { get; set; }
 }
 
 public class IdentityOptions

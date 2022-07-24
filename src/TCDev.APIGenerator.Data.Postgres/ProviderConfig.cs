@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 using TCDev.APIGenerator.Extension;
 using TCDev.APIGenerator.Model.Interfaces;
 
@@ -19,7 +20,17 @@ public static partial class ServiceExtension
 
         public void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(builder.ApiGeneratorConfig.DatabaseOptions.Connection);
+            if (string.IsNullOrEmpty(builder.ApiGeneratorConfig.DatabaseOptions.Connection)
+                &&
+                string.IsNullOrEmpty(builder.ApiGeneratorConfig.DatabaseOptions.ConnectionStringName)
+               ) throw new ArgumentException("Please set either Connection or ConnectonStringName, (and not both!)");
+
+            var connection = !string.IsNullOrEmpty(builder.ApiGeneratorConfig.DatabaseOptions.ConnectionStringName) ?
+                configuration.GetConnectionString(builder.ApiGeneratorConfig.DatabaseOptions.ConnectionStringName) :
+                builder.ApiGeneratorConfig.DatabaseOptions.Connection;
+
+
+            optionsBuilder.UseNpgsql(connection);
         }
     }
 

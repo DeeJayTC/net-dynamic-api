@@ -12,7 +12,7 @@ builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
                 //.AddAssemblyWithOData(Assembly.GetExecutingAssembly())
-                .AddAssemblyWithODataFromUri("https://raw.githubusercontent.com/DeeJayTC/net-dynamic-api/main/sample/SampleAppJson/ApiDefinition.json","")
+                .AddAssemblyWithODataFromUri("https://xxx","")
                 //.AddAssembly(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()

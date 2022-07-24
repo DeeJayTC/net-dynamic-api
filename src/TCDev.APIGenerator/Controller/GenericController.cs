@@ -98,6 +98,10 @@ namespace TCDev.APIGenerator
                 // Create the new entry
                 this.repository.Create(record, this.appDataService);
                 await this.repository.SaveAsync();
+                
+                
+                
+                
 
                 // respond with the newly created record
                 return CreatedAtAction("Find", new

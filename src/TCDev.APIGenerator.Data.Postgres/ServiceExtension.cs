@@ -55,7 +55,7 @@ public static partial class ServiceExtension
             throw new ArgumentException("Provide a connection string in configuration before initiating Database");
         }
 
-        
+
         builder.Services.AddDbContext<GenericDbContext>(options =>
         {
  
