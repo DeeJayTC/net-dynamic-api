@@ -17,6 +17,7 @@ using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Events;
 using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Interfaces;
+using TCDev.APIGenerator.Schema.Interfaces;
 using TCDev.APIGenerator.Services;
 
 namespace TCDev.APIGenerator.Odata
@@ -33,6 +34,7 @@ namespace TCDev.APIGenerator.Odata
         private readonly IGenericRespository<T, TEntityId> repository;
         private ApiAttributeAttributeOptions options;
         private CachableAttribute cacheOptions;
+        private EventAttribute eventOptions;
         private ApiGeneratorConfig apiGenConfig;
 
 
@@ -141,6 +143,9 @@ namespace TCDev.APIGenerator.Odata
                 this.repository.Create(record, this.appDataService);
                 await this.repository.SaveAsync();
 
+
+                if (eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(record, typeof(T).Name + ".CREATED", null);
+
                 // respond with the newly created record
                 return CreatedAtAction("Find", new
                 {
@@ -196,7 +201,7 @@ namespace TCDev.APIGenerator.Odata
                 }
 
 
-                CheckAndSendEvent(record, typeof(T).Name + ".UPDATED");
+                if (eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(record, typeof(T).Name + ".UPDATED", null);
 
 
                 return Ok(record);
@@ -224,7 +229,7 @@ namespace TCDev.APIGenerator.Odata
 
                 this.repository.Delete(id, this.appDataService);
 
-                CheckAndSendEvent(existingRecord, typeof(T).Name + ".DELETED");
+                if (eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(existingRecord, typeof(T).Name + ".DELETED", null);
                 if (await this.repository.SaveAsync() == 0)
                 {
                     return BadRequest();
@@ -254,7 +259,7 @@ namespace TCDev.APIGenerator.Odata
 
 
 
-        private void CheckAndSendEvent(T record, string Name)
+        private void CheckAndSendEvent(T record, string Name, T oldRecord)
         {
             try
             {
@@ -272,7 +277,7 @@ namespace TCDev.APIGenerator.Odata
                 if (apiGenConfig.RuntimeOptions.AMQPService != null)
                 {
 
-                    apiGenConfig.RuntimeOptions.AMQPService.SendMessage(new AMQPPayload<T>() { data = record, eventName = Name });
+                    apiGenConfig.RuntimeOptions.AMQPService.SendMessage(new AMQPPayload<T>() { data = record, eventName = Name, oldData = oldRecord });
                 }
             }
             catch (Exception ex)
@@ -281,7 +286,6 @@ namespace TCDev.APIGenerator.Odata
             }
 
         }
-
         private IActionResult ValidateCall(ApiMethodsToGenerate method, bool isWritingCall = false)
         {
             if (!this.options.Methods.HasFlag(method))

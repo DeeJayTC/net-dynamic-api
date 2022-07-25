@@ -1,18 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<PackageId>TCDev.APIGenerator.Redis</PackageId>
+		<PackageId>TCDev.APIGenerator.RabbitMQ</PackageId>
 		<Version>0.7.0-RC1</Version>
 		<Authors>Tim Cadenbach</Authors>
 		<Company>Rasepi</Company>
-		<Description>Adds necessary functionality to use Redis Cache with the API Generator. Rasepi greates fully working CRUD Apis from just models</Description>
+		<Description>Package adds RabbitMQ events to the APIs. Creates fully working CRUD Apis from just models</Description>
 		<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
-		<PackageIcon>logo_small.png</PackageIcon>
 		<PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
+		<PackageIcon>logo_small.png</PackageIcon>
+		<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -23,9 +24,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,6 +30,7 @@ namespace TCDev.APIGenerator
         private readonly IGenericRespository<T, TEntityId> repository;
         private ApiAttributeAttributeOptions options;
         private CachableAttribute cacheOptions;
+        private EventAttribute eventOptions;
         private ApiGeneratorConfig apiGenConfig;
 
 
@@ -67,6 +68,13 @@ namespace TCDev.APIGenerator
             if (attrs.FirstOrDefault(p => p.GetType() == typeof(CachableAttribute)) is CachableAttribute cacheAttrib)
             {
                 this.cacheOptions = cacheAttrib;
+            }
+
+            // Get Cache Settings
+            var eventAttr = Attribute.GetCustomAttributes(typeof(EventAttribute));
+            if (attrs.FirstOrDefault(p => p.GetType() == typeof(EventAttribute)) is EventAttribute eventAttrib)
+            {
+                this.eventOptions = eventAttrib;
             }
 
         }
@@ -137,7 +145,7 @@ namespace TCDev.APIGenerator
                 this.repository.Create(record, this.appDataService);
                 await this.repository.SaveAsync();
 
-                CheckAndSendEvent(record, typeof(T).Name + ".CREATED");
+                if (eventOptions.events.HasFlag(AMQPEvents.Created))  CheckAndSendEvent(record, typeof(T).Name + ".CREATED", null);
 
                 // respond with the newly created record
                 return CreatedAtAction("Find", new
@@ -152,7 +160,7 @@ namespace TCDev.APIGenerator
         }
 
         
-        private void CheckAndSendEvent(T record, string Name)
+        private void CheckAndSendEvent(T record, string Name, T oldRecord)
         {
             try
             {
@@ -170,7 +178,7 @@ namespace TCDev.APIGenerator
                 if (apiGenConfig.RuntimeOptions.AMQPService != null)
                 {
 
-                    apiGenConfig.RuntimeOptions.AMQPService.SendMessage(new AMQPPayload<T>() { data = record, eventName = Name });
+                    apiGenConfig.RuntimeOptions.AMQPService.SendMessage(new AMQPPayload<T>() { data = record, eventName = Name, oldData = oldRecord });
                 }
             }
             catch(Exception ex)
@@ -216,17 +224,14 @@ namespace TCDev.APIGenerator
                     this.appDataService.GenericDataContext.Update(record);
                     await this.appDataService.GenericDataContext.SaveChangesAsync();
 
-
-                    
                     // We have a after update handler
                     if (typeof(T).IsAssignableTo(typeof(IAfterUpdate<T>)))
                     {
                         var baseEntity = record as IAfterUpdate<T>;
                         await baseEntity.AfterUpdate(record, existingRecord, this.appDataService);
                     }
-
-
-                    CheckAndSendEvent(record, typeof(T).Name + ".UPDATED");
+                    
+                    if (eventOptions.events.HasFlag(AMQPEvents.Updated)) CheckAndSendEvent(record, typeof(T).Name.ToUpper() + ".UPDATED", existingRecord);
 
 
                     return Ok(record);
@@ -259,7 +264,8 @@ namespace TCDev.APIGenerator
 
                 this.repository.Delete(id, this.appDataService);
 
-                CheckAndSendEvent(existingRecord, typeof(T).Name + ".DELETED");
+
+                if (eventOptions.events.HasFlag(AMQPEvents.Deleted)) CheckAndSendEvent(existingRecord, typeof(T).Name.ToUpper() + ".DELETED", null);
                 if (await this.repository.SaveAsync() == 0)
                 {
                     return BadRequest();

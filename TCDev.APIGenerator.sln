@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCDev.APIGenerator.Data", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{AEC50A6A-A13F-4E40-A8FC-BA5F10DD5DF9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCDev.APIGenerator.RabbitMQ", "TCDev.APIGenerator.Events\TCDev.APIGenerator.RabbitMQ.csproj", "{BC73126C-1E98-4F92-B485-CC4BCDA568A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCDev.APIGenerator.RabbitMQ", "src\TCDev.APIGenerator.RabbitMQ\TCDev.APIGenerator.RabbitMQ.csproj", "{BC73126C-1E98-4F92-B485-CC4BCDA568A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
