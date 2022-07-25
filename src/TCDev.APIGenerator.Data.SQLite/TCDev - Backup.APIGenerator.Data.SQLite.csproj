@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<PackageId>TCDev.APIGenerator.Redis</PackageId>
-		<Version>0.7.0-RC1</Version>
+		<PackageId>TCDev.APIGenerator.Data.SQLite</PackageId>
+		<Version>0.6.0</Version>
 		<Authors>Tim Cadenbach</Authors>
 		<Company>Rasepi</Company>
-		<Description>Adds necessary functionality to use Redis Cache with the API Generator. Rasepi greates fully working CRUD Apis from just models</Description>
+		<Description>Adds necessary functionality to use SQLLite with the API Generator. Rasepi greates fully working CRUD Apis from just models</Description>
 		<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
@@ -15,14 +15,22 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Include="..\.nuget\logo_small.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="EFCore.AutomaticMigrations" Version="6.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TCDev.APIGenerator.Schema\TCDev.APIGenerator.Schema.csproj" />
     <ProjectReference Include="..\TCDev.APIGenerator\TCDev.APIGenerator.csproj" />
   </ItemGroup>
 

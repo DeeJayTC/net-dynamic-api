@@ -6,32 +6,21 @@ using System.Threading.Tasks;
 
 namespace TCDev.APIGenerator.Events
 {
-    [Flags]
-    public enum Events
-    {
-        Created = 1,
-        Updated = 2,
-        Deleted = 4,
-        All = Created
-    }
 
     [AttributeUsage(AttributeTargets.Class)]
-    public class EventAttribute : Attribute
+    public class CachableAttribute : Attribute
     {
 
-        public Events events;
-        public string routingKey;
-        public string exchange;
-        
-        public EventAttribute(
-            Events events,
-            string routingKey = "",
-            string exchange = ""
+        public string cacheKey;
+        public int defaultLifeTime;
+
+        public CachableAttribute(
+            string cacheKey = "",
+            int defaultLifeTime = 60
             )
         {
-            this.events = events;
-            this.exchange = exchange;
-            this.routingKey = routingKey;
+            this.cacheKey = cacheKey;
+            this.defaultLifeTime = defaultLifeTime;
         }
     }
 

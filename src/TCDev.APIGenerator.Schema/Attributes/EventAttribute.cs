@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,23 +8,34 @@ using System.Threading.Tasks;
 namespace TCDev.APIGenerator.Events
 {
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class CachableAttribute : Attribute
+    [Flags]
+    public enum AMQPEvents
     {
-
-        public string cacheKey;
-        public int defaultLifeTime;
-        
-        public CachableAttribute(
-            string cacheKey = "",
-            int defaultLifeTime = 60
-            )
-        {
-            this.cacheKey = cacheKey;
-            this.defaultLifeTime = defaultLifeTime;
-        }
+        Created = 1,
+        Updated = 2,
+        Deleted = 4,
+        All = Created
     }
 
+    [AttributeUsage(AttributeTargets.Class)]
+    public class EventAttribute : Attribute
+    {
+
+        public AMQPEvents events;
+        public string routingKey;
+        public string exchange;
+
+        public EventAttribute(
+            AMQPEvents events,
+            string routingKey = "",
+            string exchange = ""
+            )
+        {
+            this.events = events;
+            this.exchange = exchange;
+            this.routingKey = routingKey;
+        }
+    }
 
 
 }

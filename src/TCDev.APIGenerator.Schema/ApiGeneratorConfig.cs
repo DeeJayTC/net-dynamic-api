@@ -6,6 +6,8 @@ using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using TCDev.APIGenerator.Events;
+using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace TCDev.APIGenerator;
 
@@ -18,6 +20,8 @@ public class ApiGeneratorConfig
    public ODataOptions ODataOptions = new();
    public AMQPOptions AMQPOptions = new();
    public IdentityOptions IdentityOptions = new();
+   public RuntimeOptions RuntimeOptions = new();
+    
    private readonly IConfiguration configuration;
 
 
@@ -30,10 +34,11 @@ public class ApiGeneratorConfig
         this.configuration.Bind("Api:Database", this.DatabaseOptions);
         this.configuration.Bind("Api:Odata", this.ODataOptions);
         this.configuration.Bind("Api:Identity", this.IdentityOptions);
-
+        this.configuration.Bind("Api:AMQP", this.AMQPOptions);
+        
 
         // Verify DB Settings
-        if(string.IsNullOrEmpty(this.DatabaseOptions.Connection) && !string.IsNullOrEmpty(this.DatabaseOptions.ConnectionStringName))
+        if (string.IsNullOrEmpty(this.DatabaseOptions.Connection) && !string.IsNullOrEmpty(this.DatabaseOptions.ConnectionStringName))
         {
             this.DatabaseOptions.Connection = configuration.GetConnectionString(this.DatabaseOptions.ConnectionStringName);
         }
@@ -60,8 +65,6 @@ public class ApiGeneratorConfig
         BindConfig();
 
     }
-
-
 
     public ApiGeneratorConfig(IConfiguration config)
    {
@@ -158,13 +161,27 @@ public class SwaggerOptions
 
 public class AMQPOptions
 {
-    public string Host { get; set; }
-    public string Exchange { get; set; }
-    
-    public string RoutingKey { get; set; }
-    
-    public string Queue { get; set; }
+    public string Host { get; set; } = String.Empty;
+    public string Exchange { get; set; } = String.Empty;
 
+    public AMQPDetailConfig ExchangeConfig { get; set; }
+    public AMQPDetailConfig QueueConfig { get; set; }
+
+
+    public string RoutingKey { get; set; } = String.Empty;
+    
+    public string Queue { get; set; } = String.Empty;
+
+}
+
+public class AMQPDetailConfig
+{
+    public bool Durable { get; set; }
+    public bool AutoDelete { get; set; }
+    
+    public bool Exclusive { get; set; }
+
+    public string Type { get; set; } = "topic";
 }
 
 public class IdentityOptions
@@ -180,4 +197,16 @@ public class IdentityOptions
     public bool ValidateAudience { get; set; } = true;
     public bool ValidateLifetime { get; set; } = true;
     public bool ValidateIssuerSigningKey { get; set; } = true;
+}
+
+/// <summary>
+///  DO not set these directly, runtime options are set
+///  by the apigen for performance reasons
+/// </summary>
+public class RuntimeOptions
+{
+    public ICacheService CacheService { get; set; }
+    public bool CacheChecked { get; set; } = false;
+    public IMessageProducer AMQPService { get; set; }
+    public bool AQMPChecked { get; set; } = false;
 }

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.EntityFrameworkCore;
 using TCDev.APIGenerator.Attributes;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Events;
 using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Interfaces;
 using TCDev.APIGenerator.Services;
@@ -26,12 +27,28 @@ namespace TCDev.APIGenerator.Odata
     public class GenericODataController<T, TEntityId> : ODataController
         where T : class, IObjectBase<TEntityId>
     {
+        private readonly ODataScopeService<T, TEntityId> scopeLookup;
         private readonly ApplicationDataService<GenericDbContext, AuthDbContext> appDataService;
         private readonly IAuthorizationService authorizationService;
         private readonly IGenericRespository<T, TEntityId> repository;
-        private readonly ODataScopeService<T, TEntityId> scopeLookup;
         private ApiAttributeAttributeOptions options;
+        private CachableAttribute cacheOptions;
+        private ApiGeneratorConfig apiGenConfig;
 
+
+        public GenericODataController(
+            IAuthorizationService authorizationService,
+            IGenericRespository<T, TEntityId> repository,
+            ApplicationDataService<GenericDbContext, AuthDbContext> dataService,
+            ApiGeneratorConfig apiGenConfig)
+        {
+            this.repository = repository;
+            this.authorizationService = authorizationService;
+            this.appDataService = dataService;
+            this.apiGenConfig = apiGenConfig;
+
+            ConfigureController();
+        }
         private void ConfigureController()
         {
             // Get attribute config from underlying type T
@@ -43,6 +60,13 @@ namespace TCDev.APIGenerator.Odata
             else
             {
                 throw new Exception($"Could not find ApiAttribute on Class: {typeof(T)}");
+            }
+
+            // Get Cache Settings
+            var cacheAttr = Attribute.GetCustomAttributes(typeof(CachableAttribute));
+            if (attrs.FirstOrDefault(p => p.GetType() == typeof(CachableAttribute)) is CachableAttribute cacheAttrib)
+            {
+                this.cacheOptions = cacheAttrib;
             }
         }
 
@@ -153,16 +177,16 @@ namespace TCDev.APIGenerator.Odata
 
                 if (typeof(T).IsAssignableFrom(typeof(IHasTrackingFields)))
                 {
-                    this.appDataService.GenericData.Entry(record)
+                    this.appDataService.GenericDataContext.Entry(record)
                     .Property<DateTime>("LastModified")
                     .CurrentValue = DateTime.UtcNow;
-                    this.appDataService.GenericData.Entry(record)
+                    this.appDataService.GenericDataContext.Entry(record)
                     .State = EntityState.Modified;
                 }
                 
-                this.appDataService.GenericData.ChangeTracker.Clear();
-                this.appDataService.GenericData.Update(record);
-                await this.appDataService.GenericData.SaveChangesAsync();
+                this.appDataService.GenericDataContext.ChangeTracker.Clear();
+                this.appDataService.GenericDataContext.Update(record);
+                await this.appDataService.GenericDataContext.SaveChangesAsync();
 
                 // We have a after update handler
                 if (typeof(T).IsAssignableTo(typeof(IAfterUpdate<T>)))
@@ -170,6 +194,10 @@ namespace TCDev.APIGenerator.Odata
                     var baseEntity = record as IAfterUpdate<T>;
                     await baseEntity.AfterUpdate(record, existingRecord, this.appDataService);
                 }
+
+
+                CheckAndSendEvent(record, typeof(T).Name + ".UPDATED");
+
 
                 return Ok(record);
             }
@@ -187,7 +215,16 @@ namespace TCDev.APIGenerator.Odata
                 IActionResult validator = ValidateCall(ApiMethodsToGenerate.Delete, true);
                 if (validator.GetType() != typeof(OkResult)) return validator;
 
+
+                var existingRecord = await this.repository.GetAsync(id, this.appDataService);
+                if (existingRecord == null)
+                {
+                    return NotFound();
+                }
+
                 this.repository.Delete(id, this.appDataService);
+
+                CheckAndSendEvent(existingRecord, typeof(T).Name + ".DELETED");
                 if (await this.repository.SaveAsync() == 0)
                 {
                     return BadRequest();
@@ -216,6 +253,34 @@ namespace TCDev.APIGenerator.Odata
         }
 
 
+
+        private void CheckAndSendEvent(T record, string Name)
+        {
+            try
+            {
+                // Check if we are using AMQP to send message and remember the value globally
+                // We only want to check this once!
+                if (!apiGenConfig.RuntimeOptions.AQMPChecked)
+                {
+                    var amqpService = (IMessageProducer)HttpContext.RequestServices.GetService(typeof(IMessageProducer));
+                    if (amqpService != null)
+                    {
+                        apiGenConfig.RuntimeOptions.AMQPService = amqpService;
+                    }
+                    apiGenConfig.RuntimeOptions.AQMPChecked = true;
+                }
+                if (apiGenConfig.RuntimeOptions.AMQPService != null)
+                {
+
+                    apiGenConfig.RuntimeOptions.AMQPService.SendMessage(new AMQPPayload<T>() { data = record, eventName = Name });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Could not send AMQP Message: ", ex);
+            }
+
+        }
 
         private IActionResult ValidateCall(ApiMethodsToGenerate method, bool isWritingCall = false)
         {

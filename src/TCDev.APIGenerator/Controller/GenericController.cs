@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TCDev.APIGenerator.Attributes;
 using TCDev.APIGenerator.Data;
-using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Events;
 using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Interfaces;
@@ -31,6 +30,24 @@ namespace TCDev.APIGenerator
         private readonly IGenericRespository<T, TEntityId> repository;
         private ApiAttributeAttributeOptions options;
         private CachableAttribute cacheOptions;
+        private ApiGeneratorConfig apiGenConfig;
+
+
+        public GenericController(
+            IAuthorizationService authorizationService,
+            IGenericRespository<T, TEntityId> repository,
+            ApplicationDataService<GenericDbContext, AuthDbContext> dataService,
+            ApiGeneratorConfig apiGenConfig)
+        {
+            this.repository = repository;
+            this.authorizationService = authorizationService;
+            this.appDataService = dataService;
+            this.apiGenConfig = apiGenConfig;
+
+            ConfigureController();
+        }
+
+
 
         private void ConfigureController()
         {
@@ -120,12 +137,7 @@ namespace TCDev.APIGenerator
                 this.repository.Create(record, this.appDataService);
                 await this.repository.SaveAsync();
 
-                // Check if we are using AMQP to send message
-                var amqpService = (IMessageProducer)HttpContext.RequestServices.GetService(typeof(IMessageProducer));
-                if (amqpService != null)
-                {
-                    amqpService.SendMessage(record);
-                }
+                CheckAndSendEvent(record, typeof(T).Name + ".CREATED");
 
                 // respond with the newly created record
                 return CreatedAtAction("Find", new
@@ -137,6 +149,35 @@ namespace TCDev.APIGenerator
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        
+        private void CheckAndSendEvent(T record, string Name)
+        {
+            try
+            {
+                // Check if we are using AMQP to send message and remember the value globally
+                // We only want to check this once!
+                if (!apiGenConfig.RuntimeOptions.AQMPChecked)
+                {
+                    var amqpService = (IMessageProducer)HttpContext.RequestServices.GetService(typeof(IMessageProducer));
+                    if (amqpService != null)
+                    {
+                        apiGenConfig.RuntimeOptions.AMQPService = amqpService;
+                    }
+                    apiGenConfig.RuntimeOptions.AQMPChecked = true;
+                }
+                if (apiGenConfig.RuntimeOptions.AMQPService != null)
+                {
+
+                    apiGenConfig.RuntimeOptions.AMQPService.SendMessage(new AMQPPayload<T>() { data = record, eventName = Name });
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.Error.WriteLine("Could not send AMQP Message: ", ex);
+            }
+
         }
 
         [HttpPut("{id}")]
@@ -164,23 +205,29 @@ namespace TCDev.APIGenerator
 
                     if (typeof(T).IsAssignableFrom(typeof(IHasTrackingFields)))
                     {
-                        this.appDataService.GenericData.Entry(record)
+                        this.appDataService.GenericDataContext.Entry(record)
                         .Property<DateTime>("LastModified")
                         .CurrentValue = DateTime.UtcNow;
-                        this.appDataService.GenericData.Entry(record)
+                        this.appDataService.GenericDataContext.Entry(record)
                         .State = EntityState.Modified;
                     }
 
-                    this.appDataService.GenericData.ChangeTracker.Clear();
-                    this.appDataService.GenericData.Update(record);
-                    await this.appDataService.GenericData.SaveChangesAsync();
+                    this.appDataService.GenericDataContext.ChangeTracker.Clear();
+                    this.appDataService.GenericDataContext.Update(record);
+                    await this.appDataService.GenericDataContext.SaveChangesAsync();
 
+
+                    
                     // We have a after update handler
                     if (typeof(T).IsAssignableTo(typeof(IAfterUpdate<T>)))
                     {
                         var baseEntity = record as IAfterUpdate<T>;
                         await baseEntity.AfterUpdate(record, existingRecord, this.appDataService);
                     }
+
+
+                    CheckAndSendEvent(record, typeof(T).Name + ".UPDATED");
+
 
                     return Ok(record);
                 }
@@ -211,6 +258,8 @@ namespace TCDev.APIGenerator
                 }
 
                 this.repository.Delete(id, this.appDataService);
+
+                CheckAndSendEvent(existingRecord, typeof(T).Name + ".DELETED");
                 if (await this.repository.SaveAsync() == 0)
                 {
                     return BadRequest();
@@ -224,17 +273,6 @@ namespace TCDev.APIGenerator
             }
         }
 
-        public GenericController(
-            IAuthorizationService authorizationService,
-            IGenericRespository<T, TEntityId> repository,
-            ApplicationDataService<GenericDbContext, AuthDbContext> dataService)
-        {
-            this.repository = repository;
-            this.authorizationService = authorizationService;
-            this.appDataService = dataService;
-
-            ConfigureController();
-        }
 
 
 
