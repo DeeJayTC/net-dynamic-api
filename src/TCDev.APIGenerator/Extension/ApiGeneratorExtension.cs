@@ -56,6 +56,7 @@ namespace TCDev.APIGenerator.Extension
                 .AddSingleton(typeof(ITriggers<,>), typeof(Triggers<,>))
                 .AddSingleton(typeof(ITriggers<>), typeof(Triggers<>))
                 .AddSingleton(typeof(ITriggers), typeof(Triggers))
+                .AddSingleton<ApiGeneratorConfig>(builder.ApiGeneratorConfig)
                 .AddScoped(typeof(IApplicationDataService<,>),typeof(ApplicationDataService<,>))
                 .AddScoped(typeof(ApplicationDataService<,>))
                 .AddScoped(typeof(IGenericRespository<,>), typeof(GenericRespository<,>));

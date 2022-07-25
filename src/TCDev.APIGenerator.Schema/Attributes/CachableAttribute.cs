@@ -21,13 +21,16 @@ namespace TCDev.APIGenerator.Events
 
         public Events events;
         public string routingKey;
+        public string exchange;
         
         public EventAttribute(
             Events events,
-            string routingKey = ""
+            string routingKey = "",
+            string exchange = ""
             )
         {
             this.events = events;
+            this.exchange = exchange;
             this.routingKey = routingKey;
         }
     }

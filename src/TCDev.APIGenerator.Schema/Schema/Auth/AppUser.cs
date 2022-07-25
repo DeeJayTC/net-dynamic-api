@@ -39,7 +39,6 @@ namespace TCDev.APIGenerator.Model
         string DeletedById { get; set; }
         public bool IsDeleted { get; set; }
         public Guid TenantId { get; set; }
-        public Tenant Tenant { get; set; }
         public string ObjectId { get; set; }
         public string PrimaryEmail { get; set; }
         public string SID { get; set; }
@@ -55,7 +54,6 @@ namespace TCDev.APIGenerator.Model
 
         public string UserLookup { get; set; } = string.Empty;
 
-        public Tenant Tenant { get; set; }
         public DateTime Created { get; set; }
         public DateTime? LastModified { get; set; }
         public DateTime? Deleted { get; set; }

@@ -12,8 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using TCDev.APIGenerator.Attributes;
 using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Data;
+using TCDev.APIGenerator.Events;
 using TCDev.APIGenerator.Hooks;
 using TCDev.APIGenerator.Interfaces;
+using TCDev.APIGenerator.Schema.Interfaces;
 using TCDev.APIGenerator.Services;
 
 namespace TCDev.APIGenerator
@@ -28,6 +30,7 @@ namespace TCDev.APIGenerator
         private readonly IAuthorizationService authorizationService;
         private readonly IGenericRespository<T, TEntityId> repository;
         private ApiAttributeAttributeOptions options;
+        private CachableAttribute cacheOptions;
 
         private void ConfigureController()
         {
@@ -41,6 +44,14 @@ namespace TCDev.APIGenerator
             {
                 throw new Exception($"Could not find ApiAttribute on Class: {typeof(T)}");
             }
+            
+            // Get Cache Settings
+            var cacheAttr = Attribute.GetCustomAttributes(typeof(CachableAttribute));
+            if (attrs.FirstOrDefault(p => p.GetType() == typeof(CachableAttribute)) is CachableAttribute cacheAttrib)
+            {
+                this.cacheOptions = cacheAttrib;
+            }
+
         }
 
         /// <summary>
@@ -80,8 +91,18 @@ namespace TCDev.APIGenerator
                 return BadRequest();
             }
 
-            var record = await this.repository.GetAsync(id, this.appDataService);
 
+            // Check if we are using Redis
+            var redisService = (ICacheService)HttpContext.RequestServices.GetService(typeof(ICacheService));
+            if(redisService != null)
+            {
+                // generate cachekey
+                var keys = string.Format(cacheOptions.cacheKey, id);
+                var value = await redisService.GetData<T>(keys);
+                if (value != null) return Ok(value);
+            }
+
+            var record = await this.repository.GetAsync(id, this.appDataService);
 
             return Ok(record);
         }
@@ -98,10 +119,13 @@ namespace TCDev.APIGenerator
                 // Create the new entry
                 this.repository.Create(record, this.appDataService);
                 await this.repository.SaveAsync();
-                
-                
-                
-                
+
+                // Check if we are using AMQP to send message
+                var amqpService = (IMessageProducer)HttpContext.RequestServices.GetService(typeof(IMessageProducer));
+                if (amqpService != null)
+                {
+                    amqpService.SendMessage(record);
+                }
 
                 // respond with the newly created record
                 return CreatedAtAction("Find", new

@@ -12,10 +12,11 @@ builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
                 //.AddAssemblyWithOData(Assembly.GetExecutingAssembly())
-                .AddAssemblyWithODataFromUri("https://xxx","")
-                //.AddAssembly(Assembly.GetExecutingAssembly())
+                //.AddAssemblyWithODataFromUri("https://xxx","")
+                .AddAssembly(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()
+                .AddRedisCache()
                 .AddSwagger(true);
 
 

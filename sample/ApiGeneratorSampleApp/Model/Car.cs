@@ -13,77 +13,64 @@ using TCDev.APIGenerator.Schemes;
 namespace ApiGeneratorSampleApI.Model
 {
 
-    [Api("/people", 
-        authorize:true, 
-        requiredReadScopes: new string[] { "people.read" },
-        requiredWriteScopes: new string[] { "people.write"})]
-    [Event(Events.Created | Events.Updated)]
-    public class Person : Trackable
-    {
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime DateOfBirth { get; set; }
-    }
+    //[Api("/car")]
+
+    //[Table("Carlala")]
+    //public class Car : IObjectBase<Guid>
+    //{
+    //    [Key]
+    //    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    //    [SwaggerIgnore]
+    //    public Guid Id { get; set; } = Guid.NewGuid();
 
 
-    [Api("/car")]
+    //    [EmailAddress]
+    //    public string Name { get; set; }
 
-    [Table("Carlala")]
-    public class Car : IObjectBase<Guid>
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [SwaggerIgnore]
-        public Guid Id { get; set; } = Guid.NewGuid();
+    //    public string Description { get; set; }
 
+    //    public string Color { get; set; }
 
-        [EmailAddress]
-        public string Name { get; set; }
+    //    public Make? Make { get; set; }
 
-        public string Description { get; set; }
-
-        public string Color { get; set; }
-
-        public Make? Make { get; set; }
-
-        public Model? Model { get; set; }
-    }
+    //    public Model? Model { get; set; }
+    //}
 
 
-    [Api("/carMakes",
-        authorize: true,
-        requiredReadScopes: new string[] { "make.read" },
-        requiredWriteScopes: new string[] { "make.write" })]
-    public class Make : IObjectBase<Guid>
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [SwaggerIgnore]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Name { get; set; }
+    //[Api("/carMakes",
+    //    authorize: true,
+    //    requiredReadScopes: new string[] { "make.read" },
+    //    requiredWriteScopes: new string[] { "make.write" })]
+    //public class Make : IObjectBase<Guid>
+    //{
+    //    [Key]
+    //    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    //    [SwaggerIgnore]
+    //    public Guid Id { get; set; } = Guid.NewGuid();
+    //    public string Name { get; set; }
 
-        public string Description { get; set; }
+    //    public string Description { get; set; }
 
 
-        public Model? Model { get; set; }
-    }
+    //    public Model? Model { get; set; }
+    //}
 
 
 
-    [Api("/carModel",
-        authorize: true,
-        requiredReadScopes: new string[] { "model.read" },
-        requiredWriteScopes: new string[] { "model.write" })]
-    public class Model : IObjectBase<Guid>
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [SwaggerIgnore]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Name { get; set; }
+    //[Api("/carModel",
+    //    authorize: true,
+    //    requiredReadScopes: new string[] { "model.read" },
+    //    requiredWriteScopes: new string[] { "model.write" })]
+    //public class Model : IObjectBase<Guid>
+    //{
+    //    [Key]
+    //    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    //    [SwaggerIgnore]
+    //    public Guid Id { get; set; } = Guid.NewGuid();
+    //    public string Name { get; set; }
 
-        public string Description { get; set; }
-    }
+    //    public string Description { get; set; }
+    //}
 
 }
