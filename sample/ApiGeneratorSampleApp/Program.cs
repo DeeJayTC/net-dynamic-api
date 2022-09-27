@@ -11,8 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
-                //.AddAssemblyWithOData(Assembly.GetExecutingAssembly())
-                //.AddAssemblyWithODataFromUri("https://xxx","")
                 .AddAssembly(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()

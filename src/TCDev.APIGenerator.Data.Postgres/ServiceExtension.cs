@@ -8,8 +8,9 @@ using System.Reflection;
 using TCDev.APIGenerator.Data;
 using TCDev.APIGenerator.Extension;
 using TCDev.APIGenerator.Model.Interfaces;
+using TCDev.APIGenerator.Data.Postgres;
 
-namespace TCDev.APIGenerator.SQL;
+namespace TCDev.APIGenerator.Extension;
 
 public static partial class ServiceExtension
 {
@@ -45,7 +46,7 @@ public static partial class ServiceExtension
         return app;
     }
     
-    private static ApiGeneratorServiceBuilder AddDataContextSQL(
+    public static ApiGeneratorServiceBuilder AddDataContextPostgres(
         this ApiGeneratorServiceBuilder builder, 
         Action<NpgsqlDbContextOptionsBuilder>? NpgsqlOptions = null)
     {
