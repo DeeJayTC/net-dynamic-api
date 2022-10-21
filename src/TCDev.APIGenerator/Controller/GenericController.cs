@@ -145,7 +145,7 @@ namespace TCDev.APIGenerator
                 this.repository.Create(record, this.appDataService);
                 await this.repository.SaveAsync();
 
-                if (eventOptions.events.HasFlag(AMQPEvents.Created))  CheckAndSendEvent(record, typeof(T).Name + ".CREATED", null);
+                if (eventOptions != null && eventOptions.events.HasFlag(AMQPEvents.Created))  CheckAndSendEvent(record, typeof(T).Name + ".CREATED", null);
 
                 // respond with the newly created record
                 return CreatedAtAction("Find", new
@@ -230,8 +230,8 @@ namespace TCDev.APIGenerator
                         var baseEntity = record as IAfterUpdate<T>;
                         await baseEntity.AfterUpdate(record, existingRecord, this.appDataService);
                     }
-                    
-                    if (eventOptions.events.HasFlag(AMQPEvents.Updated)) CheckAndSendEvent(record, typeof(T).Name.ToUpper() + ".UPDATED", existingRecord);
+
+                    if (eventOptions != null && eventOptions.events.HasFlag(AMQPEvents.Updated)) CheckAndSendEvent(record, typeof(T).Name.ToUpper() + ".UPDATED", existingRecord);
 
 
                     return Ok(record);
@@ -265,7 +265,7 @@ namespace TCDev.APIGenerator
                 this.repository.Delete(id, this.appDataService);
 
 
-                if (eventOptions.events.HasFlag(AMQPEvents.Deleted)) CheckAndSendEvent(existingRecord, typeof(T).Name.ToUpper() + ".DELETED", null);
+                if (eventOptions != null && eventOptions.events.HasFlag(AMQPEvents.Deleted)) CheckAndSendEvent(existingRecord, typeof(T).Name.ToUpper() + ".DELETED", null);
                 if (await this.repository.SaveAsync() == 0)
                 {
                     return BadRequest();

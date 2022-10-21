@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<PackageId>TCDev.APIGenerator.Data.SQL</PackageId>
-		<Version>0.7.0-RC1</Version>
+		<Version>0.7.1-RC1</Version>
 		<Authors>Tim Cadenbach</Authors>
 		<Company>TCDev</Company>
 		<Description>Adds necessary functionality to use MS SQL Server and Azure SQL Instances with the API Generator. </Description>

@@ -12,8 +12,8 @@ using TCDev.APIGenerator.Interfaces;
 namespace DemoAPI
 {
 
-    [Api("/people", ApiMethodsToGenerate.All)]
-    public class Person : IObjectBase<Guid>
+    [Api("/people", ApiMethodsToGenerate.All, authorize:true)]
+    public class Person : IObjectBase<Guid>, IBeforeCreate<Person>
     {
         public Guid Id { get; set; } = new Guid();
 
@@ -27,6 +27,15 @@ namespace DemoAPI
 
         public string Image { get; set; }
 
+        public Task<Person> BeforeCreate(Person newItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
+        {
+            return Task.Run(async () =>
+            {
+
+
+                return newItem;
+            });
+        }
     }
 
 }

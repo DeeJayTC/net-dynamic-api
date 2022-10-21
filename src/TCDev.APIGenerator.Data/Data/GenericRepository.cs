@@ -67,11 +67,10 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
                 .CurrentValue = DateTime.UtcNow;
 
 
-
         if (typeof(TEntity).IsAssignableTo(typeof(IAfterCreate<TEntity>)))
         {
-            var baseEntity = record as IBeforeCreate<TEntity>;
-            await baseEntity.BeforeCreate(record, data);
+            var baseEntity = record as IAfterCreate<TEntity>;
+            await baseEntity.AfterCreate(record, data);
         }
     }
 

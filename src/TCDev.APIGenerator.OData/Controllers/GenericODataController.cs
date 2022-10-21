@@ -38,16 +38,32 @@ namespace TCDev.APIGenerator.Odata
         private ApiGeneratorConfig apiGenConfig;
 
 
+        //public GenericODataController(
+        //    IAuthorizationService authorizationService,
+        //    IGenericRespository<T, TEntityId> repository,
+        //    ApplicationDataService<GenericDbContext, AuthDbContext> dataService)
+        //{
+        //    this.repository = repository;
+        //    this.authorizationService = authorizationService;
+        //    this.appDataService = dataService;
+
+        //    ConfigureController();
+        //}
+
+
         public GenericODataController(
             IAuthorizationService authorizationService,
             IGenericRespository<T, TEntityId> repository,
             ApplicationDataService<GenericDbContext, AuthDbContext> dataService,
+            ODataScopeService<T, TEntityId> scopeLookup,
             ApiGeneratorConfig apiGenConfig)
         {
             this.repository = repository;
             this.authorizationService = authorizationService;
             this.appDataService = dataService;
             this.apiGenConfig = apiGenConfig;
+
+            this.scopeLookup = scopeLookup;
 
             ConfigureController();
         }
@@ -70,6 +86,13 @@ namespace TCDev.APIGenerator.Odata
             {
                 this.cacheOptions = cacheAttrib;
             }
+
+            // Get RabbitMQ Settings
+            var eventAttr = Attribute.GetCustomAttributes(typeof(EventAttribute));
+            if (attrs.FirstOrDefault(p => p.GetType() == typeof(EventAttribute)) is EventAttribute eventAttrib)
+            {
+                this.eventOptions = eventAttrib;
+            }
         }
 
         /// <summary>
@@ -80,7 +103,7 @@ namespace TCDev.APIGenerator.Odata
         [ProducesErrorResponseType(typeof(BadRequestResult))]
         [HttpGet]
         [EnableQuery(
-            AllowedQueryOptions = AllowedQueryOptions.All,
+            AllowedQueryOptions = AllowedQueryOptions.Search | AllowedQueryOptions.Filter,
             AllowedFunctions = AllowedFunctions.All,
             PageSize = 20)
         ]
@@ -130,7 +153,6 @@ namespace TCDev.APIGenerator.Odata
             return Ok(record);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] T record)
         {
@@ -144,7 +166,7 @@ namespace TCDev.APIGenerator.Odata
                 await this.repository.SaveAsync();
 
 
-                if (eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(record, typeof(T).Name + ".CREATED", null);
+                if (eventOptions != null && eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(record, typeof(T).Name + ".CREATED", null);
 
                 // respond with the newly created record
                 return CreatedAtAction("Find", new
@@ -201,7 +223,7 @@ namespace TCDev.APIGenerator.Odata
                 }
 
 
-                if (eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(record, typeof(T).Name + ".UPDATED", null);
+                if (eventOptions != null && eventOptions.events.HasFlag(AMQPEvents.Updated)) CheckAndSendEvent(record, typeof(T).Name + ".UPDATED", existingRecord);
 
 
                 return Ok(record);
@@ -229,7 +251,7 @@ namespace TCDev.APIGenerator.Odata
 
                 this.repository.Delete(id, this.appDataService);
 
-                if (eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(existingRecord, typeof(T).Name + ".DELETED", null);
+                if (eventOptions != null && eventOptions.events.HasFlag(AMQPEvents.Created)) CheckAndSendEvent(existingRecord, typeof(T).Name + ".DELETED", null);
                 if (await this.repository.SaveAsync() == 0)
                 {
                     return BadRequest();
@@ -241,20 +263,6 @@ namespace TCDev.APIGenerator.Odata
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        public GenericODataController(
-            IAuthorizationService authorizationService,
-            IGenericRespository<T, TEntityId> repository,
-            ODataScopeService<T, TEntityId> scopeLookup,
-            ApplicationDataService<GenericDbContext, AuthDbContext> dataService)
-        {
-            this.repository = repository;
-            this.authorizationService = authorizationService;
-            this.scopeLookup = scopeLookup;
-            this.appDataService = dataService;
-
-            ConfigureController();
         }
 
 
