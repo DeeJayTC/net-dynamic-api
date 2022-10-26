@@ -14,7 +14,7 @@ namespace TCDev.APIGenerator.Events
         Created = 1,
         Updated = 2,
         Deleted = 4,
-        All = Created
+        All = Created | Updated | Deleted
     }
 
     [AttributeUsage(AttributeTargets.Class)]

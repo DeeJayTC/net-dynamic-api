@@ -22,7 +22,7 @@ namespace TCDev.APIGenerator.Identity
                     options.Authority = config.IdentityOptions.Authority;
                     options.Audience = config.IdentityOptions.Audience;
                     options.RequireHttpsMetadata = false;
-                    options.MetadataAddress = config.IdentityOptions.MetaDataUri;
+                    options.MetadataAddress = "https://dev-dy2rk4vd.us.auth0.com/.well-known/openid-configuration";//,"config.IdentityOptions.MetaDataUri;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = config.IdentityOptions.ValidateIssuer,

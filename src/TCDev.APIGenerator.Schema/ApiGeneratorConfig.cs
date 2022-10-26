@@ -83,6 +83,7 @@ public class ApiGeneratorConfig
         this.configuration.Bind("Api:Database", this.DatabaseOptions);
         this.configuration.Bind("Api:Odata", this.ODataOptions);
         this.configuration.Bind("Api:AMQP", this.AMQPOptions);
+        this.configuration.Bind("Api:Identity", this.IdentityOptions);
 
 
         // Verify DB Settings

@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiGeneratorIdentity(builder.Configuration);
 
 builder.Services.AddApiGeneratorServices()
-                .AddAssembly(Assembly.GetExecutingAssembly())
+                .AddAssemblyWithOData(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()
                 .AddRedisCache()
