@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace TCDev.APIGenerator.Schema
 {
     [Flags]
-    public enum Events
+    public enum METHODS
     {
         POST,
         PUT,

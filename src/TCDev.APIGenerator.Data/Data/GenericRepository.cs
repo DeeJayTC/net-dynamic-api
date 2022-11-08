@@ -26,7 +26,7 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
 
     public IQueryable<TEntity> Get()
     {
-        return this.data.GenericData.Set<TEntity>();
+        return this.data.GenericDataContext.Set<TEntity>();
     }
 
     public TEntity Get(TEntityId id)
@@ -59,19 +59,18 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
         }
 
 
-        this.data.GenericData.Add(record);
+        this.data.GenericDataContext.Add(record);
 
         if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
-            this.data.GenericData.Entry(record)
+            this.data.GenericDataContext.Entry(record)
                 .Property<DateTime>("Created")
                 .CurrentValue = DateTime.UtcNow;
 
 
-
         if (typeof(TEntity).IsAssignableTo(typeof(IAfterCreate<TEntity>)))
         {
-            var baseEntity = record as IBeforeCreate<TEntity>;
-            await baseEntity.BeforeCreate(record, data);
+            var baseEntity = record as IAfterCreate<TEntity>;
+            await baseEntity.AfterCreate(record, data);
         }
     }
 
@@ -86,16 +85,16 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
 
         if (typeof(TEntity).IsAssignableFrom(typeof(IHasTrackingFields)))
         {
-            this.data.GenericData.Entry(newRecord)
+            this.data.GenericDataContext.Entry(newRecord)
             .Property<DateTime>("LastModified")
             .CurrentValue = DateTime.UtcNow;
-            this.data.GenericData.Entry(newRecord)
+            this.data.GenericDataContext.Entry(newRecord)
             .State = EntityState.Modified;
         }
 
-        this.data.GenericData.ChangeTracker.Clear();
-        this.data.GenericData.Update(newRecord);
-        await this.data.GenericData.SaveChangesAsync();
+        this.data.GenericDataContext.ChangeTracker.Clear();
+        this.data.GenericDataContext.Update(newRecord);
+        await this.data.GenericDataContext.SaveChangesAsync();
 
         // We have a after update handler
         if (typeof(TEntity).IsAssignableTo(typeof(IAfterUpdate<TEntity>)))
@@ -114,18 +113,18 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
             // If the entity is using softdelete -> only mark as deleted
             if (typeof(TEntity).IsAssignableFrom(typeof(ISoftDelete)))
             {
-                this.data.GenericData.Entry(record)
+                this.data.GenericDataContext.Entry(record)
                 .Property<DateTime>("Deleted")
                 .CurrentValue = DateTime.UtcNow;
-                this.data.GenericData.Entry(record)
+                this.data.GenericDataContext.Entry(record)
                 .Property<bool>("IsDeleted")
                 .CurrentValue = true;
-                this.data.GenericData.Entry(record)
+                this.data.GenericDataContext.Entry(record)
                 .State = EntityState.Modified;
             }
             else
             {
-                this.data.GenericData.Remove(record);
+                this.data.GenericDataContext.Remove(record);
             }
         }
     }
@@ -133,13 +132,13 @@ public class GenericRespository<TEntity, TEntityId> : IGenericRespository<TEntit
 
     public Task<int> SaveAsync()
     {
-        return this.data.GenericData.SaveChangesAsync();
+        return this.data.GenericDataContext.SaveChangesAsync();
     }
 
 
     public int Save()
     {
-        return this.data.GenericData.SaveChanges();
+        return this.data.GenericDataContext.SaveChanges();
     }
 
     public IQueryable<TEntity> GetQuery(Type entityType)

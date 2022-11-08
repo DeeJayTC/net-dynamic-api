@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 	<PackageId>TCDev.APIGenerator</PackageId>
-	<Version>0.6.0</Version>
+	  <Version>0.7.0</Version>
 	<Authors>Tim Cadenbach</Authors>
 	<Company>Rasepi</Company>
 	<Description>Creates fully working CRUD Apis from just models</Description>

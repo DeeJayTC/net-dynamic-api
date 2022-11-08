@@ -17,9 +17,12 @@ using Directory = System.IO.Directory;
 using Innofactor.EfCoreJsonValueConverter;
 using TCDev.APIGenerator.Model.Interfaces;
 using TCDev.APIGenerator.Extension;
+using TCDev.APIGenerator.Model;
 
 namespace TCDev.APIGenerator.Data
 {
+
+
     public class GenericDbContext : DbContext
     {
         private readonly AssemblyService assemblyService;
@@ -69,8 +72,8 @@ namespace TCDev.APIGenerator.Data
             foreach (var customType in this.assemblyService.Types.Where(x => x.IsAssignableFrom(typeof(IHasTenantId))))
             {
                 // Get current tenantID
-                var tenant = this.context.HttpContext.GetUser().Tenant;
-                builder.Entity(customType).HasQueryFilter((IHasTenantId p) => p.TenantId == tenant.TenantId);
+                var tenant = this.context.HttpContext.GetUser().TenantId;
+                builder.Entity(customType).HasQueryFilter((IHasTenantId p) => p.TenantId == tenant);
             }
 
             builder.AddJsonFields();

@@ -28,7 +28,7 @@ namespace TCDev.APIGenerator.Extension
                     dbContext.MigrateToLatestVersion(new DbMigrationsOptions
                     {
                         AutomaticMigrationsEnabled = true,
-                        AutomaticMigrationDataLossAllowed = allowDataLoss
+                        AutomaticMigrationDataLossAllowed = true
                     });
 
                     dbContext.MigrateToLatestVersion();
