@@ -8,7 +8,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/DeeJayTC/net-dynamic-api</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	  <Version>0.7.1-RC1</Version>
+	  <Version>0.7.0</Version>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 

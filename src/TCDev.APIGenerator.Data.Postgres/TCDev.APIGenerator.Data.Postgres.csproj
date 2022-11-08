@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<PackageId>TCDev.APIGenerator.Data.Postgres</PackageId>
-		<Version>0.7.0-RC1</Version>
+		<Version>0.7.0</Version>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Authors>Tim Cadenbach</Authors>
 		<Company>Rasepi</Company>

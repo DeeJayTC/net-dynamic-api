@@ -23,8 +23,4 @@ namespace TCDev.APIGenerator.Events
             this.defaultLifeTime = defaultLifeTime;
         }
     }
-
-
-
 }
-
