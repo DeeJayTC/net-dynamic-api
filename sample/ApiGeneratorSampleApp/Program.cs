@@ -14,8 +14,8 @@ builder.Services.AddApiGeneratorServices()
                 .AddAssemblyWithOData(Assembly.GetExecutingAssembly())
                 .AddDataContextSQL()
                 .AddOData()
-                .AddRedisCache()
-                .AddRabbitMQ()
+                //.AddRedisCache()
+                //.AddRabbitMQ()
                 .AddSwagger(true);
 
 
