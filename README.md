@@ -72,7 +72,7 @@ And this is also the FULL code for a working API using the JSON mode:
   ]
  ```
 
-# Getting Started & Docoumentation
+# Getting Started & Documentation
 Read this for a more detailed guide -> [https://www.tcdev.de/tcdev-api-generator-getting-started](https://www.tcdev.de/tcdev-api-generator-getting-started)
 Or just follow these steps:
 
