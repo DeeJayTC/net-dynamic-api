@@ -23,8 +23,8 @@ Creating a CRUD API has never been easier. With just a few lines of code, you ca
 /// <summary>
 /// This is as simple as it gets, yes this is a working api ;)
 /// </summary>
-[Api("/minimal")]
-public class MinimalSample : IObjectBase<int>
+[Api("/simple")]
+public class SimpleSample : IObjectBase<int>
 {
   public int Id { get; set; }
   public string Name { get; set; }
