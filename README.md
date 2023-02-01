@@ -11,17 +11,17 @@
 
 | Version | Build | Nuget 
 |--------------|-----------------|-------------------|
-| Main | <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/main?label=Main"> | [0.7.0](https://www.nuget.org/packages/TCDev.ApiGenerator/0.7.0) | [![Build Status Installer pipeline](https://dev.azure.com/microsoft/Dart/_apis/build/status/microsoft.PowerToys?branchName=main)](https://dev.azure.com/microsoft/Dart/_build/latest?definitionId=76541&branchName=main) |
-| VNext |  <img src="https://img.shields.io/github/workflow/status/DeeJayTC/net-dynamic-api/.NET/vnext?label=vnext"> | [0.8.0](https://www.nuget.org/packages/TCDev.ApiGenerator/0.8.0)
+| Main | <img src="https://github.com/DeeJayTC/net-dynamic-api/actions/workflows/dotnet.yml/badge.svg"> | [0.7.0](https://www.nuget.org/packages/TCDev.ApiGenerator/0.7.0) | [![Build Status Installer pipeline](https://github.com/DeeJayTC/net-dynamic-api/actions/workflows/dotnet.yml/badge.svg)](https://dev.azure.com/microsoft/Dart/_build/latest?definitionId=76541&branchName=main) |
+| VNext |  <img src="https://github.com/DeeJayTC/net-dynamic-api/actions/workflows/dotnet.yml/badge.svg"> | [0.8.0](https://www.nuget.org/packages/TCDev.ApiGenerator/0.8.0)
 
 ## About
-The API Generator automatically generates a fully working CRUD Microservice from just your Model (C# Classes) or a JSON Definition. Everything from routes, database handling, migrations, openapi spec, OData etc is working magically out of the box! You just write your model and get a fully working CRUD api with filtering, sorting, selectable fields and everything else OData and classic REST offers.
+The API Generator is a tool that helps you create fully functioning CRUD microservices with ease. Whether you use C# classes or a JSON definition, the API Generator takes care of all the necessary components, such as routes, database handling, migrations, openapi spec, and OData. All you have to do is write your model, and you'll have a CRUD API complete with filtering, sorting, selectable fields, and all the other features offered by both OData and classic REST.
 
 
-By using the API Generator, this little code snippet is already a working CRUD API
+Creating a CRUD API has never been easier. With just a few lines of code, you can have a working API in no time. Here's a simple example:
 ```csharp
 /// <summary>
-/// This is the minimal sample, yes this is a working api ;)
+/// This is as simple as it gets, yes this is a working api ;)
 /// </summary>
 [Api("/minimal")]
 public class MinimalSample : IObjectBase<int>
@@ -32,7 +32,7 @@ public class MinimalSample : IObjectBase<int>
 }
 ```
 
-Heres another sample:
+Or, if you prefer using JSON:
 
 ```csharp
  [Api("/people", ApiMethodsToGenerate.All )]
