@@ -38,19 +38,27 @@ namespace TCDev.APIGenerator.Extension
                 }
             }
 
+			var dbContextAuth = serviceScope.ServiceProvider.GetService<AuthDbContext>();
+			if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
+				{
+				try
+					{
+					dbContextAuth.MigrateToLatestVersion(new DbMigrationsOptions
+						{
+						AutomaticMigrationsEnabled = true,
+						AutomaticMigrationDataLossAllowed = allowDataLoss
+						});
 
-            //var dbContextAuth = serviceScope.ServiceProvider.GetService<AuthDbContext>();
-            //if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
-            //{
-            //    dbContextAuth.MigrateToLatestVersion(new DbMigrationsOptions
-            //    {
-            //        AutomaticMigrationsEnabled = true,
-            //        AutomaticMigrationDataLossAllowed = allowDataLoss,
-                 
-            //    });
-            //}
+					dbContextAuth.MigrateToLatestVersion();
+					}
+				catch (MigrateDatabaseException ex)
+					{
+					Console.WriteLine("ERROR -> Could not migrate database -> " + ex.Message, ex);
+					}
+				}
 
-            return app;
+
+			return app;
         }
 
 

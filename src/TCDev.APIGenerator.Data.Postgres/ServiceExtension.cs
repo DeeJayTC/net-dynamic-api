@@ -21,27 +21,44 @@ public static partial class ServiceExtension
         using var serviceScope = app.ApplicationServices.CreateScope();
         var builder = serviceScope.ServiceProvider.GetRequiredService<ApiGeneratorServiceBuilder>();
 
-        var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
-        if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
-        {
-            dbContext.MigrateToLatestVersion(new DbMigrationsOptions
-            {
-                AutomaticMigrationsEnabled = true,
-                AutomaticMigrationDataLossAllowed = allowDataLoss
-            });
-        }
 
+		var dbContext = serviceScope.ServiceProvider.GetService<GenericDbContext>();
+		if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
+			{
+			try
+				{
+				dbContext.MigrateToLatestVersion(new DbMigrationsOptions
+					{
+					AutomaticMigrationsEnabled = true,
+					AutomaticMigrationDataLossAllowed = allowDataLoss
+					});
 
-        var dbContextAuth = serviceScope.ServiceProvider.GetService<AuthDbContext>();
-        if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
-        {
-            dbContextAuth.MigrateToLatestVersion(new DbMigrationsOptions
-            {
-                AutomaticMigrationsEnabled = true,
-                AutomaticMigrationDataLossAllowed = allowDataLoss
-            });
-        }
+				dbContext.MigrateToLatestVersion();
+				}
+			catch (MigrateDatabaseException ex)
+				{
+				Console.WriteLine("ERROR -> Could not migrate database -> " + ex.Message, ex);
+				}
+			}
 
+		var dbContextAuth = serviceScope.ServiceProvider.GetService<AuthDbContext>();
+		if (builder.ApiGeneratorConfig.DatabaseOptions.DatabaseType != DbType.InMemory)
+			{
+			try
+				{
+				dbContextAuth.MigrateToLatestVersion(new DbMigrationsOptions
+					{
+					AutomaticMigrationsEnabled = true,
+					AutomaticMigrationDataLossAllowed = allowDataLoss
+					});
+
+				dbContextAuth.MigrateToLatestVersion();
+				}
+			catch (MigrateDatabaseException ex)
+				{
+				Console.WriteLine("ERROR -> Could not migrate database -> " + ex.Message, ex);
+				}
+			}
         return app;
     }
     
@@ -77,8 +94,34 @@ public static partial class ServiceExtension
     
 
         });
-        
-        builder.Services.AddSingleton<IDatabaseProviderConfiguration, ProviderConfig>();
+
+
+		builder.Services.AddDbContext<AuthDbContext>(options =>
+		{
+
+			if (NpgsqlOptions != null)
+				{
+				options.UseNpgsql(connectionString: builder.ApiGeneratorConfig.DatabaseOptions.Connection, NpgsqlOptions);
+
+				}
+			else
+				{
+
+				options.UseNpgsql(connectionString: builder.ApiGeneratorConfig.DatabaseOptions.Connection, b =>
+				{
+					if (builder.ApiGeneratorConfig.DatabaseOptions.EnableAutomaticMigration)
+						{
+						b.MigrationsAssembly(builder.ApiGeneratorConfig.DatabaseOptions.MigrationAssembly);
+						}
+				});
+				}
+
+
+		});
+
+
+
+		builder.Services.AddSingleton<IDatabaseProviderConfiguration, ProviderConfig>();
         return builder;
 
     }
