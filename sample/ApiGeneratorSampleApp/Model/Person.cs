@@ -12,8 +12,8 @@ using TCDev.APIGenerator.Interfaces;
 namespace DemoAPI
 {
 
-    [Api("/people", ApiMethodsToGenerate.All)]
-    public class Person : IObjectBase<Guid>, IAfterCreate<Person>, IBeforeCreate<Person>
+    [Api("/people", ApiMethodsToGenerate.All, authorize:true)]
+    public class Person : IObjectBase<Guid>, IBeforeCreate<Person>
     {
         public Guid Id { get; set; } = new Guid();
 
@@ -27,50 +27,15 @@ namespace DemoAPI
 
         public string Image { get; set; }
 
-        public Guid CompanyId { get; set; }
-        public Company? Company { get; set; }
-
-        public Task<Person> AfterCreate(Person newItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
-        {
-
-            return Task.FromResult(newItem);
-        }
-
         public Task<Person> BeforeCreate(Person newItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
         {
-            newItem.Email = "hallo@hallo.de";
+            return Task.Run(async () =>
+            {
 
-            return Task.FromResult(newItem);
+
+                return newItem;
+            });
         }
     }
 
-}
-
-[Api("/companies", ApiMethodsToGenerate.All)]
-public class Company : IObjectBase<Guid>, IBeforeUpdate<Company>, IAfterUpdate<Company>
-{
-    public Guid Id { get; set; } = new Guid();
-
-    public string Name { get; set; }
-
-    public string Email { get; set; }
-
-    public string Image { get; set; }
-
-    public List<Person>? People { get; set; }
-
-    public string Address { get; set; }
-    public string Country { get; set; }
-
-    public Task<Company> AfterUpdate(Company newItem, Company oldItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
-    {
-        return Task.FromResult(newItem);
-    }
-
-    public Task<Company> BeforeUpdate(Company newItem, Company oldItem, IApplicationDataService<GenericDbContext, AuthDbContext> data)
-    {
-        newItem.Email = "hallo@hallo.de";
-
-        return Task.FromResult(newItem);
-    }
 }

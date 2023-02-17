@@ -2,27 +2,21 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<PackageId>TCDev.APIGenerator.Data.SQL</PackageId>
-		<Version>0.7.0</Version>
+		<PackageId>TCDev.APIGenerator.Data.SQLite</PackageId>
+		<Version>0.6.0</Version>
 		<Authors>Tim Cadenbach</Authors>
-		<Company>TCDev</Company>
-		<Description>Adds necessary functionality to use MS SQL Server and Azure SQL Instances with the API Generator. </Description>
+		<Company>Rasepi</Company>
+		<Description>Adds necessary functionality to use SQLLite with the API Generator. Rasepi greates fully working CRUD Apis from just models</Description>
 		<Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
-		<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
-		<PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
-		<PackageIcon>logo_small.png</PackageIcon>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<RepositoryUrl>https://www.github.com/deejaytc/net-dynamic-api</RepositoryUrl>
+		<PackageIcon>logo_small.png</PackageIcon>
+		<PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Include="..\.nuget\logo_small.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\..\README.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
@@ -31,12 +25,7 @@
   <ItemGroup>
     <PackageReference Include="EFCore.AutomaticMigrations" Version="6.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>

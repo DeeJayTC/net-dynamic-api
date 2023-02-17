@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Configurations>Debug;Release;DebugWithSampleApp;SampleAppNuget;SampleAppJson</Configurations>
-    <Version>0.6.0-44ffa</Version>
+    <Version>0.7.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

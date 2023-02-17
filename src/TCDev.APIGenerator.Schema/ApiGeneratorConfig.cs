@@ -6,6 +6,8 @@ using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using TCDev.APIGenerator.Events;
+using TCDev.APIGenerator.Schema.Interfaces;
 
 namespace TCDev.APIGenerator;
 
@@ -16,7 +18,10 @@ public class ApiGeneratorConfig
    public SwaggerOptions SwaggerOptions = new();
    public DatabaseOptions DatabaseOptions = new();
    public ODataOptions ODataOptions = new();
+   public AMQPOptions AMQPOptions = new();
    public IdentityOptions IdentityOptions = new();
+   public RuntimeOptions RuntimeOptions = new();
+    
    private readonly IConfiguration configuration;
 
 
@@ -29,6 +34,14 @@ public class ApiGeneratorConfig
         this.configuration.Bind("Api:Database", this.DatabaseOptions);
         this.configuration.Bind("Api:Odata", this.ODataOptions);
         this.configuration.Bind("Api:Identity", this.IdentityOptions);
+        this.configuration.Bind("Api:AMQP", this.AMQPOptions);
+        
+
+        // Verify DB Settings
+        if (string.IsNullOrEmpty(this.DatabaseOptions.Connection) && !string.IsNullOrEmpty(this.DatabaseOptions.ConnectionStringName))
+        {
+            this.DatabaseOptions.Connection = configuration.GetConnectionString(this.DatabaseOptions.ConnectionStringName);
+        }
     }
 
     public ApiGeneratorConfig() {
@@ -46,13 +59,12 @@ public class ApiGeneratorConfig
     public ApiGeneratorConfig(string configFile) {
         this.configuration =  new ConfigurationBuilder()
                             .AddJsonFile(configFile)
+                            .AddEnvironmentVariables()
                             .Build();
 
         BindConfig();
 
     }
-
-
 
     public ApiGeneratorConfig(IConfiguration config)
    {
@@ -70,7 +82,15 @@ public class ApiGeneratorConfig
         this.configuration.Bind("Api:Swagger", this.SwaggerOptions);
         this.configuration.Bind("Api:Database", this.DatabaseOptions);
         this.configuration.Bind("Api:Odata", this.ODataOptions);
+        this.configuration.Bind("Api:AMQP", this.AMQPOptions);
         this.configuration.Bind("Api:Identity", this.IdentityOptions);
+
+
+        // Verify DB Settings
+        if (string.IsNullOrEmpty(this.DatabaseOptions.Connection) && !string.IsNullOrEmpty(this.DatabaseOptions.ConnectionStringName))
+        {
+            this.DatabaseOptions.Connection = configuration.GetConnectionString(this.DatabaseOptions.ConnectionStringName);
+        }
     }
 }
 
@@ -106,6 +126,8 @@ public class DatabaseOptions
 {
    public DbType DatabaseType { get; set; } = DbType.InMemory;
    public string? Connection { get; set; } = string.Empty;
+   public string? ConnectionStringName { get; set; } = string.Empty;
+    
    public bool EnableAutomaticMigration { get; set; } = true;
 
     public string MigrationAssembly { get; set; } = Assembly.GetExecutingAssembly().FullName;
@@ -138,6 +160,31 @@ public class SwaggerOptions
    public string Route { get; set; } = "/swagger/v1/swagger.json";
 }
 
+public class AMQPOptions
+{
+    public string Host { get; set; } = String.Empty;
+    public string Exchange { get; set; } = String.Empty;
+
+    public AMQPDetailConfig ExchangeConfig { get; set; }
+    public AMQPDetailConfig QueueConfig { get; set; }
+
+
+    public string RoutingKey { get; set; } = String.Empty;
+    
+    public string Queue { get; set; } = String.Empty;
+
+}
+
+public class AMQPDetailConfig
+{
+    public bool Durable { get; set; }
+    public bool AutoDelete { get; set; }
+    
+    public bool Exclusive { get; set; }
+
+    public string Type { get; set; } = "topic";
+}
+
 public class IdentityOptions
 {
     public bool EnableIdentity { get; set; } = false;
@@ -151,4 +198,16 @@ public class IdentityOptions
     public bool ValidateAudience { get; set; } = true;
     public bool ValidateLifetime { get; set; } = true;
     public bool ValidateIssuerSigningKey { get; set; } = true;
+}
+
+/// <summary>
+///  DO not set these directly, runtime options are set
+///  by the apigen for performance reasons
+/// </summary>
+public class RuntimeOptions
+{
+    public ICacheService CacheService { get; set; }
+    public bool CacheChecked { get; set; } = false;
+    public IMessageProducer AMQPService { get; set; }
+    public bool AQMPChecked { get; set; } = false;
 }

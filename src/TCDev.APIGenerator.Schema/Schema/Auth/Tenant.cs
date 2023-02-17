@@ -15,6 +15,5 @@ namespace TCDev.APIGenerator.Model
 
         public Guid OwnerId { get; set; }
 
-        public virtual IEnumerable<AppUser> Users { get; set; }
     }
 }

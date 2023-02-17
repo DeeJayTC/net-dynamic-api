@@ -30,9 +30,8 @@ namespace TCDev.APIGenerator.Attributes
             string[] requiredReadScopes = null,
             string[] requiredWriteScopes = null,
             bool fireEvents = false,
-            bool authorize = false,
-            bool cache = false,
-            int cacheDuration = 50000)
+            bool authorize = false
+            )
         {
             this.Route = route;
             this.Options = new ApiAttributeAttributeOptions
@@ -40,8 +39,6 @@ namespace TCDev.APIGenerator.Attributes
                 RequiredReadScopes = requiredReadScopes,
                 RequiredWriteScopes = requiredWriteScopes,
                 Authorize = authorize,
-                Cache = cache,
-                CacheDuration = cacheDuration,
                 FireEvents = fireEvents,
                 Methods = methods
             };

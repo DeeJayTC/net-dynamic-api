@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <Version>0.6.0</Version>
+	  <Version>0.7.0</Version>
     <PackageProjectUrl>https://www.rasepi.com</PackageProjectUrl>
     <PackageIcon>logo_small.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
